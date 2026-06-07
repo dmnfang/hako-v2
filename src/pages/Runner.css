@@ -1,0 +1,321 @@
+.runner-shell {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+  background: #E8EAF2;
+  gap: 12px;
+  padding: 12px;
+}
+
+.runner-loading {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Figtree', sans-serif;
+  font-size: 16px;
+  color: #A8A39A;
+}
+
+/* Header */
+.runner-header {
+  background: #FDFCFF;
+  border: 0.5px solid #E2E4EC;
+  border-radius: 12px;
+  padding: 16px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+  gap: 16px;
+}
+
+.runner-header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.runner-header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.runner-exit-btn {
+  height: 32px;
+  width: 32px;
+  border-radius: 8px;
+  border: 0.5px solid #E2E4EC;
+  background: #F2F3F7;
+  color: #6B665E;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-family: 'Figtree', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.15s;
+}
+
+.runner-exit-btn:hover { background: #FDEAEA; color: #C03030; border-color: #F5AAAA; }
+
+.runner-header-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #C9C5B8;
+  flex-shrink: 0;
+}
+
+.runner-school {
+  font-family: 'Figtree', sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  color: #2E2B27;
+}
+
+.runner-class {
+  font-family: 'Figtree', sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  color: #534AB7;
+}
+
+.runner-global-timer {
+  font-family: 'Figtree', sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  color: #534AB7;
+  min-width: 64px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.runner-global-timer.warning { color: #C03030; }
+
+.runner-nav-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 0.5px solid #E2E4EC;
+  background: #F2F3F7;
+  color: #6B665E;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+  flex-shrink: 0;
+}
+
+.runner-nav-btn:disabled { opacity: 0.3; cursor: default; }
+.runner-nav-btn:hover:not(:disabled) { background: #E2E4EC; }
+.runner-nav-btn.finish { background: #EEFAF2; border-color: #6FCF97; color: #27AE60; }
+.runner-nav-btn.finish:hover { background: #27AE60; color: #FDFCFF; border-color: #27AE60; }
+
+/* Body */
+.runner-body {
+  flex: 1;
+  display: flex;
+  gap: 12px;
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* Block List */
+.runner-block-list {
+  width: 30%;
+  flex-shrink: 0;
+  background: #FDFCFF;
+  border: 0.5px solid #E2E4EC;
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.runner-block-list-header {
+  padding: 16px 16px;
+  border-bottom: 0.5px solid #E2E4EC;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.runner-lesson-curriculum {
+  font-family: 'Figtree', sans-serif;
+  font-size: 18px;
+  line-height: 24px;
+  font-weight: 600;
+  color: #2E2B27;
+  white-space: nowrap;
+}
+
+.runner-lesson-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #C9C5B8;
+  flex-shrink: 0;
+}
+
+.runner-lesson-unit {
+  font-family: 'Figtree', sans-serif;
+  font-size: 18px;
+  line-height: 24px;
+  font-weight: 600;
+  color: #2E2B27;
+  white-space: nowrap;
+}
+
+.runner-lesson-num {
+  font-family: 'Figtree', sans-serif;
+  font-size: 18px;
+  line-height: 24px;
+  font-weight: 400;
+  color: #A8A39A;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.runner-block-items {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.runner-block-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 16px 16px 16px;
+  border-bottom: 0.5px solid #E2E4EC;
+  cursor: pointer;
+  transition: all 0.15s;
+  user-select: none;
+}
+
+.runner-block-item:last-child { border-bottom: none; }
+.runner-block-item:hover { background: #F8F7FB; }
+
+.runner-block-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: transparent;
+  transition: background 0.15s;
+  border-radius: 0 0 0 0px;
+}
+
+.runner-block-item.active::before { background: #534AB7; }
+.runner-block-item.active { background: #FDFCFF; cursor: default; }
+.runner-block-item.active .runner-block-item-title { color: #534AB7; font-weight: 600; }
+
+.runner-block-item.done { background: #F0EEF8; cursor: pointer; }
+.runner-block-item.done .runner-block-item-title { color: #7B74D4; }
+.runner-block-item.done .runner-block-item-time { color: #7B74D4; }
+
+.runner-block-item.dragging { opacity: 0.35; }
+.runner-block-item.drag-over { border-top: 2px solid #534AB7; }
+
+.runner-block-grip { color: #D3D1C7; flex-shrink: 0; }
+
+.runner-block-item-title {
+  font-family: 'Figtree', sans-serif;
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 500;
+  color: #2E2B27;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.runner-block-item-time {
+  font-family: 'Figtree', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  color: #A8A39A;
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+}
+
+/* Active Block */
+.runner-active {
+  flex: 1;
+  background: #FDFCFF;
+  border: 0.5px solid #E2E4EC;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-width: 0;
+}
+
+.runner-active-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 16px;
+  border-bottom: 0.5px solid #E2E4EC;
+  flex-shrink: 0;
+}
+
+.runner-active-title {
+  font-family: 'Figtree', sans-serif;
+  font-size: 18px;
+  line-height: 24px;
+  font-weight: 600;
+  color: #2E2B27;
+}
+
+.runner-block-timer {
+  font-family: 'Figtree', sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  color: #A8A39A;
+  font-variant-numeric: tabular-nums;
+}
+
+.runner-active-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.runner-content-line {
+  display: flex;
+  gap: 12px;
+  font-family: 'Figtree', sans-serif;
+  font-size: 16px;
+  color: #2E2B27;
+  line-height: 1.6;
+}
+
+.runner-bullet {
+  color: #534AB7;
+  flex-shrink: 0;
+}
+
+.runner-empty {
+  font-family: 'Figtree', sans-serif;
+  font-size: 15px;
+  color: #C9C5B8;
+}
