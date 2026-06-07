@@ -306,12 +306,19 @@ export default function Home() {
               className={`period-row ${isSelected ? 'selected' : ''} ${!cls ? 'no-class' : ''}`}
               onClick={() => setSelectedPeriodIdx(i)}
             >
-              <span className="period-eyebrow">Period {period.period_number}</span>
-              <div className="period-row-middle">
+              {/* Period label row */}
+              <div className="period-header-row">
+                <span className={`period-dot ${isSelected ? 'selected' : ''}`} />
+                <span className="period-eyebrow">Period {period.period_number}</span>
+              </div>
+
+              {/* School + Time bar */}
+              <div className="period-bar school-bar">
                 <button
-                  className={`period-school-chip ${isSelected ? 'selected' : ''}`}
+                  className="period-tap-chip school"
                   onClick={e => {
                     e.stopPropagation()
+                    setSelectedPeriodIdx(i)
                     setModalPeriodIdx(i)
                     setModalSchoolId(effectiveSId)
                     setModalChangeType('once')
@@ -320,23 +327,27 @@ export default function Home() {
                 >
                   {periodSchool?.name ?? '—'}
                 </button>
+                <button className="period-tap-chip" onClick={e => { e.stopPropagation(); setSelectedPeriodIdx(i) }}>
+                  {period.start_time ? `${period.start_time.slice(0,5)} – ${period.end_time?.slice(0,5)}` : '—'}
+                </button>
+              </div>
+
+              {/* Class + Lesson bar */}
+              <div className="period-bar class-bar">
                 <button
-                  className={`period-class-chip ${isSelected ? 'selected' : ''} ${!cls ? 'empty' : ''}`}
-                  onClick={e => e.stopPropagation()}
+                  className={`period-tap-chip ${!cls ? 'empty' : ''}`}
+                  onClick={e => { e.stopPropagation(); setSelectedPeriodIdx(i) }}
                 >
-                  {cls?.label ?? 'Select a class'}
+                  {cls?.label ?? '—'}
                 </button>
                 {cls && lesson && (
                   <>
-                    <span className="period-lesson-label">{lesson.tag1 ?? ''}</span>
-                    <span className="period-lesson-dot" />
-                    <span className="period-lesson-label">{lesson.tag2 ?? lesson.title}</span>
+                    {lesson.tag1 && <span className="period-lesson-inline">{lesson.tag1}</span>}
+                    {lesson.tag1 && lesson.tag2 && <span className="period-lesson-dot" />}
+                    {lesson.tag2 && <span className="period-lesson-inline">{lesson.tag2}</span>}
                   </>
                 )}
               </div>
-              <button className="period-time-btn" onClick={e => e.stopPropagation()}>
-                {period.start_time ? `${period.start_time.slice(0,5)} – ${period.end_time?.slice(0,5)}` : '—'}
-              </button>
             </div>
           )
         })}

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 import { useData } from '../context/DataContext'
 import Layout from '../components/Layout'
-import { GripVertical, X } from 'lucide-react'
+import { ArrowRightLeft } from 'lucide-react'
 import './Schedule.css'
 
 const DAYS = [
@@ -22,11 +22,6 @@ export default function Schedule() {
   const [schedule, setSchedule] = useState([])
   const [dayCounts, setDayCounts] = useState({})
   const [daySchools, setDaySchools] = useState({})
-
-  const [dragSlotPeriod, setDragSlotPeriod] = useState(null)
-  const [dragSlotIdx, setDragSlotIdx] = useState(null)
-  const [dragOverSlotIdx, setDragOverSlotIdx] = useState(null)
-
   const [loading, setLoading] = useState(true)
 
   useEffect(() => { fetchBase() }, [])
@@ -162,31 +157,6 @@ export default function Schedule() {
     fetchDaySchedule()
   }
 
-  function handleSlotDragStart(e, periodNum, idx) {
-    setDragSlotPeriod(periodNum)
-    setDragSlotIdx(idx)
-    e.dataTransfer.effectAllowed = 'move'
-  }
-
-  function handleSlotDragOver(e, idx) {
-    e.preventDefault()
-    setDragOverSlotIdx(idx)
-  }
-
-  function handleSlotDrop(e, periodId, slots) {
-    e.preventDefault()
-    if (dragSlotIdx !== null) swapAlternatingSlots(periodId, slots)
-    setDragSlotPeriod(null)
-    setDragSlotIdx(null)
-    setDragOverSlotIdx(null)
-  }
-
-  function handleSlotDragEnd() {
-    setDragSlotPeriod(null)
-    setDragSlotIdx(null)
-    setDragOverSlotIdx(null)
-  }
-
   if (loading) return <Layout sidebar={<div />}><div /></Layout>
 
   const sidebar = (
@@ -242,76 +212,85 @@ export default function Schedule() {
             const schoolClasses = allClasses.filter(c => c.school_id === period?.school_id)
 
             return (
-              <div key={num} className="sch-period-row week">
-                <div className="sch-period-row-top">
-                  <span className="sch-period-num">Period {num}</span>
+              <div key={num} className="sch-period-row">
 
+                {/* Row 1: dot + label */}
+                <div className="sch-period-header-row">
+                  <span className="sch-period-dot" />
+                  <span className="sch-period-eyebrow">Period {num}</span>
+                </div>
+
+                {/* Row 2: school + time bar */}
+                <div className={`sch-period-bar ${period ? 'configured' : ''}`}>
                   <select
-                    className="sch-school-select"
+                    className="sch-period-tap-chip"
                     value={period?.school_id ?? ''}
                     onChange={e => { if (e.target.value) assignSchoolToDay(num, e.target.value) }}
                   >
                     <option value="">No school</option>
                     {schools.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
                   </select>
-
                   {period && (
-                    <span className="sch-period-time">
-                      {period.start_time ? `${period.start_time.slice(0, 5)} – ${period.end_time?.slice(0, 5)}` : 'No time set'}
+                    <span className="sch-period-time-chip">
+                      {period.start_time ? `${period.start_time.slice(0, 5)} – ${period.end_time?.slice(0, 5)}` : 'No time'}
                     </span>
                   )}
+                </div>
 
-                  {period && (
+                {/* Row 3: frequency + class slot(s) */}
+                {period && (
+                  <div className="sch-period-bar class-bar">
                     <select
-                      className="sch-freq-select"
+                      className="sch-period-tap-chip freq"
                       value={frequency}
                       onChange={e => setFrequency(period.period_id, e.target.value, slots)}
                     >
                       <option value="weekly">Weekly</option>
                       <option value="alternating">Alternating</option>
                     </select>
-                  )}
-                </div>
 
-                {period && frequency === 'weekly' && (
-                  <div className="sch-slot-row">
-                    <select
-                      className="sch-class-select"
-                      value={slots[0]?.class_id ?? ''}
-                      onChange={e => assignClassToSlot(slots[0]?.id, e.target.value, period.period_id)}
-                    >
-                      <option value="">No class</option>
-                      {schoolClasses.map(c => <option key={c.id} value={c.id}>{c.label}</option>)}
-                    </select>
-                  </div>
-                )}
-
-                {period && frequency === 'alternating' && (
-                  <div className="sch-alt-slots">
-                    {slots.map((slot, idx) => (
-                      <div
-                        key={slot.id}
-                        className={`sch-alt-slot ${dragSlotPeriod === num && dragOverSlotIdx === idx ? 'drag-over' : ''}`}
-                        draggable
-                        onDragStart={e => handleSlotDragStart(e, num, idx)}
-                        onDragOver={e => handleSlotDragOver(e, idx)}
-                        onDrop={e => handleSlotDrop(e, period.period_id, slots)}
-                        onDragEnd={handleSlotDragEnd}
+                    {frequency === 'weekly' && (
+                      <select
+                        className="sch-period-tap-chip class"
+                        value={slots[0]?.class_id ?? ''}
+                        onChange={e => assignClassToSlot(slots[0]?.id, e.target.value, period.period_id)}
                       >
-                        <GripVertical size={14} className="sch-slot-grip" />
-                        <span className="sch-slot-label">{idx === 0 ? 'This week' : 'Next week'}</span>
+                        <option value="">No class</option>
+                        {schoolClasses.map(c => <option key={c.id} value={c.id}>{c.label}</option>)}
+                      </select>
+                    )}
+
+                    {frequency === 'alternating' && (
+                      <>
+                        <span className="sch-ab-label">A</span>
                         <select
-                          className="sch-class-select"
-                          value={slot.class_id ?? ''}
-                          onChange={e => assignClassToSlot(slot.id, e.target.value, period.period_id)}
+                          className="sch-period-tap-chip class"
+                          value={slots[0]?.class_id ?? ''}
+                          onChange={e => assignClassToSlot(slots[0]?.id, e.target.value, period.period_id)}
                         >
                           <option value="">No class</option>
                           {schoolClasses.map(c => <option key={c.id} value={c.id}>{c.label}</option>)}
                         </select>
-                      </div>
-                    ))}
+                        <span className="sch-ab-label">B</span>
+                        <select
+                          className="sch-period-tap-chip class"
+                          value={slots[1]?.class_id ?? ''}
+                          onChange={e => assignClassToSlot(slots[1]?.id, e.target.value, period.period_id)}
+                        >
+                          <option value="">No class</option>
+                          {schoolClasses.map(c => <option key={c.id} value={c.id}>{c.label}</option>)}
+                        </select>
+                        <button
+                          className="sch-swap-btn"
+                          onClick={() => swapAlternatingSlots(period.period_id, slots)}
+                        >
+                          <ArrowRightLeft size={13} />
+                        </button>
+                      </>
+                    )}
                   </div>
                 )}
+
               </div>
             )
           })}

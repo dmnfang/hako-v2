@@ -3,13 +3,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #E8EAF2;
+  background: #F5F5F5;
   padding: 24px;
 }
 
 .tg-card {
-  background: #FDFCFF;
-  border: 0.5px solid #E2E4EC;
+  background: #FFFFFF;
+  border: 0.5px solid #E0E0E0;
   border-radius: 16px;
   padding: 40px 36px;
   width: 100%;
@@ -30,14 +30,14 @@
   font-family: 'Figtree', sans-serif;
   font-size: 22px;
   font-weight: 700;
-  color: #2E2B27;
+  color: #0A100D;
   margin: 0;
 }
 
 .tg-desc {
   font-family: 'Figtree', sans-serif;
   font-size: 14px;
-  color: #6B665E;
+  color: #3D3D3D;
   line-height: 1.6;
   margin: 0;
 }
@@ -47,8 +47,8 @@
   height: 40px;
   border-radius: 8px;
   border: none;
-  background: #534AB7;
-  color: #FDFCFF;
+  background: #00C8E0;
+  color: #FFFFFF;
   font-family: 'Figtree', sans-serif;
   font-size: 15px;
   font-weight: 700;
@@ -63,17 +63,17 @@
   width: 100%;
   height: 36px;
   border-radius: 8px;
-  border: 0.5px solid #E2E4EC;
-  background: #F2F3F7;
+  border: 0.5px solid #E0E0E0;
+  background: #F5F5F5;
   font-family: 'Figtree', sans-serif;
   font-size: 14px;
   font-weight: 600;
-  color: #4A4640;
+  color: #3D3D3D;
   cursor: pointer;
   transition: all 0.15s;
 }
 
-.tg-btn-grace:hover { background: #E2E4EC; }
+.tg-btn-grace:hover { background: #E0E0E0; }
 .tg-btn-grace:disabled { opacity: 0.5; cursor: default; }
 
 .tg-grace-msg {
@@ -94,10 +94,10 @@
   background: transparent;
   font-family: 'Figtree', sans-serif;
   font-size: 13px;
-  color: #C9C5B8;
+  color: #B8B8B8;
   cursor: pointer;
   transition: color 0.15s;
   margin-top: 4px;
 }
 
-.tg-btn-signout:hover { color: #6B665E; }
+.tg-btn-signout:hover { color: #3D3D3D; }

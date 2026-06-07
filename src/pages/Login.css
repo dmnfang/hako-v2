@@ -3,13 +3,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #E8EAF2;
+  background: #F5F5F5;
   padding: 24px;
 }
 
 .login-card {
-  background: #FDFCFF;
-  border: 0.5px solid #E2E4EC;
+  background: #FFFFFF;
+  border: 0.5px solid #E0E0E0;
   border-radius: 16px;
   padding: 40px 36px;
   width: 100%;
@@ -23,7 +23,7 @@
   font-family: 'Figtree', sans-serif;
   font-size: 32px;
   font-weight: 700;
-  color: #2E2B27;
+  color: #0A100D;
   text-align: center;
   margin-bottom: 4px;
 }
@@ -31,7 +31,7 @@
 .login-subtitle {
   font-family: 'Figtree', sans-serif;
   font-size: 14px;
-  color: #A8A39A;
+  color: #787878;
   text-align: center;
   margin-bottom: 24px;
 }
@@ -39,7 +39,7 @@
 .login-tabs {
   display: flex;
   gap: 0;
-  background: #F2F3F7;
+  background: #F5F5F5;
   border-radius: 10px;
   padding: 3px;
   margin-bottom: 20px;
@@ -54,15 +54,15 @@
   font-family: 'Figtree', sans-serif;
   font-size: 14px;
   font-weight: 600;
-  color: #A8A39A;
+  color: #787878;
   cursor: pointer;
   transition: all 0.15s;
 }
 
 .login-tab.active {
-  background: #FDFCFF;
-  color: #2E2B27;
-  border: 0.5px solid #E2E4EC;
+  background: #FFFFFF;
+  color: #0A100D;
+  border: 0.5px solid #E0E0E0;
 }
 
 .login-form {
@@ -75,19 +75,19 @@
 .login-form input {
   height: 40px;
   border-radius: 8px;
-  border: 0.5px solid #E2E4EC;
-  background: #F2F3F7;
+  border: 0.5px solid #E0E0E0;
+  background: #F5F5F5;
   padding: 0 14px;
   font-family: 'Figtree', sans-serif;
   font-size: 14px;
-  color: #2E2B27;
+  color: #0A100D;
   outline: none;
   transition: border-color 0.15s, background 0.15s;
 }
 
 .login-form input:focus {
-  border-color: #534AB7;
-  background: #FDFCFF;
+  border-color: #008FA3;
+  background: #FFFFFF;
 }
 
 .login-error {
@@ -104,8 +104,8 @@
   height: 40px;
   border-radius: 8px;
   border: none;
-  background: #534AB7;
-  color: #FDFCFF;
+  background: #00C8E0;
+  color: #FFFFFF;
   font-family: 'Figtree', sans-serif;
   font-size: 14px;
   font-weight: 600;
@@ -122,7 +122,7 @@
   align-items: center;
   gap: 12px;
   margin: 16px 0;
-  color: #C9C5B8;
+  color: #B8B8B8;
   font-family: 'Figtree', sans-serif;
   font-size: 13px;
 }
@@ -132,15 +132,15 @@
   content: '';
   flex: 1;
   height: 0.5px;
-  background: #E2E4EC;
+  background: #E0E0E0;
 }
 
 .login-btn-google {
   height: 40px;
   border-radius: 8px;
-  border: 0.5px solid #E2E4EC;
-  background: #F2F3F7;
-  color: #2E2B27;
+  border: 0.5px solid #E0E0E0;
+  background: #F5F5F5;
+  color: #0A100D;
   font-family: 'Figtree', sans-serif;
   font-size: 14px;
   font-weight: 600;
@@ -152,7 +152,7 @@
   transition: background 0.15s;
 }
 
-.login-btn-google:hover { background: #E2E4EC; }
+.login-btn-google:hover { background: #E0E0E0; }
 
 .login-success {
   font-family: 'Figtree', sans-serif;
