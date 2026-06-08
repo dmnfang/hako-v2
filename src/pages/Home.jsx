@@ -65,25 +65,25 @@ export default function Home() {
   const [calSelected, setCalSelected] = useState(today)
 
   useEffect(() => { fetchBase() }, [])
-  useEffect(() => { fetchDateData() }, [selectedDate, selectedSchoolId])
+  useEffect(() => { fetchDateData() }, [selectedDate])
 
   async function fetchBase() {
-    if (schools.length > 0 && !selectedSchoolId) setSelectedSchoolId(schools[0].id)
+    // selectedSchoolId no longer drives the main query — periods come from all school_days for the dow
+    if (schools.length > 0) setSelectedSchoolId(schools[0].id)
     setLoading(false)
   }
 
   async function fetchDateData() {
-    if (!selectedSchoolId) return
     const dateStr = toLocalDateStr(selectedDate)
+    // getDay(): 0=Sun,1=Mon,2=Tue,3=Wed,4=Thu,5=Fri,6=Sat
+    // DB uses: 1=Mon,2=Tue,3=Wed,4=Thu,5=Fri — matches getDay() for Mon-Fri
     const dow = selectedDate.getDay()
 
-    const [{ data: sdData }, { data: overrideData }, { data: statusData }] = await Promise.all([
+    const [{ data: sdRows }, { data: overrideData }, { data: statusData }] = await Promise.all([
       supabase
         .from('school_days')
-        .select('*, periods(*, period_slots(*, class:classes(*, curriculum:curricula(*))))')
-        .eq('school_id', selectedSchoolId)
-        .eq('day_of_week', dow)
-        .maybeSingle(),
+        .select('*, school:schools(id,name), periods(*, period_slots(*, class:classes(*, curriculum:curricula(*))))')
+        .eq('day_of_week', dow),
       supabase.from('period_overrides').select('*').eq('date', dateStr),
       supabase.from('day_status').select('*').eq('date', dateStr).maybeSingle(),
     ])
@@ -98,9 +98,13 @@ export default function Home() {
       return
     }
 
-    if (!sdData?.periods) { setPeriods([]); return }
+    // Merge periods from all school_days for this day of week
+    const allPeriods = (sdRows ?? []).flatMap(sd =>
+      (sd.periods ?? []).map(p => ({ ...p, school_id: sd.school_id, school: sd.school }))
+    )
+    if (allPeriods.length === 0) { setPeriods([]); return }
 
-    const sorted = [...sdData.periods].sort((a, b) => a.period_number - b.period_number)
+    const sorted = [...allPeriods].sort((a, b) => a.period_number - b.period_number)
     setPeriods(sorted)
     setSelectedPeriodIdx(0)
 
@@ -267,7 +271,7 @@ export default function Home() {
   // Schools active today (from period schedule)
   const todaySchools = [...new Set(periods.map(p => {
     const ov = periodOverrides[p.id]
-    return ov?.school_id ?? selectedSchoolId
+    return ov?.school_id ?? p.school_id
   }))].map(id => schools.find(s => s.id === id)?.name).filter(Boolean)
 
   const dow = selectedDate.toLocaleDateString('en-US', { weekday: 'long' })
@@ -334,7 +338,7 @@ export default function Home() {
         )}
         {isWorkingDay && periods.map((period, i) => {
           const override = periodOverrides[period.id]
-          const effectiveSId = override?.school_id ?? selectedSchoolId
+          const effectiveSId = override?.school_id ?? period.school_id
           const effectiveCId = override?.class_id ?? period.period_slots?.[0]?.class?.id
           const cls = allClasses.find(c => c.id === effectiveCId)
           const periodSchool = schools.find(s => s.id === effectiveSId)
@@ -570,7 +574,7 @@ export default function Home() {
       {/* Period Class Override Modal */}
       {modal === 'period_class' && modalPeriodIdx !== null && (() => {
         const period = periods[modalPeriodIdx]
-        const schoolClasses = allClasses.filter(cl => cl.school_id === (period?.school_id ?? selectedSchoolId))
+        const schoolClasses = allClasses.filter(cl => cl.school_id === period?.school_id)
         return (
           <div className="modal-overlay" onClick={() => setModal(null)}>
             <div className="modal" onClick={e => e.stopPropagation()}>
@@ -628,12 +632,12 @@ export default function Home() {
               <button className="modal-close" onClick={() => setModal(null)}><X size={14} /></button>
             </div>
             <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <label style={{ fontFamily: "'Figtree',sans-serif", fontSize: 14, color: '#787878', width: 40 }}>Start</label>
+              <div className="modal-field">
+                <span className="modal-field-label">START TIME</span>
                 <input className="modal-label-input" type="time" value={modalTimeForm.start_time} onChange={e => setModalTimeForm(p => ({ ...p, start_time: e.target.value }))} autoFocus />
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <label style={{ fontFamily: "'Figtree',sans-serif", fontSize: 14, color: '#787878', width: 40 }}>End</label>
+              <div className="modal-field">
+                <span className="modal-field-label">END TIME</span>
                 <input className="modal-label-input" type="time" value={modalTimeForm.end_time} onChange={e => setModalTimeForm(p => ({ ...p, end_time: e.target.value }))} />
               </div>
               <div className="modal-change-types">

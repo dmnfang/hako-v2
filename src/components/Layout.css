@@ -2,6 +2,7 @@
 
 html, body {
   height: 100%;
+  height: -webkit-fill-available;
   overflow: hidden;
   overscroll-behavior: none;
 }
@@ -9,12 +10,13 @@ html, body {
 .shell {
   display: flex;
   height: 100vh;
+  height: -webkit-fill-available;
   overflow: hidden;
   background: #F5F5F5;
 }
 
 .sidebar {
-  width: 25%;
+  width: 30%;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;

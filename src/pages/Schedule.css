@@ -717,7 +717,7 @@
   background: #FFFFFF;
   border-radius: 12px;
   width: 100%;
-  max-width: 400px;
+  max-width: 480px;
   overflow: hidden;
   border: 0.5px solid #E0E0E0;
 }
@@ -805,8 +805,3 @@
   background: #FFFFFF;
   color: #007080;
 }
-
-.sch-modal-chip:hover { background: #F5F5F5; }
-.sch-modal-chip.school.active:hover { background: #FFE599; }
-.sch-modal-chip.class.active:hover { background: #96F4FF; }
-.sch-modal-chip.active:hover { background: #F5F5F5; }
