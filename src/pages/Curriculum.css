@@ -31,13 +31,14 @@
   line-height: 24px;
 }
 
+/* Primary button */
 .curr-new-btn {
   height: 32px;
   padding: 0 12px;
   border-radius: 8px;
-  border: none;
-  background: #0A100D;
-  color: #FFFFFF;
+  border: 0.5px solid #2DE6FF;
+  background: #96F4FF;
+  color: #003A40;
   font-family: 'Figtree', sans-serif;
   font-size: 14px;
   font-weight: 600;
@@ -60,7 +61,7 @@
 
 .curr-row {
   position: relative;
-  padding: 16px 16px 16px 16px;
+  padding: 16px;
   border-bottom: 0.5px solid #E0E0E0;
   background: transparent;
   cursor: pointer;
@@ -72,28 +73,21 @@
 .curr-row::before {
   content: '';
   position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
+  left: 0; top: 0; bottom: 0;
   width: 4px;
   background: transparent;
   transition: background 0.15s;
 }
 
-.curr-row.selected::before {
-  background: #00C8E0;
-}
-
+.curr-row.selected::before { background: #00C8E0; }
 .curr-row:hover { background: #FAFAFA; }
 .curr-row.selected { background: #FFFFFF; }
-.curr-row.selected .curr-row-name { color: #005A66; }
-.curr-row.selected .curr-row-count { color: #008FA3; }
-.curr-row.selected .curr-grade-tag { background: #DFFCFF; border: 0.5px solid #2DE6FF; color: #005A66; }
+.curr-row.selected .curr-row-name { color: #007080; }
+.curr-row.selected .curr-row-count { color: #007080; }
+.curr-row.selected .curr-grade-tag { background: #DFFCFF; color: #007080; }
 
 .curr-dot { display: none; }
-
 .curr-dot.active { background: #00C8E0; }
-
 .curr-row-body { flex: 1; min-width: 0; }
 
 .curr-row-top {
@@ -125,6 +119,8 @@
   background: #F5F5F5;
   border-radius: 999px;
   height: 24px;
+  min-width: 24px;
+  justify-content: center;
   padding: 0 8px;
   flex-shrink: 0;
   display: inline-flex;
@@ -133,7 +129,7 @@
 
 .curr-row.selected .curr-row-count {
   background: #DFFCFF;
-  color: #005A66;
+  color: #007080;
 }
 
 .curr-grade-tag {
@@ -141,9 +137,8 @@
   font-family: 'Figtree', sans-serif;
   font-size: 12px;
   font-weight: 500;
-  color: #005A66;
+  color: #007080;
   background: #DFFCFF;
-  border: 0.5px solid #2DE6FF;
   border-radius: 999px;
   padding: 5px 10px;
 }
@@ -167,13 +162,14 @@
   flex-shrink: 0;
 }
 
+/* Tertiary button */
 .curr-back-btn {
   width: 32px;
   height: 32px;
   border-radius: 8px;
   border: 0.5px solid #E0E0E0;
-  background: #F5F5F5;
-  color: #3D3D3D;
+  background: #FFFFFF;
+  color: #606060;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -182,7 +178,7 @@
   flex-shrink: 0;
 }
 
-.curr-back-btn:hover { background: #E0E0E0; }
+.curr-back-btn:hover { background: #F5F5F5; }
 
 .curr-main-title {
   font-family: 'Figtree', sans-serif;
@@ -207,16 +203,17 @@
   white-space: nowrap;
 }
 
+/* Tertiary button */
 .curr-action-btn {
   height: 32px;
   padding: 0 12px;
   border-radius: 8px;
   border: 0.5px solid #E0E0E0;
-  background: #F5F5F5;
+  background: #FFFFFF;
   font-family: 'Figtree', sans-serif;
   font-size: 14px;
   font-weight: 600;
-  color: #3D3D3D;
+  color: #606060;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
@@ -225,15 +222,16 @@
   white-space: nowrap;
 }
 
-.curr-action-btn:hover { background: #E0E0E0; }
+.curr-action-btn:hover { background: #F5F5F5; }
 
+/* Tertiary button */
 .curr-more-btn {
   width: 32px;
   height: 32px;
   border-radius: 8px;
   border: 0.5px solid #E0E0E0;
-  background: transparent;
-  color: #787878;
+  background: #FFFFFF;
+  color: #606060;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -263,7 +261,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 16px 16px 16px 16px;
+  padding: 16px;
   border-bottom: 0.5px solid #E0E0E0;
   cursor: pointer;
   transition: background 0.1s;
@@ -303,13 +301,14 @@
   flex: 1;
 }
 
+/* Tertiary button */
 .curr-lesson-arrow {
   width: 32px;
   height: 32px;
   border-radius: 8px;
   border: 0.5px solid #E0E0E0;
-  background: #F5F5F5;
-  color: #3D3D3D;
+  background: #FFFFFF;
+  color: #606060;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -319,7 +318,7 @@
   transition: all 0.15s;
 }
 
-.curr-lesson-row:hover .curr-lesson-arrow { background: #E0E0E0; }
+.curr-lesson-row:hover .curr-lesson-arrow { background: #F5F5F5; }
 
 .curr-block-list {
   flex: 1;
@@ -335,7 +334,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 16px 16px;
+  padding: 16px;
   cursor: pointer;
   transition: background 0.1s;
 }
@@ -357,22 +356,23 @@
   font-weight: 600;
   color: #0A100D;
   border: none;
-  border-bottom: 2px solid #00C8E0;
+  border-bottom: 2px solid #2DE6FF;
   background: transparent;
   outline: none;
   padding: 0;
 }
 
+/* Tertiary button */
 .curr-block-copy-btn {
   height: 32px;
   padding: 0 12px;
   border-radius: 8px;
   border: 0.5px solid #E0E0E0;
-  background: transparent;
+  background: #FFFFFF;
   font-family: 'Figtree', sans-serif;
   font-size: 14px;
   font-weight: 600;
-  color: #3D3D3D;
+  color: #606060;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
@@ -381,15 +381,16 @@
   flex-shrink: 0;
 }
 
-.curr-block-copy-btn:hover { background: #E0E0E0; }
+.curr-block-copy-btn:hover { background: #F5F5F5; }
 
+/* Tertiary button */
 .curr-block-chevron-btn {
   width: 32px;
   height: 32px;
   border-radius: 8px;
   border: 0.5px solid #E0E0E0;
-  background: transparent;
-  color: #787878;
+  background: #FFFFFF;
+  color: #606060;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -400,10 +401,7 @@
 
 .curr-block-chevron-btn:hover { background: #F5F5F5; }
 
-.curr-block-chevron {
-  transition: transform 0.2s;
-}
-
+.curr-block-chevron { transition: transform 0.2s; }
 .curr-block-chevron.open { transform: rotate(180deg); }
 
 .curr-block-body {
@@ -429,7 +427,7 @@
   transition: border-color 0.15s;
 }
 
-.curr-block-input:focus { border-color: #00C8E0; }
+.curr-block-input:focus { border-color: #2DE6FF; }
 
 .curr-block-footer {
   display: flex;
@@ -437,16 +435,17 @@
   gap: 8px;
 }
 
+/* Tertiary button */
 .curr-block-action {
   height: 32px;
   padding: 0 12px;
   border-radius: 8px;
   border: 0.5px solid #E0E0E0;
-  background: transparent;
+  background: #FFFFFF;
   font-family: 'Figtree', sans-serif;
   font-size: 14px;
   font-weight: 600;
-  color: #3D3D3D;
+  color: #606060;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
@@ -454,7 +453,7 @@
   transition: all 0.15s;
 }
 
-.curr-block-action:hover { background: #E0E0E0; }
+.curr-block-action:hover { background: #F5F5F5; }
 .curr-block-action.danger { color: #C03030; border-color: #F5AAAA; }
 .curr-block-action.danger:hover { background: #FDEAEA; }
 
@@ -465,7 +464,6 @@
   background: #FFFFFF;
   border: 0.5px solid #E0E0E0;
   border-radius: 8px;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
   z-index: 100;
   min-width: 160px;
   overflow: hidden;
@@ -519,4 +517,130 @@
   width: auto;
 }
 
-.curr-lesson-edit-input:focus { border-color: #00C8E0; }
+.curr-lesson-edit-input:focus { border-color: #2DE6FF; }
+
+/* Modal */
+.sc-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(0,0,0,0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sc-modal {
+  background: #FFFFFF;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 400px;
+  overflow: hidden;
+  border: 0.5px solid #E0E0E0;
+}
+
+.sc-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 16px 16px 20px;
+  border-bottom: 0.5px solid #E0E0E0;
+}
+
+.sc-modal-title {
+  font-family: 'Figtree', sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  color: #0A100D;
+}
+
+.sc-modal-close {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 0.5px solid #E0E0E0;
+  background: #FFFFFF;
+  color: #606060;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+}
+
+.sc-modal-close:hover { background: #F5F5F5; }
+
+.sc-modal-body { padding: 16px 20px; }
+
+.sc-modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 12px 20px;
+  border-top: 0.5px solid #E0E0E0;
+}
+
+/* Form field with eyebrow label */
+.sc-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sc-field-label {
+  font-family: 'Figtree', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  color: #787878;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.sc-input {
+  width: 100%;
+  height: 32px;
+  padding: 0 10px;
+  border-radius: 6px;
+  border: 0.5px solid #E0E0E0;
+  background: #FFFFFF;
+  font-family: 'Figtree', sans-serif;
+  font-size: 13px;
+  color: #0A100D;
+  outline: none;
+  transition: border-color 0.15s;
+  box-sizing: border-box;
+}
+
+.sc-input:focus { border-color: #2DE6FF; }
+
+.sc-form-cancel {
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 8px;
+  border: 0.5px solid #E0E0E0;
+  background: #FFFFFF;
+  color: #606060;
+  font-family: 'Figtree', sans-serif;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.sc-form-cancel:hover { background: #F5F5F5; }
+
+.sc-form-save {
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 8px;
+  border: 0.5px solid #2DE6FF;
+  background: #96F4FF;
+  color: #003A40;
+  font-family: 'Figtree', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.sc-form-save:hover { opacity: 0.85; }

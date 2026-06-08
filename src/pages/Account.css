@@ -143,8 +143,8 @@
   font-family: 'Figtree', sans-serif;
   font-size: 11px;
   font-weight: 700;
-  color: #005A66;
-  background: #DFFCFF; border: 0.5px solid #2DE6FF;
+  color: #007080;
+  background: #DFFCFF;
   padding: 3px 10px;
   border-radius: 999px;
   text-transform: uppercase;
@@ -329,7 +329,6 @@
   border-radius: 50%;
   background: #FFFFFF;
   transition: transform 0.2s;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
 }
 
 .acc-toggle.on { background: #00C8E0; }
@@ -362,8 +361,8 @@
   padding: 0 12px;
   border-radius: 8px;
   border: none;
-  background: #00C8E0;
-  color: #FFFFFF;
+  background: #96F4FF;
+  color: #003A40;
   font-family: 'Figtree', sans-serif;
   font-size: 14px;
   font-weight: 600;
@@ -412,9 +411,9 @@
   height: 32px;
   padding: 0 12px;
   border-radius: 8px;
-  border: none;
-  background: #00C8E0;
-  color: #FFFFFF;
+  border: 0.5px solid #2DE6FF;
+  background: #96F4FF;
+  color: #003A40;
   font-family: 'Figtree', sans-serif;
   font-size: 14px;
   font-weight: 600;
@@ -503,7 +502,7 @@
   font-family: 'Figtree', sans-serif;
   font-size: 24px;
   font-weight: 700;
-  color: #005A66;
+  color: #007080;
   line-height: 1;
 }
 

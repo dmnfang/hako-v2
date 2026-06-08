@@ -25,6 +25,8 @@ export default function Curriculum() {
   const [openBlockMenuId, setOpenBlockMenuId] = useState(null)
   const [openLessonMenu, setOpenLessonMenu] = useState(false)
   const [openCourseMenu, setOpenCourseMenu] = useState(false)
+  const [courseModal, setCourseModal] = useState(false)
+  const [courseForm, setCourseForm] = useState({ name: '', grade_tag: '' })
 
   useEffect(() => { fetchCurricula() }, [])
   useEffect(() => { if (selectedCurriculumId) fetchLessons() }, [selectedCurriculumId])
@@ -83,6 +85,19 @@ export default function Curriculum() {
     setBlocks(data ?? [])
     if (data?.length > 0) setExpandedBlocks({ [data[0].id]: true })
     else setExpandedBlocks({})
+  }
+
+  async function saveCourse() {
+    const { name, grade_tag } = courseForm
+    if (!name.trim()) return
+    const { data } = await supabase.from('curricula').insert({
+      name: name.trim(),
+      grade_tag: grade_tag.trim() || null,
+    }).select().single()
+    setCourseModal(false)
+    setCourseForm({ name: '', grade_tag: '' })
+    refreshData()
+    if (data) setSelectedCurriculumId(data.id)
   }
 
   async function addLesson() {
@@ -206,7 +221,7 @@ export default function Curriculum() {
       <div className="curr-count-box">
         <h1 className="curr-title">Courses</h1>
         <span>You currently have <strong>{curricula.length} active courses</strong></span>
-        <button className="curr-new-btn"><Plus size={14} /> New Course</button>
+        <button className="curr-new-btn" onClick={() => { setCourseForm({ name: '', grade_tag: '' }); setCourseModal(true) }}><Plus size={14} /> New Course</button>
       </div>
       <div className="curr-list">
         {curricula.map(c => (
@@ -464,6 +479,44 @@ export default function Curriculum() {
         )}
 
       </div>
+      {courseModal && (
+        <div className="sc-modal-overlay" onClick={() => setCourseModal(false)}>
+          <div className="sc-modal" onClick={e => e.stopPropagation()}>
+            <div className="sc-modal-header">
+              <span className="sc-modal-title">New Course</span>
+              <button className="sc-modal-close" onClick={() => setCourseModal(false)}><X size={14} /></button>
+            </div>
+            <div className="sc-modal-body" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <div className="sc-field">
+                <span className="sc-field-label">COURSE NAME</span>
+                <input
+                  className="sc-input"
+                  placeholder="e.g. Let's Try 1"
+                  value={courseForm.name}
+                  onChange={e => setCourseForm(p => ({ ...p, name: e.target.value }))}
+                  onKeyDown={e => { if (e.key === 'Enter') saveCourse() }}
+                  autoFocus
+                />
+              </div>
+              <div className="sc-field">
+                <span className="sc-field-label">GRADE TAG</span>
+                <input
+                  className="sc-input"
+                  placeholder="e.g. Grade 3"
+                  value={courseForm.grade_tag}
+                  onChange={e => setCourseForm(p => ({ ...p, grade_tag: e.target.value }))}
+                  onKeyDown={e => { if (e.key === 'Enter') saveCourse() }}
+                />
+              </div>
+            </div>
+            <div className="sc-modal-footer">
+              <button className="sc-form-cancel" onClick={() => setCourseModal(false)}>Cancel</button>
+              <button className="sc-form-save" onClick={saveCourse}>Save</button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </Layout>
   )
 }

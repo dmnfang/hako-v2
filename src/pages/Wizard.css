@@ -48,7 +48,7 @@
 }
 
 .wz-dot.active { background: #0A100D; color: #FFFFFF; border-color: #0A100D; }
-.wz-dot.done   { background: #00C8E0; color: #003A40; border-color: #00C8E0; }
+.wz-dot.done   { background: #96F4FF; color: #003A40; border-color: #2DE6FF; }
 
 .wz-line {
   flex: 1;
@@ -57,7 +57,7 @@
   margin: 0 8px;
 }
 
-.wz-line.done { background: #00C8E0; }
+.wz-line.done { background: #96F4FF; }
 
 /* Step content */
 .wz-title {
@@ -188,7 +188,7 @@
 }
 
 .curriculum-form-row input:focus,
-.curriculum-form-row select:focus { border-color: #00C8E0; }
+.curriculum-form-row select:focus { border-color: #2DE6FF; }
 
 /* Schools */
 .school-list {
@@ -378,7 +378,7 @@
 }
 
 .class-add-row input:focus,
-.class-add-row select:focus { border-color: #00C8E0; }
+.class-add-row select:focus { border-color: #2DE6FF; }
 
 .class-add-row input  { flex: 1; min-width: 80px; }
 .class-add-row select { flex: 1; min-width: 100px; }
@@ -475,7 +475,7 @@
   padding: 0 12px;
   border-radius: 8px;
   border: none;
-  background: #00C8E0;
+  background: #96F4FF;
   color: #003A40;
   font-family: 'Figtree', sans-serif;
   font-size: 14px;

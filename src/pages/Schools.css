@@ -31,13 +31,14 @@
   color: #3D3D3D;
 }
 
+/* Primary button */
 .sc-new-btn {
   height: 32px;
   padding: 0 12px;
   border-radius: 8px;
-  border: none;
-  background: #0A100D;
-  color: #FFFFFF;
+  border: 0.5px solid #2DE6FF;
+  background: #96F4FF;
+  color: #003A40;
   font-family: 'Figtree', sans-serif;
   font-size: 14px;
   font-weight: 600;
@@ -106,15 +107,17 @@
   background: #F5F5F5;
   border-radius: 999px;
   height: 24px;
+  min-width: 24px;
   padding: 0 8px;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   flex-shrink: 0;
 }
 
 .sc-row.selected .sc-row-count {
   background: #DFFCFF;
-  color: #005A66;
+  color: #007080;
 }
 
 /* ── Main ── */
@@ -137,26 +140,15 @@
   overflow: hidden;
 }
 
-/* ── Periods Panel ── */
-.sc-periods-panel {
-  flex: 1;
-  min-width: 0;
-  border: 0.5px solid #E0E0E0;
-  border-radius: 12px;
-  background: #FFFFFF;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
 /* ── Shared Panel Header ── */
 .sc-panel-header {
   padding: 16px;
   border-bottom: 0.5px solid #E0E0E0;
   flex-shrink: 0;
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
   gap: 12px;
 }
 
@@ -181,16 +173,17 @@
   color: #787878;
 }
 
+/* Tertiary button */
 .sc-add-btn {
   height: 32px;
   padding: 0 12px;
   border-radius: 8px;
   border: 0.5px solid #E0E0E0;
-  background: #F5F5F5;
+  background: #FFFFFF;
   font-family: 'Figtree', sans-serif;
   font-size: 14px;
   font-weight: 600;
-  color: #3D3D3D;
+  color: #606060;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
@@ -199,30 +192,7 @@
   transition: all 0.15s;
 }
 
-.sc-add-btn:hover { background: #E0E0E0; }
-
-/* ── Day Tabs ── */
-.sc-day-tabs {
-  display: flex;
-  gap: 8px;
-}
-
-.sc-day-tab {
-  height: 32px;
-  padding: 0 12px;
-  border-radius: 8px;
-  border: 0.5px solid #E0E0E0;
-  background: transparent;
-  font-family: 'Figtree', sans-serif;
-  font-size: 14px;
-  font-weight: 600;
-  color: #787878;
-  cursor: pointer;
-  transition: all 0.15s;
-}
-
-.sc-day-tab:hover { background: #F5F5F5; color: #0A100D; }
-.sc-day-tab.active { background: #00C8E0; color: #003A40; border-color: #00C8E0; }
+.sc-add-btn:hover { background: #F5F5F5; }
 
 /* ── Class Form ── */
 .sc-class-form {
@@ -250,7 +220,7 @@
   box-sizing: border-box;
 }
 
-.sc-input:focus { border-color: #00C8E0; }
+.sc-input:focus { border-color: #2DE6FF; }
 
 .sc-select {
   width: 100%;
@@ -285,19 +255,20 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  background: #FFFFFF;
+  background: #F5F5F5;
   border: 0.5px solid #E0E0E0;
-  border-radius: 6px;
+  border-radius: 8px;
   padding: 4px;
 }
 
+/* Tertiary button */
 .sc-lesson-arrow {
   width: 32px;
   height: 32px;
   border-radius: 8px;
-  border: none;
-  background: #F5F5F5;
-  color: #3D3D3D;
+  border: 0.5px solid #E0E0E0;
+  background: #FFFFFF;
+  color: #606060;
   font-size: 14px;
   cursor: pointer;
   display: flex;
@@ -308,7 +279,7 @@
 }
 
 .sc-lesson-arrow:disabled { opacity: 0.3; cursor: default; }
-.sc-lesson-arrow:hover:not(:disabled) { background: #E0E0E0; }
+.sc-lesson-arrow:hover:not(:disabled) { background: #F5F5F5; }
 
 .sc-lesson-picker-val {
   flex: 1;
@@ -331,12 +302,13 @@
   gap: 8px;
 }
 
+/* Danger button */
 .sc-form-delete {
   height: 32px;
   padding: 0 12px;
   border-radius: 8px;
   border: 0.5px solid #F5AAAA;
-  background: transparent;
+  background: #FFFFFF;
   font-family: 'Figtree', sans-serif;
   font-size: 14px;
   font-weight: 600;
@@ -347,13 +319,14 @@
 
 .sc-form-delete:hover { background: #FDEAEA; }
 
+/* Primary button */
 .sc-form-save {
   height: 32px;
   padding: 0 12px;
   border-radius: 8px;
-  border: none;
-  background: #00C8E0;
-  color: #FFFFFF;
+  border: 0.5px solid #2DE6FF;
+  background: #96F4FF;
+  color: #003A40;
   font-family: 'Figtree', sans-serif;
   font-size: 14px;
   font-weight: 600;
@@ -363,13 +336,14 @@
 
 .sc-form-save:hover { opacity: 0.85; }
 
+/* Tertiary button */
 .sc-form-cancel {
   height: 32px;
   padding: 0 12px;
   border-radius: 8px;
   border: 0.5px solid #E0E0E0;
-  background: transparent;
-  color: #3D3D3D;
+  background: #FFFFFF;
+  color: #606060;
   font-family: 'Figtree', sans-serif;
   font-size: 14px;
   cursor: pointer;
@@ -402,17 +376,15 @@
   border-bottom: 0.5px solid #E0E0E0;
   gap: 8px;
   transition: background 0.1s;
+  cursor: pointer;
 }
 
 .sc-class-row:last-child { border-bottom: none; }
 .sc-class-row:hover { background: #FAFAFA; }
-.sc-class-row.editing { padding: 0; background: #FAFAFA; }
-.sc-class-row.editing .sc-class-form { margin: 0; border: none; border-radius: 0; width: 100%; }
-
 .sc-class-body {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
   flex: 1;
   min-width: 0;
 }
@@ -426,7 +398,7 @@
 
 .sc-class-label {
   font-family: 'Figtree', sans-serif;
-  font-size: 18px;
+  font-size: 16px;
   line-height: 24px;
   font-weight: 700;
   color: #0A100D;
@@ -461,6 +433,7 @@
   flex-wrap: wrap;
 }
 
+/* Regular chips — no stroke */
 .sc-chip {
   display: inline-flex;
   align-items: center;
@@ -472,9 +445,9 @@
   flex-shrink: 0;
 }
 
-.sc-chip-grade   { color: #005A66; background: #DFFCFF; border: 0.5px solid #2DE6FF; }
-.sc-chip-teacher { color: #92620A; background: #FEF3D0; border: 0.5px solid #FFD966; }
-.sc-chip-students { color: #2A7A52; background: #D6F2E5; border: 0.5px solid #6FCF97; }
+.sc-chip-grade   { color: #007080; background: #DFFCFF; }
+.sc-chip-teacher { color: #472890; background: #F0EAFA; }
+.sc-chip-students { color: #3A8000; background: #EDFFD4; }
 
 .sc-class-actions {
   display: flex;
@@ -482,92 +455,24 @@
   flex-shrink: 0;
 }
 
+/* Tertiary button */
 .sc-class-btn {
   height: 32px;
   padding: 0 12px;
   border-radius: 8px;
   border: 0.5px solid #E0E0E0;
-  background: transparent;
+  background: #FFFFFF;
   font-family: 'Figtree', sans-serif;
   font-size: 14px;
   font-weight: 600;
-  color: #3D3D3D;
+  color: #606060;
   cursor: pointer;
   transition: all 0.15s;
 }
 
-.sc-class-btn:hover { background: #E0E0E0; }
+.sc-class-btn:hover { background: #F5F5F5; }
 .sc-class-btn.danger { color: #C03030; border-color: #F5AAAA; }
 .sc-class-btn.danger:hover { background: #FDEAEA; }
-
-/* ── Period List ── */
-.sc-period-list {
-  flex: 1;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-}
-
-.sc-period-row {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 16px 16px;
-  border-bottom: 0.5px solid #E0E0E0;
-}
-
-.sc-period-row:last-child { border-bottom: none; }
-
-.sc-period-num {
-  font-family: 'Figtree', sans-serif;
-  font-size: 13px;
-  font-weight: 600;
-  color: #787878;
-  width: 64px;
-  flex-shrink: 0;
-}
-
-.sc-ref-times { display: flex; gap: 8px; }
-
-.sc-period-time-btn {
-  height: 32px;
-  padding: 0 12px;
-  border-radius: 8px;
-  border: 0.5px solid #E0E0E0;
-  background: #F5F5F5;
-  font-family: 'Figtree', sans-serif;
-  font-size: 13px;
-  font-weight: 500;
-  color: #3D3D3D;
-  cursor: pointer;
-  transition: all 0.15s;
-  white-space: nowrap;
-}
-
-.sc-period-time-btn:hover { background: #E0E0E0; }
-
-.sc-ref-edit {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.sc-ref-actions { display: flex; gap: 6px; }
-
-.sc-time-input {
-  height: 32px;
-  padding: 0 10px;
-  border-radius: 8px;
-  border: 0.5px solid #E0E0E0;
-  background: #FFFFFF;
-  font-family: 'Figtree', sans-serif;
-  font-size: 13px;
-  color: #0A100D;
-  outline: none;
-  width: 110px;
-}
-
-.sc-time-input:focus { border-color: #00C8E0; }
 
 /* ── Modal ── */
 .sc-modal-overlay {
@@ -586,7 +491,6 @@
   width: 100%;
   max-width: 400px;
   overflow: hidden;
-  box-shadow: 0 8px 40px rgba(0,0,0,0.12);
   border: 0.5px solid #E0E0E0;
 }
 
@@ -605,13 +509,14 @@
   color: #0A100D;
 }
 
+/* Tertiary button */
 .sc-modal-close {
   width: 32px;
   height: 32px;
   border-radius: 8px;
   border: 0.5px solid #E0E0E0;
-  background: #F5F5F5;
-  color: #787878;
+  background: #FFFFFF;
+  color: #606060;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -619,7 +524,7 @@
   transition: all 0.15s;
 }
 
-.sc-modal-close:hover { background: #E0E0E0; }
+.sc-modal-close:hover { background: #F5F5F5; }
 
 .sc-modal-body { padding: 16px 20px; }
 
@@ -632,30 +537,18 @@
   border-top: 0.5px solid #E0E0E0;
 }
 
-/* Curriculum + lesson line */
-.sc-class-curriculum-line {
+/* Form field with eyebrow label */
+.sc-field {
   display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: 6px;
-  background: #F5F5F5;
-  border-radius: 6px;
-  padding: 0px 12px;
-  height: 32px;
-  align-self: flex-start;
 }
 
-.sc-class-curr-text {
+.sc-field-label {
   font-family: 'Figtree', sans-serif;
-  font-size: 13px;
-  font-weight: 500;
-  color: #3D3D3D;
-  white-space: nowrap;
-}
-
-.sc-class-curr-dot {
-  width: 3px;
-  height: 3px;
-  border-radius: 50%;
-  background: #B8B8B8;
-  flex-shrink: 0;
+  font-size: 11px;
+  font-weight: 600;
+  color: #787878;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }

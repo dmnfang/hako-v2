@@ -56,6 +56,8 @@ export default function Home() {
   const [modalSchoolId, setModalSchoolId] = useState(null)
   const [modalStatus, setModalStatus] = useState('working')
   const [modalStatusLabel, setModalStatusLabel] = useState('')
+  const [modalLessonPeriodIdx, setModalLessonPeriodIdx] = useState(null)
+  const [modalLessonIdx, setModalLessonIdx] = useState(0)
 
   const [calDate, setCalDate] = useState(new Date(today.getFullYear(), today.getMonth(), 1))
   const [calSelected, setCalSelected] = useState(today)
@@ -313,7 +315,7 @@ export default function Home() {
               </div>
 
               {/* School + Time bar */}
-              <div className="period-bar school-bar">
+              <div className="period-bar">
                 <button
                   className="period-tap-chip school"
                   onClick={e => {
@@ -327,25 +329,43 @@ export default function Home() {
                 >
                   {periodSchool?.name ?? '—'}
                 </button>
-                <button className="period-tap-chip" onClick={e => { e.stopPropagation(); setSelectedPeriodIdx(i) }}>
+                <button className="period-tap-chip time" onClick={e => { e.stopPropagation(); setSelectedPeriodIdx(i) }}>
                   {period.start_time ? `${period.start_time.slice(0,5)} – ${period.end_time?.slice(0,5)}` : '—'}
                 </button>
               </div>
 
               {/* Class + Lesson bar */}
-              <div className="period-bar class-bar">
+              <div className="period-bar">
                 <button
-                  className={`period-tap-chip ${!cls ? 'empty' : ''}`}
+                  className={`period-tap-chip class ${!cls ? 'empty' : ''}`}
                   onClick={e => { e.stopPropagation(); setSelectedPeriodIdx(i) }}
                 >
                   {cls?.label ?? '—'}
                 </button>
-                {cls && lesson && (
-                  <>
-                    {lesson.tag1 && <span className="period-lesson-inline">{lesson.tag1}</span>}
-                    {lesson.tag1 && lesson.tag2 && <span className="period-lesson-dot" />}
-                    {lesson.tag2 && <span className="period-lesson-inline">{lesson.tag2}</span>}
-                  </>
+                {cls && (
+                  <button
+                    className="period-tap-chip"
+                    onClick={e => {
+                      e.stopPropagation()
+                      setSelectedPeriodIdx(i)
+                      setModalLessonPeriodIdx(i)
+                      const p = periods[i]
+                      const effectiveCls = p?.override_class_id
+                        ? allClasses.find(c => c.id === p.override_class_id)
+                        : allClasses.find(c => c.id === p?.class_id)
+                      const currId = effectiveCls?.curriculum_id
+                      const currLessons = currId ? lessonsByCurriculum[currId] ?? [] : []
+                      const currentLesson = lesson
+                      const idx = currentLesson ? currLessons.findIndex(l => l.id === currentLesson.id) : 0
+                      setModalLessonIdx(Math.max(0, idx))
+                      setModal('lesson')
+                    }}
+                  >
+                    {lesson
+                      ? [lesson.tag1, lesson.tag2].filter(Boolean).join(' · ')
+                      : <span style={{color:'#B8B8B8'}}>No lesson</span>
+                    }
+                  </button>
                 )}
               </div>
             </div>
@@ -511,6 +531,58 @@ export default function Home() {
       )}
 
       {/* Swap Date Modal */}
+      {modal === 'lesson' && (() => {
+        const p = periods[modalLessonPeriodIdx]
+        const effectiveCls = p?.override_class_id
+          ? allClasses.find(c => c.id === p.override_class_id)
+          : allClasses.find(c => c.id === p?.class_id)
+        const currId = effectiveCls?.curriculum_id
+        const currLessons = currId ? lessonsByCurriculum[currId] ?? [] : []
+        const currentModalLesson = currLessons[modalLessonIdx]
+        return (
+          <div className="modal-overlay" onClick={() => setModal(null)}>
+            <div className="modal modal-date" onClick={e => e.stopPropagation()}>
+              <div className="modal-header">
+                <span className="modal-title">Change Lesson</span>
+                <button className="modal-close" onClick={() => setModal(null)}><X size={14} /></button>
+              </div>
+              <div className="modal-body">
+                <div className="modal-sub">{effectiveCls?.label} — {curricula?.find(cu => cu.id === currId)?.name ?? 'No course'}</div>
+                <div className="sch-lesson-picker-row" style={{display:'flex',alignItems:'center',gap:8,background:'#F5F5F5',borderRadius:8,padding:4}}>
+                  <button
+                    style={{width:32,height:32,borderRadius:8,border:'0.5px solid #E0E0E0',background:'#FFFFFF',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center'}}
+                    onClick={() => setModalLessonIdx(i => Math.max(0, i - 1))}
+                    disabled={modalLessonIdx === 0}
+                  ><ChevronLeft size={14} /></button>
+                  <span style={{flex:1,textAlign:'center',fontFamily:"'Figtree',sans-serif",fontSize:14,color:'#0A100D'}}>
+                    {currentModalLesson
+                      ? [currentModalLesson.tag1, currentModalLesson.tag2].filter(Boolean).join(' · ')
+                      : 'No lessons'}
+                  </span>
+                  <button
+                    style={{width:32,height:32,borderRadius:8,border:'0.5px solid #E0E0E0',background:'#FFFFFF',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center'}}
+                    onClick={() => setModalLessonIdx(i => Math.min(currLessons.length - 1, i + 1))}
+                    disabled={modalLessonIdx >= currLessons.length - 1}
+                  ><ChevronRight size={14} /></button>
+                </div>
+              </div>
+              <div className="modal-footer">
+                <button className="modal-btn-cancel" onClick={() => setModal(null)}>Cancel</button>
+                <button className="modal-btn-save" onClick={async () => {
+                  if (!currentModalLesson || !effectiveCls) return
+                  await supabase.from('class_progress').upsert({
+                    class_id: effectiveCls.id,
+                    current_lesson_id: currentModalLesson.id,
+                  }, { onConflict: 'class_id' })
+                  refreshData()
+                  setModal(null)
+                }}>Save</button>
+              </div>
+            </div>
+          </div>
+        )
+      })()}
+
       {modal === 'date' && (
         <div className="modal-overlay" onClick={() => setModal(null)}>
           <div className="modal modal-date" onClick={e => e.stopPropagation()}>

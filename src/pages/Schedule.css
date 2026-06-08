@@ -34,7 +34,6 @@
 .sch-sidebar-tab.active {
   background: #FFFFFF;
   color: #0A100D;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
 }
 
 .sch-sidebar-bigtitle {
@@ -59,13 +58,14 @@
   color: #3D3D3D;
 }
 
+/* Primary button */
 .sch-new-btn {
   height: 32px;
   padding: 0 12px;
   border-radius: 8px;
-  border: none;
-  background: #0A100D;
-  color: #FFFFFF;
+  border: 0.5px solid #2DE6FF;
+  background: #96F4FF;
+  color: #003A40;
   font-family: 'Figtree', sans-serif;
   font-size: 14px;
   font-weight: 600;
@@ -142,7 +142,7 @@
 
 .sch-row.selected .sch-row-count {
   background: #DFFCFF;
-  color: #005A66;
+  color: #007080;
 }
 
 .sch-row-days {
@@ -152,14 +152,14 @@
   margin-top: 8px;
 }
 
+/* School name chip — orange tap chip style */
 .sch-day-chip {
   display: inline-block;
   font-family: 'Figtree', sans-serif;
   font-size: 12px;
   font-weight: 500;
-  color: #7A3D00;
+  color: #A05000;
   background: #FFF5D6;
-  border: 0.5px solid #FFD966;
   border-radius: 999px;
   padding: 5px 10px;
 }
@@ -206,16 +206,17 @@
   color: #787878;
 }
 
+/* Tertiary button */
 .sch-add-btn {
   height: 32px;
   padding: 0 12px;
   border-radius: 8px;
   border: 0.5px solid #E0E0E0;
-  background: #F5F5F5;
+  background: #FFFFFF;
   font-family: 'Figtree', sans-serif;
   font-size: 14px;
   font-weight: 600;
-  color: #3D3D3D;
+  color: #606060;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
@@ -223,7 +224,7 @@
   transition: all 0.15s;
 }
 
-.sch-add-btn:hover { background: #E0E0E0; }
+.sch-add-btn:hover { background: #F5F5F5; }
 
 /* Body */
 .sch-body {
@@ -296,7 +297,7 @@
   transition: border-color 0.15s;
 }
 
-.sch-input:focus { border-color: #00C8E0; }
+.sch-input:focus { border-color: #2DE6FF; }
 
 .sch-select {
   width: 100%;
@@ -331,9 +332,9 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  background: #FFFFFF;
+  background: #F5F5F5;
   border: 0.5px solid #E0E0E0;
-  border-radius: 6px;
+  border-radius: 8px;
   padding: 4px;
 }
 
@@ -341,9 +342,9 @@
   width: 32px;
   height: 32px;
   border-radius: 8px;
-  border: none;
-  background: #F5F5F5;
-  color: #3D3D3D;
+  border: 0.5px solid #E0E0E0;
+  background: #FFFFFF;
+  color: #606060;
   font-size: 14px;
   cursor: pointer;
   display: flex;
@@ -354,7 +355,7 @@
 }
 
 .sch-lesson-arrow:disabled { opacity: 0.3; cursor: default; }
-.sch-lesson-arrow:hover:not(:disabled) { background: #E0E0E0; }
+.sch-lesson-arrow:hover:not(:disabled) { background: #F5F5F5; }
 
 .sch-lesson-picker-val {
   flex: 1;
@@ -370,13 +371,14 @@
   gap: 8px;
 }
 
+/* Primary button */
 .sch-form-save {
   height: 32px;
   padding: 0 12px;
   border-radius: 8px;
-  border: none;
-  background: #00C8E0;
-  color: #FFFFFF;
+  border: 0.5px solid #2DE6FF;
+  background: #96F4FF;
+  color: #003A40;
   font-family: 'Figtree', sans-serif;
   font-size: 14px;
   font-weight: 600;
@@ -386,13 +388,14 @@
 
 .sch-form-save:hover { opacity: 0.85; }
 
+/* Tertiary button */
 .sch-form-cancel {
   height: 32px;
   padding: 0 12px;
   border-radius: 8px;
   border: 0.5px solid #E0E0E0;
-  background: transparent;
-  color: #3D3D3D;
+  background: #FFFFFF;
+  color: #606060;
   font-family: 'Figtree', sans-serif;
   font-size: 14px;
   cursor: pointer;
@@ -425,7 +428,6 @@
 
 .sch-class-row:last-child { border-bottom: none; }
 .sch-class-row:hover { background: #FAFAFA; }
-
 .sch-class-row.editing { padding: 0; background: #FAFAFA; }
 .sch-class-row.editing .sch-class-form { margin: 0; border: none; border-radius: 0; width: 100%; }
 
@@ -484,6 +486,7 @@
   flex-wrap: wrap;
 }
 
+/* Regular chips — no stroke */
 .sch-chip {
   display: inline-flex;
   align-items: center;
@@ -495,9 +498,9 @@
   flex-shrink: 0;
 }
 
-.sch-chip-grade   { color: #2E6600; background: #EDFFD4; border: 0.5px solid #9EF037; }
-.sch-chip-teacher { color: #92620A; background: #FEF3D0; border: 0.5px solid #FFD966; }
-.sch-chip-students { color: #2A7A52; background: #D6F2E5; border: 0.5px solid #6FCF97; }
+.sch-chip-grade   { color: #007080; background: #DFFCFF; }
+.sch-chip-teacher { color: #472890; background: #F0EAFA; }
+.sch-chip-students { color: #3A8000; background: #EDFFD4; }
 
 .sch-class-actions {
   display: flex;
@@ -505,21 +508,22 @@
   flex-shrink: 0;
 }
 
+/* Tertiary button */
 .sch-class-btn {
   height: 32px;
   padding: 0 12px;
   border-radius: 8px;
   border: 0.5px solid #E0E0E0;
-  background: transparent;
+  background: #FFFFFF;
   font-family: 'Figtree', sans-serif;
   font-size: 14px;
   font-weight: 600;
-  color: #3D3D3D;
+  color: #606060;
   cursor: pointer;
   transition: all 0.15s;
 }
 
-.sch-class-btn:hover { background: #E0E0E0; }
+.sch-class-btn:hover { background: #F5F5F5; }
 .sch-class-btn.danger { color: #C03030; border-color: #F5AAAA; }
 .sch-class-btn.danger:hover { background: #FDEAEA; }
 
@@ -535,7 +539,7 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  padding: 16px 16px;
+  padding: 16px;
   border-bottom: 0.5px solid #E0E0E0;
 }
 
@@ -558,17 +562,25 @@
   margin-right: 2px;
 }
 
-/* Shared tap chip */
+/* Period bar — no background, just flex row */
+.sch-period-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  align-self: flex-start;
+}
+
+/* All tap chips — white bg, colored stroke+text */
 .sch-period-tap-chip {
   height: 32px;
   padding: 0 12px;
-  border-radius: 8px;
+  border-radius: 999px;
   border: 0.5px solid #E0E0E0;
   background: #FFFFFF;
   font-family: 'Figtree', sans-serif;
   font-size: 14px;
   font-weight: 600;
-  color: #0A100D;
+  color: #606060;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
@@ -578,87 +590,60 @@
   flex-shrink: 0;
 }
 
-.sch-period-tap-chip:hover { background: #0A100D; color: #FFFFFF; border-color: #0A100D; }
+.sch-period-tap-chip:hover { background: #F5F5F5; }
 .sch-period-tap-chip.empty { color: #B8B8B8; }
-.sch-period-tap-chip.freq { color: #3D3D3D; font-weight: 500; }
 
-/* Non-tappable time display */
+/* School chip — orange */
+.sch-period-tap-chip.school {
+  border-color: #FFCC55;
+  color: #A05000;
+}
+.sch-period-tap-chip.school:hover { background: #FFF5D6; }
+
+/* Class chip — cyan */
+.sch-period-tap-chip.class {
+  border-color: #2DE6FF;
+  color: #007080;
+}
+.sch-period-tap-chip.class:hover { background: #DFFCFF; }
+
+/* Freq chip — neutral like time chip */
+.sch-period-tap-chip.freq {
+  border-color: #E0E0E0;
+  color: #606060;
+  font-weight: 600;
+}
+.sch-period-tap-chip.freq:hover { background: #F5F5F5; }
+
+/* Time chip — tappable */
 .sch-period-time-chip {
   height: 32px;
   padding: 0 12px;
-  border-radius: 8px;
+  border-radius: 999px;
   border: 0.5px solid #E0E0E0;
   background: #FFFFFF;
   font-family: 'Figtree', sans-serif;
   font-size: 14px;
   font-weight: 600;
-  color: #787878;
+  color: #606060;
   display: inline-flex;
   align-items: center;
   white-space: nowrap;
   flex-shrink: 0;
+  cursor: pointer;
+  transition: all 0.15s;
 }
 
-/* Period bar container */
-.sch-period-bar {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  background: #F5F5F5;
-  border-radius: 10px;
-  padding: 5px;
-  border: 0.5px solid transparent;
-  align-self: flex-start;
-}
-
-.sch-period-bar.configured {
-  background: #FFF5D6;
-  border-color: #FFD966;
-}
-
-.sch-period-bar.configured .sch-period-tap-chip {
-  border-color: #FFD966;
-  color: #7A3D00;
-  background: #FFFFFF;
-}
-
-.sch-period-bar.configured .sch-period-tap-chip:hover {
-  background: #F59500;
-  border-color: #F59500;
-  color: #3D1F00;
-}
-
-.sch-period-bar.configured .sch-period-time-chip {
-  border-color: #FFD966;
-  color: #C06800;
-}
-
-/* Class bar — cyan */
-.sch-period-bar.class-bar {
-  background: #DFFCFF;
-  border-color: #96F4FF;
-}
-
-.sch-period-bar.class-bar .sch-period-tap-chip {
-  border-color: #2DE6FF;
-  color: #005A66;
-  background: #FFFFFF;
-}
-
-.sch-period-bar.class-bar .sch-period-tap-chip:hover {
-  background: #00C8E0;
-  border-color: #008FA3;
-  color: #003A40;
-}
+.sch-period-time-chip:hover { background: #F5F5F5; }
 
 /* A / B labels */
 .sch-ab-label {
   height: 24px;
   width: 24px;
-  border-radius: 4px;
-  background: #008FA3;
+  border-radius: 999px;
+  background: #E0E0E0;
   border: none;
-  color: #FFFFFF;
+  color: #3D3D3D;
   font-family: 'Figtree', sans-serif;
   font-size: 12px;
   font-weight: 700;
@@ -668,14 +653,14 @@
   flex-shrink: 0;
 }
 
-/* Swap button */
+/* Swap button — secondary */
 .sch-swap-btn {
   height: 32px;
   width: 32px;
   border-radius: 8px;
-  border: none;
-  background: #008FA3;
-  color: #FFFFFF;
+  border: 0.5px solid #E0E0E0;
+  background: #FFFFFF;
+  color: #606060;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
@@ -684,7 +669,7 @@
   transition: all 0.15s;
 }
 
-.sch-swap-btn:hover { background: #3D3D3D; }
+.sch-swap-btn:hover { background: #F5F5F5; }
 
 .sch-ref-times {
   display: flex;
@@ -715,7 +700,7 @@
   width: 120px;
 }
 
-.sch-time-input:focus { border-color: #00C8E0; }
+.sch-time-input:focus { border-color: #2DE6FF; }
 
 /* Modal */
 .sch-modal-overlay {
@@ -734,7 +719,6 @@
   width: 100%;
   max-width: 400px;
   overflow: hidden;
-  box-shadow: 0 8px 40px rgba(0,0,0,0.12);
   border: 0.5px solid #E0E0E0;
 }
 
@@ -753,13 +737,14 @@
   color: #0A100D;
 }
 
+/* Tertiary button */
 .sch-modal-close {
   width: 32px;
   height: 32px;
   border-radius: 8px;
   border: 0.5px solid #E0E0E0;
-  background: #F5F5F5;
-  color: #787878;
+  background: #FFFFFF;
+  color: #606060;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -767,7 +752,7 @@
   transition: all 0.15s;
 }
 
-.sch-modal-close:hover { background: #E0E0E0; }
+.sch-modal-close:hover { background: #F5F5F5; }
 
 .sch-modal-body { padding: 16px 20px; }
 
@@ -779,3 +764,49 @@
   padding: 12px 20px;
   border-top: 0.5px solid #E0E0E0;
 }
+
+/* Modal chips */
+.sch-modal-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.sch-modal-chip {
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 0.5px solid #E0E0E0;
+  background: #FFFFFF;
+  font-family: 'Figtree', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #606060;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.sch-modal-chip:hover { background: #F5F5F5; }
+
+.sch-modal-chip.active {
+  border-color: #E0E0E0;
+  background: #F5F5F5;
+  color: #0A100D;
+}
+
+.sch-modal-chip.school.active {
+  border-color: #FFCC55;
+  background: #FFFFFF;
+  color: #A05000;
+}
+
+.sch-modal-chip.class.active {
+  border-color: #2DE6FF;
+  background: #FFFFFF;
+  color: #007080;
+}
+
+.sch-modal-chip:hover { background: #F5F5F5; }
+.sch-modal-chip.school.active:hover { background: #FFE599; }
+.sch-modal-chip.class.active:hover { background: #96F4FF; }
+.sch-modal-chip.active:hover { background: #F5F5F5; }

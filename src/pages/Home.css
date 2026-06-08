@@ -25,28 +25,7 @@
   gap: 6px;
 }
 
-.home-date-at {
-  font-family: 'Figtree', sans-serif;
-  font-size: 20px;
-  font-weight: 600;
-  color: #0A100D;
-}
-
-.home-dow {
-  font-family: 'Figtree', sans-serif;
-  font-size: 20px;
-  font-weight: 600;
-  color: #0A100D;
-}
-
-.home-date {
-  font-family: 'Figtree', sans-serif;
-  font-size: 20px;
-  font-weight: 600;
-  color: #0A100D;
-}
-
-.home-school {
+.home-date-at, .home-dow, .home-date, .home-school {
   font-family: 'Figtree', sans-serif;
   font-size: 20px;
   font-weight: 600;
@@ -66,13 +45,14 @@
   gap: 8px;
 }
 
+/* Primary button */
 .home-action-btn {
   height: 32px;
   padding: 0 12px;
   border-radius: 8px;
-  border: 0.5px solid #E0E0E0;
-  background: #0A100D;
-  color: #FFFFFF;
+  border: 0.5px solid #2DE6FF;
+  background: #96F4FF;
+  color: #003A40;
   font-family: 'Figtree', sans-serif;
   font-size: 14px;
   font-weight: 600;
@@ -83,9 +63,10 @@
   gap: 6px;
 }
 
+/* Tertiary button */
 .home-action-btn:not(.primary) {
-  background: #F5F5F5;
-  color: #3D3D3D;
+  background: #FFFFFF;
+  color: #606060;
   border-color: #E0E0E0;
 }
 
@@ -129,10 +110,10 @@
 }
 
 .period-row.selected::before { background: #00C8E0; }
-
 .period-row:last-child { border-bottom: none; }
 .period-row:hover { background: #FAFAFA; }
 .period-row.selected { background: transparent; }
+.period-row.selected:hover { background: #FAFAFA; }
 .period-row.no-class { opacity: 0.45; }
 
 /* Dot + label row */
@@ -142,9 +123,7 @@
   gap: 6px;
 }
 
-.period-dot {
-  display: none;
-}
+.period-dot { display: none; }
 
 .period-eyebrow {
   font-family: 'Figtree', sans-serif;
@@ -153,51 +132,27 @@
   color: #787878;
 }
 
-.period-row.selected .period-eyebrow { color: #005A66; }
+.period-row.selected .period-eyebrow { color: #007080; }
 
-/* Shared bar style */
+/* Period chips row — no container */
 .period-bar {
   display: flex;
   align-items: center;
   gap: 6px;
-  background: #F5F5F5;
-  border-radius: 10px;
-  padding: 5px;
-  border: 0.5px solid transparent;
   align-self: flex-start;
 }
 
-.period-row.selected .period-bar.school-bar {
-  background: #FFF5D6;
-  border: 0.5px solid #FFD966;
-}
-
-.period-row.selected .period-bar.class-bar {
-  background: #DFFCFF;
-  border: 0.5px solid #96F4FF;
-}
-
-.period-bar.school-bar {
-  background: #FFF5D6;
-  border: 0.5px solid #FFD966;
-}
-
-.period-bar.class-bar {
-  background: #DFFCFF;
-  border: 0.5px solid #96F4FF;
-}
-
-/* White tap chips inside bar */
+/* All tap chips — white bg, colored stroke+text */
 .period-tap-chip {
   height: 32px;
   padding: 0 12px;
-  border-radius: 8px;
+  border-radius: 999px;
   border: 0.5px solid #E0E0E0;
   background: #FFFFFF;
   font-family: 'Figtree', sans-serif;
   font-size: 14px;
   font-weight: 600;
-  color: #0A100D;
+  color: #606060;
   cursor: pointer;
   white-space: nowrap;
   display: inline-flex;
@@ -206,81 +161,22 @@
   flex-shrink: 0;
 }
 
-.period-tap-chip:hover { background: #0A100D; color: #FFFFFF; border-color: #0A100D; }
+.period-tap-chip:hover { background: #F5F5F5; }
 .period-tap-chip.empty { color: #B8B8B8; }
 
-.period-bar.class-bar .period-tap-chip {
-  border-color: #2DE6FF;
-  color: #005A66;
-}
-
-.period-bar.class-bar .period-tap-chip:hover {
-  background: #00C8E0;
-  border-color: #008FA3;
-  color: #003A40;
-}
-
-.period-bar.school-bar .period-tap-chip {
-  background: #FFFFFF;
-  border-color: #FFD966;
-  color: #7A3D00;
-}
-
-.period-bar.school-bar .period-tap-chip:hover {
-  background: #F59500;
-  border-color: #F59500;
-  color: #3D1F00;
-}
-
-/* School tap chip — orange */
+/* School — orange stroke + text */
 .period-tap-chip.school {
-  background: #FFFFFF !important;
-  border-color: #FFD966 !important;
-  color: #7A3D00 !important;
+  border-color: #FFCC55;
+  color: #A05000;
 }
+.period-tap-chip.school:hover { background: #FFF5D6; }
 
-.period-tap-chip.school:hover {
-  background: #F59500;
-  border-color: #F59500;
-  color: #3D1F00;
+/* Class — cyan stroke + text */
+.period-tap-chip.class {
+  border-color: #2DE6FF;
+  color: #007080;
 }
-
-.period-row.selected .period-tap-chip.school {
-  background: #FFF5D6;
-  border-color: #FFD966;
-  color: #7A3D00;
-}
-
-.period-row.selected .period-tap-chip.school:hover {
-  background: #F59500;
-  border-color: #F59500;
-  color: #3D1F00;
-}
-
-/* Dot between lesson tags */
-.period-lesson-dot {
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: #B8B8B8;
-  flex-shrink: 0;
-}
-
-.period-row.selected .period-lesson-dot { background: #2DE6FF; }
-
-/* Lesson text inline in second bar */
-.period-lesson-inline {
-  font-family: 'Figtree', sans-serif;
-  font-size: 14px;
-  color: #3D3D3D;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.period-lesson-inline:last-child { padding-right: 8px; }
-
-.period-row.selected .period-lesson-inline { color: #005A66; }
+.period-tap-chip.class:hover { background: #DFFCFF; }
 
 .period-no-lesson {
   font-family: 'Figtree', sans-serif;
@@ -322,13 +218,14 @@
   gap: 8px;
 }
 
+/* Tertiary button */
 .lesson-nav-btn {
   width: 32px;
   height: 32px;
   border-radius: 8px;
   border: 0.5px solid #E0E0E0;
-  background: #F5F5F5;
-  color: #3D3D3D;
+  background: #FFFFFF;
+  color: #606060;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -337,7 +234,7 @@
 }
 
 .lesson-nav-btn:disabled { opacity: 0.3; cursor: default; }
-.lesson-nav-btn:hover:not(:disabled) { background: #E0E0E0; }
+.lesson-nav-btn:hover:not(:disabled) { background: #F5F5F5; }
 
 .lesson-count {
   font-family: 'Figtree', sans-serif;
@@ -347,13 +244,14 @@
   text-align: center;
 }
 
+/* Primary button */
 .start-lesson-btn {
   height: 32px;
   padding: 0 12px;
   border-radius: 8px;
-  border: none;
-  background: #0A100D;
-  color: #FFFFFF;
+  border: 0.5px solid #2DE6FF;
+  background: #96F4FF;
+  color: #003A40;
   font-family: 'Figtree', sans-serif;
   font-size: 14px;
   font-weight: 600;
@@ -366,7 +264,7 @@
   flex-shrink: 0;
 }
 
-.start-lesson-btn:hover { background: #1C1C1C; color: #FFFFFF; }
+.start-lesson-btn:hover { opacity: 0.85; }
 
 /* Block list */
 .block-list {
@@ -391,7 +289,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 16px 16px 16px 16px;
+  padding: 16px;
   cursor: pointer;
   transition: background 0.1s;
 }
@@ -408,16 +306,17 @@
   flex: 1;
 }
 
+/* Tertiary button */
 .block-copy-btn {
   height: 32px;
   padding: 0 12px;
   border-radius: 8px;
   border: 0.5px solid #E0E0E0;
-  background: transparent;
+  background: #FFFFFF;
   font-family: 'Figtree', sans-serif;
   font-size: 14px;
   font-weight: 600;
-  color: #3D3D3D;
+  color: #606060;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
@@ -426,21 +325,20 @@
   flex-shrink: 0;
 }
 
-.block-copy-btn:hover { background: #E0E0E0; }
+.block-copy-btn:hover { background: #F5F5F5; }
 
 .block-more {
   width: 32px;
   height: 32px;
   border-radius: 8px;
   border: 0.5px solid #E0E0E0;
-  background: transparent;
-  color: #787878;
+  background: #FFFFFF;
+  color: #606060;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  font-size: 14px;
 }
 
 .block-chevron-btn {
@@ -448,8 +346,8 @@
   height: 32px;
   border-radius: 8px;
   border: 0.5px solid #E0E0E0;
-  background: transparent;
-  color: #787878;
+  background: #FFFFFF;
+  color: #606060;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -509,7 +407,6 @@
   width: 100%;
   max-width: 560px;
   overflow: hidden;
-  box-shadow: 0 8px 40px rgba(0,0,0,0.12);
   border: 0.5px solid #E0E0E0;
 }
 
@@ -519,7 +416,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 16px 16px 16px;
+  padding: 16px;
   border-bottom: 0.5px solid #E0E0E0;
 }
 
@@ -535,15 +432,18 @@
   height: 32px;
   border-radius: 8px;
   border: 0.5px solid #E0E0E0;
-  background: #F5F5F5;
-  color: #787878;
+  background: #FFFFFF;
+  color: #606060;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: all 0.15s;
 }
 
-.modal-body { padding: 16px 16px; }
+.modal-close:hover { background: #F5F5F5; }
+
+.modal-body { padding: 16px; }
 
 .modal-label {
   font-family: 'Figtree', sans-serif;
@@ -572,25 +472,27 @@
   padding: 0 12px;
   border-radius: 999px;
   border: 0.5px solid #E0E0E0;
-  background: #F5F5F5;
+  background: #FFFFFF;
   font-family: 'Figtree', sans-serif;
   font-size: 14px;
   font-weight: 600;
-  color: #3D3D3D;
+  color: #606060;
   cursor: pointer;
   transition: all 0.15s;
 }
 
+.modal-chip:hover { background: #F5F5F5; }
+.modal-chip.active:hover { background: #FFE599; }
+
 .modal-chip.active {
-  background: #FFF5D6;
-  color: #7A3D00;
-  border-color: #FFD966;
+  border-color: #FFCC55;
+  color: #A05000;
 }
 
 .modal-chip.other {
   background: transparent;
   border-style: dashed;
-  color: #3D3D3D;
+  color: #606060;
 }
 
 .modal-other-note {
@@ -617,6 +519,7 @@
   transition: all 0.15s;
 }
 
+.modal-change-card:hover { border-color: #B8B8B8; }
 .modal-change-card.active { border-color: #2DE6FF; background: #DFFCFF; }
 
 .modal-change-check {
@@ -660,29 +563,34 @@
   align-items: center;
   justify-content: flex-end;
   gap: 8px;
-  padding: 16px 16px;
+  padding: 16px;
   border-top: 0.5px solid #E0E0E0;
 }
 
+/* Tertiary button */
 .modal-btn-cancel {
   height: 32px;
   padding: 0 12px;
   border-radius: 8px;
   border: 0.5px solid #E0E0E0;
-  background: transparent;
+  background: #FFFFFF;
   font-family: 'Figtree', sans-serif;
   font-size: 14px;
-  color: #3D3D3D;
+  color: #606060;
   cursor: pointer;
+  transition: background 0.15s;
 }
 
+.modal-btn-cancel:hover { background: #F5F5F5; }
+
+/* Primary button */
 .modal-btn-save {
   height: 32px;
   padding: 0 12px;
   border-radius: 8px;
-  border: none;
-  background: #0A100D;
-  color: #FFFFFF;
+  border: 0.5px solid #2DE6FF;
+  background: #96F4FF;
+  color: #003A40;
   font-family: 'Figtree', sans-serif;
   font-size: 14px;
   font-weight: 600;
@@ -712,13 +620,16 @@
   height: 32px;
   border-radius: 8px;
   border: 0.5px solid #E0E0E0;
-  background: transparent;
-  color: #787878;
+  background: #FFFFFF;
+  color: #606060;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: all 0.15s;
 }
+
+.cal-modal-arrow:hover { background: #F5F5F5; }
 
 .cal-modal-grid {
   display: grid;
@@ -757,7 +668,7 @@
 .cal-modal-day.today { border: 1.5px solid #0A100D; }
 .cal-modal-day.selected {
   background: #DFFCFF;
-  color: #0A100D;
+  color: #003A40;
   border: 0.5px solid #2DE6FF;
 }
 
@@ -768,7 +679,7 @@
   background: #00C8E0;
 }
 
-.cal-modal-day.selected .cal-modal-dot { background: #008FA3; }
+.cal-modal-day.selected .cal-modal-dot { background: #007080; }
 
 .cal-modal-selected-label {
   font-family: 'Figtree', sans-serif;
@@ -844,30 +755,31 @@
   font-family: 'Figtree', sans-serif;
   font-size: 14px;
   font-weight: 600;
-  color: #7A3D00;
-  background: #FFF5D6;
-  border-radius: 8px;
+  color: #A05000;
+  background: #FFFFFF;
+  border-radius: 999px;
   padding: 0 12px;
   flex-shrink: 0;
   display: inline-flex;
   align-items: center;
   outline: none;
-  border: 0.5px solid #FFD966;
+  border: 0.5px solid #FFCC55;
   cursor: pointer;
-  transition: background 0.15s;
+  transition: all 0.15s;
 }
 
-.period-school-chip:hover { background: #FFD966; }
-.period-school-chip.selected { background: #FFD966; }
-.period-school-chip.selected:hover { background: #FFBB00; }
+.period-school-chip:hover { background: #FFF5D6; }
+.period-school-chip.selected { background: #FFF5D6; }
+.period-school-chip.selected:hover { background: #FFE599; }
 
+/* Tertiary button */
 .edit-lesson-btn {
   height: 32px;
   padding: 0 12px;
   border-radius: 8px;
   border: 0.5px solid #E0E0E0;
-  background: #F5F5F5;
-  color: #3D3D3D;
+  background: #FFFFFF;
+  color: #606060;
   font-family: 'Figtree', sans-serif;
   font-size: 14px;
   font-weight: 600;
@@ -880,7 +792,7 @@
   flex-shrink: 0;
 }
 
-.edit-lesson-btn:hover { background: #E0E0E0; }
+.edit-lesson-btn:hover { background: #F5F5F5; }
 
 .home-status-line {
   display: flex;
@@ -915,4 +827,4 @@
   display: block;
 }
 
-.modal-label-input:focus { border-color: #00C8E0; }
+.modal-label-input:focus { border-color: #2DE6FF; }
