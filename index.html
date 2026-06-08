@@ -1,6 +1,13 @@
 <!doctype html>
 <html lang="en">
   <head>
+    <script>
+  var redirect = sessionStorage.getItem('redirect')
+  if (redirect) {
+    sessionStorage.removeItem('redirect')
+    window.history.replaceState(null, null, '/hako-v2' + redirect)
+  }
+</script>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/hako-v2/favicon.svg" />
     <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet" />    <title>hako-v2</title>
