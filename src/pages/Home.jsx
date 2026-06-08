@@ -58,6 +58,8 @@ export default function Home() {
   const [modalStatusLabel, setModalStatusLabel] = useState('')
   const [modalLessonPeriodIdx, setModalLessonPeriodIdx] = useState(null)
   const [modalLessonIdx, setModalLessonIdx] = useState(0)
+  const [modalClassId, setModalClassId] = useState(null)
+  const [modalTimeForm, setModalTimeForm] = useState({ start_time: '', end_time: '' })
 
   const [calDate, setCalDate] = useState(new Date(today.getFullYear(), today.getMonth(), 1))
   const [calSelected, setCalSelected] = useState(today)
@@ -210,6 +212,44 @@ export default function Home() {
     fetchDateData()
   }
 
+  async function savePeriodClassOverride() {
+    const period = periods[modalPeriodIdx]
+    if (!period) return
+    if (modalChangeType === 'once') {
+      await supabase.from('period_overrides').upsert({
+        period_id: period.id,
+        date: toLocalDateStr(selectedDate),
+        class_id: modalClassId,
+        school_id: null,
+      }, { onConflict: 'period_id,date' })
+    } else {
+      if (period.period_slots?.[0]?.id) {
+        await supabase.from('period_slots').update({ class_id: modalClassId }).eq('id', period.period_slots[0].id)
+      }
+    }
+    setModal(null)
+    fetchDateData()
+  }
+
+  async function savePeriodTimeOverride() {
+    const period = periods[modalPeriodIdx]
+    if (!period) return
+    const { start_time, end_time } = modalTimeForm
+    if (!start_time || !end_time) return
+    if (modalChangeType === 'once') {
+      await supabase.from('period_overrides').upsert({
+        period_id: period.id,
+        date: toLocalDateStr(selectedDate),
+        start_time,
+        end_time,
+      }, { onConflict: 'period_id,date' })
+    } else {
+      await supabase.from('periods').update({ start_time, end_time }).eq('id', period.id)
+    }
+    setModal(null)
+    fetchDateData()
+  }
+
   // Derived values
   const dayStatus = getDayStatus(selectedDate, dayStatusOverride)
   const isWorkingDay = dayStatus.status === 'working'
@@ -329,7 +369,17 @@ export default function Home() {
                 >
                   {periodSchool?.name ?? '—'}
                 </button>
-                <button className="period-tap-chip time" onClick={e => { e.stopPropagation(); setSelectedPeriodIdx(i) }}>
+                <button className="period-tap-chip time" onClick={e => {
+                    e.stopPropagation()
+                    setSelectedPeriodIdx(i)
+                    setModalPeriodIdx(i)
+                    setModalTimeForm({
+                      start_time: period.start_time?.slice(0,5) ?? '',
+                      end_time: period.end_time?.slice(0,5) ?? '',
+                    })
+                    setModalChangeType('once')
+                    setModal('period_time')
+                  }}>
                   {period.start_time ? `${period.start_time.slice(0,5)} – ${period.end_time?.slice(0,5)}` : '—'}
                 </button>
               </div>
@@ -338,34 +388,21 @@ export default function Home() {
               <div className="period-bar">
                 <button
                   className={`period-tap-chip class ${!cls ? 'empty' : ''}`}
-                  onClick={e => { e.stopPropagation(); setSelectedPeriodIdx(i) }}
+                  onClick={e => {
+                    e.stopPropagation()
+                    setSelectedPeriodIdx(i)
+                    setModalPeriodIdx(i)
+                    setModalClassId(cls?.id ?? null)
+                    setModalChangeType('once')
+                    setModal('period_class')
+                  }}
                 >
                   {cls?.label ?? '—'}
                 </button>
-                {cls && (
-                  <button
-                    className="period-tap-chip"
-                    onClick={e => {
-                      e.stopPropagation()
-                      setSelectedPeriodIdx(i)
-                      setModalLessonPeriodIdx(i)
-                      const p = periods[i]
-                      const effectiveCls = p?.override_class_id
-                        ? allClasses.find(c => c.id === p.override_class_id)
-                        : allClasses.find(c => c.id === p?.class_id)
-                      const currId = effectiveCls?.curriculum_id
-                      const currLessons = currId ? lessonsByCurriculum[currId] ?? [] : []
-                      const currentLesson = lesson
-                      const idx = currentLesson ? currLessons.findIndex(l => l.id === currentLesson.id) : 0
-                      setModalLessonIdx(Math.max(0, idx))
-                      setModal('lesson')
-                    }}
-                  >
-                    {lesson
-                      ? [lesson.tag1, lesson.tag2].filter(Boolean).join(' · ')
-                      : <span style={{color:'#B8B8B8'}}>No lesson</span>
-                    }
-                  </button>
+                {cls && lesson && (
+                  <span className="period-tap-chip" style={{cursor:'default'}}>
+                    {[lesson.tag1, lesson.tag2].filter(Boolean).join(' · ')}
+                  </span>
                 )}
               </div>
             </div>
@@ -525,6 +562,100 @@ export default function Home() {
             <div className="modal-footer">
               <button className="modal-btn-cancel" onClick={() => setModal(null)}>Cancel</button>
               <button className="modal-btn-save" onClick={savePeriodSchoolOverride}>Save Change</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Period Class Override Modal */}
+      {modal === 'period_class' && modalPeriodIdx !== null && (() => {
+        const period = periods[modalPeriodIdx]
+        const schoolClasses = allClasses.filter(cl => cl.school_id === (period?.school_id ?? selectedSchoolId))
+        return (
+          <div className="modal-overlay" onClick={() => setModal(null)}>
+            <div className="modal" onClick={e => e.stopPropagation()}>
+              <div className="modal-header">
+                <span className="modal-title">Change Class — Period {period?.period_number}</span>
+                <button className="modal-close" onClick={() => setModal(null)}><X size={14} /></button>
+              </div>
+              <div className="modal-body">
+                <div className="modal-label">Which class for this period?</div>
+                <div className="modal-chips">
+                  {schoolClasses.map(cl => (
+                    <button
+                      key={cl.id}
+                      className={`modal-chip ${modalClassId === cl.id ? 'active' : ''}`}
+                      style={modalClassId === cl.id ? { borderColor: '#2DE6FF', color: '#007080' } : {}}
+                      onClick={() => setModalClassId(cl.id)}
+                    >
+                      {cl.label}
+                    </button>
+                  ))}
+                </div>
+                <div className="modal-label" style={{ marginTop: 20 }}>What kind of change is this?</div>
+                <div className="modal-change-types">
+                  <div className={`modal-change-card ${modalChangeType === 'once' ? 'active' : ''}`} onClick={() => setModalChangeType('once')}>
+                    <div className="modal-change-check" />
+                    <div>
+                      <div className="modal-change-title">Just for today</div>
+                      <div className="modal-change-desc">One-time override. Your regular schedule is unchanged.</div>
+                    </div>
+                  </div>
+                  <div className={`modal-change-card ${modalChangeType === 'permanent' ? 'active' : ''}`} onClick={() => setModalChangeType('permanent')}>
+                    <div className="modal-change-check" />
+                    <div>
+                      <div className="modal-change-title">All future {dow}s</div>
+                      <div className="modal-change-desc">Updates your recurring schedule for this period.</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="modal-footer">
+                <button className="modal-btn-cancel" onClick={() => setModal(null)}>Cancel</button>
+                <button className="modal-btn-save" onClick={savePeriodClassOverride}>Save Change</button>
+              </div>
+            </div>
+          </div>
+        )
+      })()}
+
+      {/* Period Time Override Modal */}
+      {modal === 'period_time' && modalPeriodIdx !== null && (
+        <div className="modal-overlay" onClick={() => setModal(null)}>
+          <div className="modal modal-date" onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <span className="modal-title">Change Time — Period {periods[modalPeriodIdx]?.period_number}</span>
+              <button className="modal-close" onClick={() => setModal(null)}><X size={14} /></button>
+            </div>
+            <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <label style={{ fontFamily: "'Figtree',sans-serif", fontSize: 14, color: '#787878', width: 40 }}>Start</label>
+                <input className="modal-label-input" type="time" value={modalTimeForm.start_time} onChange={e => setModalTimeForm(p => ({ ...p, start_time: e.target.value }))} autoFocus />
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <label style={{ fontFamily: "'Figtree',sans-serif", fontSize: 14, color: '#787878', width: 40 }}>End</label>
+                <input className="modal-label-input" type="time" value={modalTimeForm.end_time} onChange={e => setModalTimeForm(p => ({ ...p, end_time: e.target.value }))} />
+              </div>
+              <div className="modal-change-types">
+                <div className={`modal-change-card ${modalChangeType === 'once' ? 'active' : ''}`} onClick={() => setModalChangeType('once')}>
+                  <div className="modal-change-check" />
+                  <div>
+                    <div className="modal-change-title">Just for today</div>
+                    <div className="modal-change-desc">One-time override. Your regular schedule is unchanged.</div>
+                  </div>
+                </div>
+                <div className={`modal-change-card ${modalChangeType === 'permanent' ? 'active' : ''}`} onClick={() => setModalChangeType('permanent')}>
+                  <div className="modal-change-check" />
+                  <div>
+                    <div className="modal-change-title">All future {dow}s</div>
+                    <div className="modal-change-desc">Updates your recurring schedule for this period.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="modal-footer">
+              <button className="modal-btn-cancel" onClick={() => setModal(null)}>Cancel</button>
+              <button className="modal-btn-save" onClick={savePeriodTimeOverride}>Save Change</button>
             </div>
           </div>
         </div>

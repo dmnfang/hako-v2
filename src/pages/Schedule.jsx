@@ -183,7 +183,7 @@ export default function Schedule() {
   const sidebar = (
     <div className="sch-sidebar">
       <div className="sch-sidebar-header">
-        <h1 className="sch-sidebar-bigtitle">Schedule</h1>
+        <h1 className="sch-sidebar-bigtitle">Periods</h1>
         <span className="sch-sidebar-title">Your weekly schedule</span>
       </div>
       <div className="sch-list">
@@ -340,6 +340,7 @@ export default function Schedule() {
                   </button>
                 ))}
               </div>
+              <p style={{marginTop:12,fontFamily:"'Figtree',sans-serif",fontSize:13,color:'#787878'}}>This will update all future {DAYS.find(d => d.value === selectedDay)?.label}s.</p>
             </div>
           </div>
         </div>
@@ -365,6 +366,7 @@ export default function Schedule() {
                   </button>
                 ))}
               </div>
+              <p style={{marginTop:12,fontFamily:"'Figtree',sans-serif",fontSize:13,color:'#787878'}}>This will update all future {DAYS.find(d => d.value === selectedDay)?.label}s.</p>
             </div>
           </div>
         </div>
@@ -398,6 +400,7 @@ export default function Schedule() {
                   </button>
                 ))}
               </div>
+              <p style={{marginTop:12,fontFamily:"'Figtree',sans-serif",fontSize:13,color:'#787878'}}>This will update all future {DAYS.find(d => d.value === selectedDay)?.label}s.</p>
             </div>
           </div>
         </div>
