@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 import Layout from '../components/Layout'
 import { LogOut, User, CreditCard, Settings, Pencil } from 'lucide-react'
+import { useRef } from 'react'
 import './Account.css'
 
 function getDaysDiff(dateA, dateB) {
@@ -35,6 +36,7 @@ export default function Account() {
   const [settings, setSettings] = useState(null)
   const [displayName, setDisplayName] = useState('')
   const [editingName, setEditingName] = useState(false)
+  const nameInputRef = useRef(null)
   const [nameInput, setNameInput] = useState('')
   const [claimingGrace, setClaimingGrace] = useState(false)
   const [section, setSection] = useState('profile')
@@ -137,6 +139,7 @@ export default function Account() {
                 <span className="acc-field-label">Display name</span>
                 <div className="acc-field-row">
                   <input
+                    ref={nameInputRef}
                     className="acc-input"
                     value={nameInput}
                     placeholder="Your name"
@@ -150,7 +153,13 @@ export default function Account() {
                       <button className="acc-btn-cancel" onClick={() => { setEditingName(false); setNameInput(displayName) }}>Cancel</button>
                     </div>
                   ) : (
-                    <button className="acc-btn-edit" onClick={() => setEditingName(true)}>Edit</button>
+                    <button className="acc-btn-edit" onClick={() => {
+                      setEditingName(true)
+                      setTimeout(() => {
+                        const el = nameInputRef.current
+                        if (el) { el.focus(); const len = el.value.length; el.setSelectionRange(len, len) }
+                      }, 0)
+                    }}>Edit</button>
                   )}
                 </div>
               </div>

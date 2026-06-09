@@ -3,27 +3,9 @@ import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useData } from '../context/DataContext'
 import Layout from '../components/Layout'
+import { useDaySchedule, toLocalDateStr, getDayStatus } from '../hooks/useDaySchedule'
 import { GripVertical, ChevronLeft, ChevronRight, ChevronDown, X, Play, ArrowRightLeft, Pencil } from 'lucide-react'
 import './Home.css'
-
-function toLocalDateStr(date) {
-  return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`
-}
-
-function getDayStatus(date, dayStatusOverride) {
-  const dow = date.getDay()
-  if (dow === 0 || dow === 6) return { status: 'weekend', label: 'Weekend' }
-  if (dayStatusOverride) {
-    const labels = {
-      standby: 'Standby Day',
-      holiday: dayStatusOverride.label ?? 'Public Holiday',
-      personal: 'Personal Day',
-      school_event: 'School Event',
-    }
-    return { status: dayStatusOverride.status, label: labels[dayStatusOverride.status] ?? dayStatusOverride.status }
-  }
-  return { status: 'working', label: 'Working Day' }
-}
 
 const STATUS_OPTIONS = [
   { value: 'working', label: 'Working Day' },
@@ -40,15 +22,16 @@ export default function Home() {
   const [selectedDate, setSelectedDate] = useState(today)
   const { schools, classes: allClasses, progress: progressCtx, lessons: allLessons, lessonsByCurriculum, refresh: refreshData } = useData()
   const [selectedSchoolId, setSelectedSchoolId] = useState(null)
-  const [periods, setPeriods] = useState([])
-  const [periodOverrides, setPeriodOverrides] = useState({})
-  const [dayStatusOverride, setDayStatusOverride] = useState(null)
   const [selectedPeriodIdx, setSelectedPeriodIdx] = useState(0)
-  const [lessons, setLessons] = useState({})
-  const [blocks, setBlocks] = useState({})
-  const [lessonIndices, setLessonIndices] = useState({})
   const [expandedBlocks, setExpandedBlocks] = useState({})
-  const [loading, setLoading] = useState(true)
+
+  const {
+    periods, periodOverrides, dayStatusOverride, lessons, blocks,
+    lessonIndices, loading, fetchBlocks, setLessonIndices,
+    savePeriodSchoolOverride: savePeriodSchoolOverrideHook,
+    savePeriodClassOverride: savePeriodClassOverrideHook,
+    savePeriodTimeOverride: savePeriodTimeOverrideHook,
+  } = useDaySchedule(selectedDate, allClasses, progressCtx)
 
   const [modal, setModal] = useState(null)
   const [modalPeriodIdx, setModalPeriodIdx] = useState(null)
@@ -61,94 +44,6 @@ export default function Home() {
   const [modalClassId, setModalClassId] = useState(null)
   const [modalTimeForm, setModalTimeForm] = useState({ start_time: '', end_time: '' })
 
-  const [calDate, setCalDate] = useState(new Date(today.getFullYear(), today.getMonth(), 1))
-  const [calSelected, setCalSelected] = useState(today)
-
-  useEffect(() => { fetchBase() }, [])
-  useEffect(() => { fetchDateData() }, [selectedDate])
-
-  async function fetchBase() {
-    // selectedSchoolId no longer drives the main query — periods come from all school_days for the dow
-    if (schools.length > 0) setSelectedSchoolId(schools[0].id)
-    setLoading(false)
-  }
-
-  async function fetchDateData() {
-    const dateStr = toLocalDateStr(selectedDate)
-    // getDay(): 0=Sun,1=Mon,2=Tue,3=Wed,4=Thu,5=Fri,6=Sat
-    // DB uses: 1=Mon,2=Tue,3=Wed,4=Thu,5=Fri — matches getDay() for Mon-Fri
-    const dow = selectedDate.getDay()
-
-    const [{ data: sdRows }, { data: overrideData }, { data: statusData }] = await Promise.all([
-      supabase
-        .from('school_days')
-        .select('*, school:schools(id,name), periods(*, period_slots(*, class:classes(*, curriculum:curricula(*))))')
-        .eq('day_of_week', dow),
-      supabase.from('period_overrides').select('*').eq('date', dateStr),
-      supabase.from('day_status').select('*').eq('date', dateStr).maybeSingle(),
-    ])
-
-    // Set day status override
-    setDayStatusOverride(statusData ?? null)
-
-    // If not a working day, clear periods
-    const dayStatus = getDayStatus(selectedDate, statusData)
-    if (dayStatus.status !== 'working') {
-      setPeriods([])
-      return
-    }
-
-    // Merge periods from all school_days for this day of week
-    const allPeriods = (sdRows ?? []).flatMap(sd =>
-      (sd.periods ?? []).map(p => ({ ...p, school_id: sd.school_id, school: sd.school }))
-    )
-    if (allPeriods.length === 0) { setPeriods([]); return }
-
-    const sorted = [...allPeriods].sort((a, b) => a.period_number - b.period_number)
-    setPeriods(sorted)
-    setSelectedPeriodIdx(0)
-
-    const ovMap = {}
-    overrideData?.forEach(o => { ovMap[o.period_id] = o })
-    setPeriodOverrides(ovMap)
-
-    const currIds = [...new Set(sorted.flatMap(p =>
-      p.period_slots.map(s => s.class?.curriculum_id).filter(Boolean)
-    ))]
-
-    if (currIds.length > 0) {
-      const { data: lessonData } = await supabase
-        .from('lessons').select('*').in('curriculum_id', currIds).order('sort_order')
-      const lessonMap = {}
-      lessonData?.forEach(l => {
-        if (!lessonMap[l.curriculum_id]) lessonMap[l.curriculum_id] = []
-        lessonMap[l.curriculum_id].push(l)
-      })
-      setLessons(lessonMap)
-
-      const idxMap = {}
-      sorted.forEach((period, i) => {
-        const override = ovMap[period.id]
-        const classId = override?.class_id ?? period.period_slots[0]?.class?.id
-        if (!classId) return
-        const cls = allClasses.find(c => c.id === classId)
-        if (!cls) return
-        const currLessons = lessonMap[cls.curriculum_id] ?? []
-        const prog = progressCtx[classId]
-        const idx = prog?.current_lesson_id
-          ? Math.max(0, currLessons.findIndex(l => l.id === prog.current_lesson_id))
-          : 0
-        idxMap[i] = idx
-      })
-      setLessonIndices(idxMap)
-    }
-  }
-
-  async function fetchBlocks(lessonId) {
-    if (blocks[lessonId]) return
-    const { data } = await supabase.from('blocks').select('*').eq('lesson_id', lessonId).order('sort_order')
-    setBlocks(prev => ({ ...prev, [lessonId]: data ?? [] }))
-  }
 
   useEffect(() => {
     const period = periods[selectedPeriodIdx]
@@ -200,58 +95,21 @@ export default function Home() {
     }
 
     setModal(null)
-    fetchDateData()
   }
 
   async function savePeriodSchoolOverride() {
-    const period = periods[modalPeriodIdx]
-    if (!period || !modalSchoolId) return
-    await supabase.from('period_overrides').upsert({
-      period_id: period.id,
-      date: toLocalDateStr(selectedDate),
-      school_id: modalSchoolId,
-      class_id: null,
-    }, { onConflict: 'period_id,date' })
+    await savePeriodSchoolOverrideHook(periods[modalPeriodIdx], modalSchoolId, modalChangeType, selectedDate)
     setModal(null)
-    fetchDateData()
   }
 
   async function savePeriodClassOverride() {
-    const period = periods[modalPeriodIdx]
-    if (!period) return
-    if (modalChangeType === 'once') {
-      await supabase.from('period_overrides').upsert({
-        period_id: period.id,
-        date: toLocalDateStr(selectedDate),
-        class_id: modalClassId,
-        school_id: null,
-      }, { onConflict: 'period_id,date' })
-    } else {
-      if (period.period_slots?.[0]?.id) {
-        await supabase.from('period_slots').update({ class_id: modalClassId }).eq('id', period.period_slots[0].id)
-      }
-    }
+    await savePeriodClassOverrideHook(periods[modalPeriodIdx], modalClassId, modalChangeType, selectedDate)
     setModal(null)
-    fetchDateData()
   }
 
   async function savePeriodTimeOverride() {
-    const period = periods[modalPeriodIdx]
-    if (!period) return
-    const { start_time, end_time } = modalTimeForm
-    if (!start_time || !end_time) return
-    if (modalChangeType === 'once') {
-      await supabase.from('period_overrides').upsert({
-        period_id: period.id,
-        date: toLocalDateStr(selectedDate),
-        start_time,
-        end_time,
-      }, { onConflict: 'period_id,date' })
-    } else {
-      await supabase.from('periods').update({ start_time, end_time }).eq('id', period.id)
-    }
+    await savePeriodTimeOverrideHook(periods[modalPeriodIdx], modalTimeForm, modalChangeType, selectedDate)
     setModal(null)
-    fetchDateData()
   }
 
   // Derived values
@@ -280,11 +138,6 @@ export default function Home() {
     const ov = periodOverrides[p.id]
     return ov?.class_id ?? p.period_slots?.[0]?.class
   }).length
-
-  const cy = calDate.getFullYear()
-  const cm = calDate.getMonth()
-  const firstDow = new Date(cy, cm, 1).getDay()
-  const daysInMonth = new Date(cy, cm + 1, 0).getDate()
 
   if (loading) return <Layout sidebar={<div />}><div /></Layout>
 
@@ -321,9 +174,6 @@ export default function Home() {
             }}
           >
             <ArrowRightLeft size={14} /> Change Status
-          </button>
-          <button className="home-action-btn" onClick={() => { setCalSelected(selectedDate); setModal('date') }}>
-            <ArrowRightLeft size={14} /> Swap Date
           </button>
         </div>
 
@@ -453,14 +303,13 @@ export default function Home() {
                 return (
                   <div key={block.id} className={`block-row ${isOpen ? 'open' : ''}`}>
                     <div className="block-row-header" onClick={() => toggleBlock(key)}>
-                      <GripVertical size={14} className="block-grip" />
                       <span className="block-title">{block.title}</span>
                       <button className="block-chevron-btn" onClick={e => { e.stopPropagation(); toggleBlock(key) }}>
                         <ChevronDown size={14} className={`block-chevron ${isOpen ? 'open' : ''}`} />
                       </button>
                     </div>
                     {isOpen && block.content && (
-                      <div className="block-content">
+                      <div className="block-content-body">
                         {block.content.split('\n').filter(Boolean).map((line, j) => (
                           <div key={j} className="block-content-line">
                             <span className="block-bullet">•</span>
@@ -495,11 +344,11 @@ export default function Home() {
             </div>
             <div className="modal-body">
               <div className="modal-label">What kind of day is this?</div>
-              <div className="modal-chips" style={{ flexDirection: 'column', alignItems: 'flex-start', gap: 8 }}>
+              <div className="modal-chips">
                 {STATUS_OPTIONS.map(opt => (
                   <button
                     key={opt.value}
-                    className={`modal-chip ${modalStatus === opt.value ? 'active' : ''}`}
+                    className={`modal-chip status ${modalStatus === opt.value ? 'active' : ''}`}
                     onClick={() => setModalStatus(opt.value)}
                   >
                     {opt.label}
@@ -718,59 +567,7 @@ export default function Home() {
         )
       })()}
 
-      {modal === 'date' && (
-        <div className="modal-overlay" onClick={() => setModal(null)}>
-          <div className="modal modal-date" onClick={e => e.stopPropagation()}>
-            <div className="modal-header">
-              <span className="modal-title">Swap Date</span>
-              <button className="modal-close" onClick={() => setModal(null)}><X size={14} /></button>
-            </div>
-            <div className="modal-body">
-              <div className="cal-modal-nav">
-                <button className="cal-modal-arrow" onClick={() => setCalDate(new Date(cy, cm - 1, 1))}>
-                  <ChevronLeft size={14} />
-                </button>
-                <span className="cal-modal-month">
-                  {calDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
-                </span>
-                <button className="cal-modal-arrow" onClick={() => setCalDate(new Date(cy, cm + 1, 1))}>
-                  <ChevronRight size={14} />
-                </button>
-              </div>
-              <div className="cal-modal-grid">
-                {['SUN','MON','TUE','WED','THU','FRI','SAT'].map(d => (
-                  <div key={d} className="cal-modal-dow">{d}</div>
-                ))}
-                {Array.from({ length: firstDow }).map((_, i) => <div key={`e${i}`} />)}
-                {Array.from({ length: daysInMonth }).map((_, i) => {
-                  const day = i + 1
-                  const d = new Date(cy, cm, day)
-                  const isToday = toLocalDateStr(d) === toLocalDateStr(today)
-                  const isSel = toLocalDateStr(d) === toLocalDateStr(calSelected)
-                  return (
-                    <button
-                      key={day}
-                      className={`cal-modal-day ${isToday ? 'today' : ''} ${isSel ? 'selected' : ''}`}
-                      onClick={() => setCalSelected(d)}
-                    >
-                      {day}
-                      <span className="cal-modal-dot" />
-                    </button>
-                  )
-                })}
-              </div>
-            </div>
-            <div className="modal-footer">
-              <span className="cal-modal-selected-label">
-                {calSelected.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
-              </span>
-              <button className="modal-btn-save" onClick={() => { setSelectedDate(calSelected); setModal(null) }}>
-                View Date
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {modal === 'date' && null}
     </Layout>
   )
 }

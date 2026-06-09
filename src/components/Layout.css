@@ -15,35 +15,39 @@ html, body {
   background: #F5F5F5;
 }
 
-.sidebar {
+/* Left unit — 30% of shell, rail + sidebar side by side */
+.left-unit {
   width: 30%;
   flex-shrink: 0;
   display: flex;
-  flex-direction: column;
-  height: 100vh;
-  overflow: hidden;
-  padding: 16px;
-  gap: 12px;
-  background: #F5F5F5;
+  flex-direction: row;
+  height: 100%;
+  background: #FFFFFF;
+  border-right: 0.5px solid #E0E0E0;
 }
 
-.sidebar-nav {
-  display: flex;
-  align-items: stretch;
-  gap: 8px;
+/* Rail — 72px fixed, full height */
+.rail {
+  width: 72px;
   flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px;
+  gap: 8px;
+  border-right: 0.5px solid #E0E0E0;
+  background: #FFFFFF;
 }
 
 .nav-btn-wrap {
-  flex: 1;
   position: relative;
   display: flex;
 }
 
 .nav-btn {
-  flex: 1;
-  height: 36px;
-  border-radius: 12px;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
   border: 0.5px solid #E0E0E0;
   background: #FFFFFF;
   color: #787878;
@@ -52,16 +56,17 @@ html, body {
   align-items: center;
   justify-content: center;
   transition: all 0.15s;
+  flex-shrink: 0;
 }
 
 .nav-btn:hover { background: #F5F5F5; color: #0A100D; }
-.nav-btn.active { background: #96F4FF; border-color: #2DE6FF; color: #003A40; box-shadow: 0 1px 3px rgba(0,200,224,0.2); }
+.nav-btn.active { background: #96F4FF; border-color: #2DE6FF; color: #003A40; }
 
 .nav-tooltip {
   position: absolute;
-  top: calc(100% + 8px);
-  left: 50%;
-  transform: translateX(-50%);
+  left: calc(100% + 10px);
+  top: 50%;
+  transform: translateY(-50%);
   background: #0A100D;
   color: #FFFFFF;
   font-family: 'Figtree', sans-serif;
@@ -73,22 +78,34 @@ html, body {
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.15s;
-  z-index: 100;
+  z-index: 200;
 }
 
 .nav-btn-wrap:hover .nav-tooltip { opacity: 1; }
 
-.sidebar-content {
+/* Sidebar — fills remaining width inside left-unit */
+.sidebar {
   flex: 1;
-  overflow: hidden;
+  min-width: 0;
   display: flex;
   flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  background: #FFFFFF;
 }
 
+.sidebar > * {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+}
+
+/* Main panel — floating with padding all around */
 .main {
   flex: 1;
+  min-height: 0;
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  padding: 16px 16px 16px 0;
+  padding: 16px;
 }

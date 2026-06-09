@@ -1,11 +1,9 @@
 .curr-sidebar {
+  width: 100%;
   display: flex;
   flex-direction: column;
   height: 100%;
   overflow: hidden;
-  background: #FFFFFF;
-  border: 0.5px solid #E0E0E0;
-  border-radius: 12px;
 }
 
 .curr-count-box {
@@ -145,6 +143,8 @@
 
 .curr-main {
   flex: 1;
+  min-width: 0;
+  min-height: 0;
   background: #FFFFFF;
   border: 0.5px solid #E0E0E0;
   border-radius: 12px;

@@ -1,12 +1,10 @@
 /* Sidebar */
 .sch-sidebar {
+  width: 100%;
   display: flex;
   flex-direction: column;
   height: 100%;
   overflow: hidden;
-  background: #FFFFFF;
-  border: 0.5px solid #E0E0E0;
-  border-radius: 12px;
 }
 
 .sch-sidebar-tabs {
@@ -167,6 +165,8 @@
 /* Main */
 .sch-main {
   flex: 1;
+  min-width: 0;
+  min-height: 0;
   background: #FFFFFF;
   border: 0.5px solid #E0E0E0;
   border-radius: 12px;
@@ -805,3 +805,130 @@
   background: #FFFFFF;
   color: #007080;
 }
+
+/* Tab content wrapper */
+.sch-tab-content {
+  flex: 1;
+  display: flex;
+  gap: 12px;
+  overflow: hidden;
+  min-height: 0;
+  height: 100%;
+}
+
+/* Sidebar inner list for Regular Week tab */
+.sch-sidebar-inner {
+  width: 200px;
+  flex-shrink: 0;
+  background: #FFFFFF;
+  border: 0.5px solid #E0E0E0;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Calendar panel */
+.sch-cal-panel {
+  width: 280px;
+  flex-shrink: 0;
+  background: #FFFFFF;
+  border: 0.5px solid #E0E0E0;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 16px;
+  gap: 8px;
+}
+
+.sch-cal-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.sch-cal-today {
+  height: 32px;
+  width: 68px;
+  border-radius: 8px;
+  border: 0.5px solid #E0E0E0;
+  background: #FFFFFF;
+  color: #606060;
+  font-family: 'Figtree', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.sch-cal-today:hover { background: #F5F5F5; }
+
+.sch-cal-month {
+  font-family: 'Figtree', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: #0A100D;
+}
+
+.sch-cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+
+.sch-cal-dow {
+  font-family: 'Figtree', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  color: #787878;
+  text-align: center;
+  padding: 4px 0 6px 0;
+}
+
+.sch-cal-day {
+  aspect-ratio: 1;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  font-family: 'Figtree', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: #3D3D3D;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.1s;
+}
+
+.sch-cal-day:hover { background: #F5F5F5; }
+.sch-cal-day.today { border: 1.5px solid #0A100D; }
+.sch-cal-day.selected { background: #DFFCFF; color: #003A40; border: 0.5px solid #2DE6FF; }
+.sch-cal-day.weekend { color: #B8B8B8; }
+.sch-cal-day.weekend:hover { background: transparent; cursor: default; }
+
+/* Status colors (shared with Home) */
+.home-status-working { color: #2A7A52; }
+.home-status-weekend { color: #787878; }
+.home-status-standby { color: #92620A; }
+.home-status-holiday { color: #005A66; }
+.home-status-personal { color: #C03030; }
+.home-status-school_event { color: #3A6BC7; }
+
+/* Status chips — amber style */
+.sch-modal-chip.status {
+  border-color: #FFCC55;
+  color: #A05000;
+}
+.sch-modal-chip.status:hover { background: #FFF5D6; }
+.sch-modal-chip.status.active {
+  background: #FFF5D6;
+  border-color: #FFCC55;
+  color: #A05000;
+}
+.sch-modal-chip.status.active:hover { background: #FFE599; }
+
+/* Cancel button hover */
+.sch-form-cancel:hover { background: #F5F5F5; }

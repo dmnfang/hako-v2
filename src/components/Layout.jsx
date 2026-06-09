@@ -16,27 +16,37 @@ export default function Layout({ children, sidebar }) {
 
   return (
     <div className="shell">
-      <div className="sidebar">
-        <div className="sidebar-nav">
+
+      {/* Left unit: rail + sidebar flush together */}
+      <div className="left-unit">
+
+        {/* Rail */}
+        <div className="rail">
           {NAV.map(({ path, icon: Icon, label }) => (
             <div key={path} className="nav-btn-wrap">
               <button
                 className={`nav-btn ${location.pathname === path ? 'active' : ''}`}
                 onClick={() => navigate(path)}
               >
-                <Icon size={14} />
+                <Icon size={20} />
               </button>
               <span className="nav-tooltip">{label}</span>
             </div>
           ))}
         </div>
-        <div className="sidebar-content">
+
+        {/* Sidebar content */}
+        <div className="sidebar">
           {sidebar}
         </div>
+
       </div>
+
+      {/* Main panel */}
       <div className="main">
         {children}
       </div>
+
     </div>
   )
 }

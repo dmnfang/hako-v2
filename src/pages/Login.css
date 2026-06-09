@@ -86,7 +86,7 @@
 }
 
 .login-form input:focus {
-  border-color: #008FA3;
+  border-color: #2DE6FF;
   background: #FFFFFF;
 }
 
@@ -103,9 +103,9 @@
 .login-btn-primary {
   height: 40px;
   border-radius: 8px;
-  border: none;
+  border: 0.5px solid #2DE6FF;
   background: #96F4FF;
-  color: #FFFFFF;
+  color: #003A40;
   font-family: 'Figtree', sans-serif;
   font-size: 14px;
   font-weight: 600;
@@ -139,8 +139,8 @@
   height: 40px;
   border-radius: 8px;
   border: 0.5px solid #E0E0E0;
-  background: #F5F5F5;
-  color: #0A100D;
+  background: #FFFFFF;
+  color: #606060;
   font-family: 'Figtree', sans-serif;
   font-size: 14px;
   font-weight: 600;
@@ -152,7 +152,7 @@
   transition: background 0.15s;
 }
 
-.login-btn-google:hover { background: #E0E0E0; }
+.login-btn-google:hover { background: #F5F5F5; }
 
 .login-success {
   font-family: 'Figtree', sans-serif;

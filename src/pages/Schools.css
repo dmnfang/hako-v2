@@ -1,12 +1,10 @@
 /* ── Sidebar ── */
 .sc-sidebar {
+  width: 100%;
   display: flex;
   flex-direction: column;
   height: 100%;
   overflow: hidden;
-  background: #FFFFFF;
-  border: 0.5px solid #E0E0E0;
-  border-radius: 12px;
 }
 
 .sc-sidebar-header {
