@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 import { useData } from '../context/DataContext'
 import Layout from '../components/Layout'
+import HintBanner from '../components/HintBanner'
 import { Plus, ChevronLeft, ChevronRight, X } from 'lucide-react'
 import './Schools.css'
 
@@ -215,12 +216,12 @@ export default function Schools() {
   const sidebar = (
     <div className="sc-sidebar">
       <div className="sc-sidebar-header">
-  <h1 className="sc-sidebar-title">Schools</h1>
-  <span className="sc-sidebar-sub">You're currently working at <strong>{schools.length}</strong> {schools.length === 1 ? 'school' : 'schools'}!</span>
-  <button className="sc-new-btn" onClick={() => { setNewSchoolName(''); setNewSchoolModal(true) }}>
-    <Plus size={14} /> New School
-  </button>
-</div>
+          <HintBanner id="schools" message="Manage your schools and classes here. Classes you add to a school will appear as options when setting up your schedule." />
+        <h1 className="sc-sidebar-title">Schools</h1>
+        <button className="sc-new-btn" onClick={() => { setNewSchoolName(''); setNewSchoolModal(true) }}>
+          <Plus size={14} /> New School
+        </button>
+      </div>
       <div className="sc-list">
         {schools.map(s => (
           <div

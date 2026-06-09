@@ -1,9 +1,8 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
+import { X, Check } from 'lucide-react'
 import './Wizard.css'
-
-const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
 
 const TEXTBOOKS = {
   es: [
@@ -31,7 +30,6 @@ const TEXTBOOKS = {
     { value: 'columbus_21', label: 'Columbus 21' },
   ],
   hs: [{ value: 'original', label: 'Original' }],
-  other: [{ value: 'original', label: 'Original' }],
 }
 
 const DEFAULT_GRADE_TAG = {
@@ -75,16 +73,19 @@ function buildLessons(curriculumId, textbook) {
   const seed = LESSON_SEEDS[textbook]
   if (!seed) return []
   const lessons = []
-  let sort = 0
+  let sort = 1
   seed.forEach(({ unit, count }) => {
     const isSpecial = typeof unit === 'string'
     for (let i = 1; i <= count; i++) {
+      const title = isSpecial ? `${unit} · Lesson ${i}` : `Unit ${unit} · Lesson ${i}`
       lessons.push({
         curriculum_id: curriculumId,
         unit: isSpecial ? null : unit,
         unit_label: isSpecial ? unit : null,
         lesson_number: i,
-        title: isSpecial ? `${unit} · Lesson ${i}` : `Unit ${unit} · Lesson ${i}`,
+        title,
+        tag1: isSpecial ? unit : `Unit ${unit}`,
+        tag2: `Lesson ${i}`,
         sort_order: sort++,
       })
     }
@@ -96,6 +97,7 @@ export default function Wizard() {
   const navigate = useNavigate()
   const [step, setStep] = useState(1)
   const [saving, setSaving] = useState(false)
+  const [error, setError] = useState(null)
 
   const [levels, setLevels] = useState({ es: true, jhs: false, hs: false })
   const [curricula, setCurricula] = useState([])
@@ -104,7 +106,6 @@ export default function Wizard() {
   const [schools, setSchools] = useState([])
   const [newSchoolName, setNewSchoolName] = useState('')
   const [newSchoolLevel, setNewSchoolLevel] = useState('es')
-  const [newSchoolDays, setNewSchoolDays] = useState([])
 
   const [classes, setClasses] = useState({})
   const [newClass, setNewClass] = useState({})
@@ -116,10 +117,9 @@ export default function Wizard() {
     setLevels(prev => ({ ...prev, [l]: !prev[l] }))
   }
 
-  function updateNewCurriculumTextbook(textbook) {
+  function updateTextbook(textbook) {
     const gradeTag = DEFAULT_GRADE_TAG[textbook] ?? ''
-    const name = textbook === 'original'
-      ? newCurriculum.name
+    const name = textbook === 'original' ? newCurriculum.name
       : (TEXTBOOKS[newCurriculum.level]?.find(t => t.value === textbook)?.label ?? newCurriculum.name)
     setNewCurriculum(prev => ({ ...prev, textbook, gradeTag, name }))
   }
@@ -127,229 +127,142 @@ export default function Wizard() {
   function addCurriculum() {
     if (!newCurriculum.name.trim()) return
     setCurricula(prev => [...prev, { ...newCurriculum, id: crypto.randomUUID() }])
-    setNewCurriculum({
-      name: '', gradeTag: '', textbook: 'original',
-      level: activeLevels[0] ?? 'es'
-    })
-  }
-
-  function removeCurriculum(id) {
-    setCurricula(prev => prev.filter(c => c.id !== id))
-  }
-
-  function toggleNewDay(day) {
-    setNewSchoolDays(prev =>
-      prev.includes(day) ? prev.filter(d => d !== day) : [...prev, day]
-    )
+    setNewCurriculum({ name: '', gradeTag: '', textbook: 'original', level: activeLevels[0] ?? 'es' })
   }
 
   function addSchool() {
-    if (!newSchoolName.trim() || newSchoolDays.length === 0) return
-    const school = {
-      id: crypto.randomUUID(),
-      name: newSchoolName.trim(),
-      level: newSchoolLevel,
-      days: [...newSchoolDays]
-    }
+    if (!newSchoolName.trim()) return
+    const school = { id: crypto.randomUUID(), name: newSchoolName.trim(), level: newSchoolLevel }
     setSchools(prev => [...prev, school])
     setClasses(prev => ({ ...prev, [school.id]: [] }))
-    setNewClass(prev => ({ ...prev, [school.id]: { label: '', curriculumId: '', frequency: 'every_week' } }))
+    setNewClass(prev => ({ ...prev, [school.id]: { label: '', curriculumId: '' } }))
     setNewSchoolName('')
-    setNewSchoolDays([])
     setActiveSchoolId(school.id)
-  }
-
-  function removeSchool(id) {
-    setSchools(prev => {
-      const updated = prev.filter(s => s.id !== id)
-      if (activeSchoolId === id) setActiveSchoolId(updated[0]?.id ?? null)
-      return updated
-    })
-    setClasses(prev => { const n = { ...prev }; delete n[id]; return n })
-  }
-
-  function goToStep3() {
-    setActiveSchoolId(schools[0]?.id ?? null)
-    setStep(3)
   }
 
   function addClass(schoolId) {
     const nc = newClass[schoolId]
     if (!nc?.label?.trim()) return
-    const cls = {
-      id: crypto.randomUUID(),
-      label: nc.label.trim(),
-      curriculumId: nc.curriculumId ?? '',
-      frequency: nc.frequency ?? 'every_week',
-    }
+    const cls = { id: crypto.randomUUID(), label: nc.label.trim(), curriculumId: nc.curriculumId ?? '' }
     setClasses(prev => ({ ...prev, [schoolId]: [...(prev[schoolId] ?? []), cls] }))
-    setNewClass(prev => ({ ...prev, [schoolId]: { label: '', curriculumId: '', frequency: 'every_week' } }))
+    setNewClass(prev => ({ ...prev, [schoolId]: { label: '', curriculumId: '' } }))
   }
 
-  function removeClass(schoolId, classId) {
-    setClasses(prev => ({ ...prev, [schoolId]: prev[schoolId].filter(c => c.id !== classId) }))
-  }
-
-  const allSchoolsHaveClasses = schools.every(s => (classes[s.id] ?? []).length > 0)
+  const allSchoolsHaveClasses = schools.length > 0 && schools.every(s => (classes[s.id] ?? []).length > 0)
   const activeSchool = schools.find(s => s.id === activeSchoolId)
   const activeClasses = activeSchoolId ? (classes[activeSchoolId] ?? []) : []
 
   async function handleFinish() {
     setSaving(true)
-    const { data: { user } } = await supabase.auth.getUser()
-    const uid = user.id
-    const curriculumIdMap = {}
+    setError(null)
+    try {
+      const { data: { user } } = await supabase.auth.getUser()
+      const uid = user.id
+      const curriculumIdMap = {}
 
-    for (const c of curricula) {
-      const { data: currRow } = await supabase.from('curricula').insert({
-        user_id: uid,
-        name: c.name,
-        textbook: c.textbook,
-        school_level: c.level,
-        sort_order: curricula.indexOf(c)
-      }).select().single()
+      // 1. Insert curricula + lessons
+      for (const [i, c] of curricula.entries()) {
+        const { data: currRow, error: currErr } = await supabase
+          .from('curricula')
+          .insert({ name: c.name, grade_tag: c.gradeTag, sort_order: i, user_id: uid })
+          .select().single()
+        if (currErr) throw currErr
+        curriculumIdMap[c.id] = currRow.id
 
-      curriculumIdMap[c.id] = currRow.id
-
-      if (c.gradeTag) {
-        await supabase.from('grades').insert({
-          user_id: uid,
-          name: c.gradeTag,
-          school_level: c.level,
-          sort_order: curricula.indexOf(c)
-        })
+        const lessons = buildLessons(currRow.id, c.textbook)
+        if (lessons.length > 0) {
+          const { error: lessonErr } = await supabase.from('lessons').insert(lessons)
+          if (lessonErr) throw lessonErr
+        }
       }
 
-      const lessons = buildLessons(currRow.id, c.textbook)
-      if (lessons.length > 0) {
-        await supabase.from('lessons').insert(lessons)
+      // 2. Insert schools + classes only — schedule is set up in the app
+      for (const [si, school] of schools.entries()) {
+        const { data: schoolRow, error: schoolErr } = await supabase
+          .from('schools')
+          .insert({ name: school.name, sort_order: si, user_id: uid })
+          .select().single()
+        if (schoolErr) throw schoolErr
+
+        const schoolClasses = classes[school.id] ?? []
+        for (const [ci, cls] of schoolClasses.entries()) {
+          const { error: clsErr } = await supabase.from('classes').insert({
+            school_id: schoolRow.id,
+            curriculum_id: curriculumIdMap[cls.curriculumId] ?? null,
+            label: cls.label,
+            sort_order: ci,
+          })
+          if (clsErr) throw clsErr
+        }
       }
+
+      navigate('/home')
+    } catch (err) {
+      console.error(err)
+      setError('Something went wrong. Please try again.')
+    } finally {
+      setSaving(false)
     }
-
-    for (const school of schools) {
-      const { data: schoolRow } = await supabase.from('schools').insert({
-        user_id: uid,
-        name: school.name,
-        school_level: school.level,
-        sort_order: schools.indexOf(school)
-      }).select().single()
-
-      for (const day of school.days) {
-        await supabase.from('school_days').insert({
-          school_id: schoolRow.id,
-          day_of_week: DAYS.indexOf(day) + 1
-        })
-      }
-
-      const schoolClasses = classes[school.id] ?? []
-      for (const cls of schoolClasses) {
-        await supabase.from('classes').insert({
-          school_id: schoolRow.id,
-          curriculum_id: curriculumIdMap[cls.curriculumId] ?? null,
-          label: cls.label,
-          frequency: cls.frequency,
-          sort_order: schoolClasses.indexOf(cls)
-        })
-      }
-    }
-
-    setSaving(false)
-    navigate('/home')
   }
 
   return (
     <div className="wizard-shell">
       <div className="wizard-card">
+
+        {/* Progress */}
         <div className="wizard-progress">
           {[1, 2, 3].map(n => (
             <div key={n} className="wz-step-wrap">
               <div className={`wz-dot ${step === n ? 'active' : step > n ? 'done' : ''}`}>
-                {step > n ? '✓' : n}
+                {step > n ? <Check size={14} /> : n}
               </div>
               {n < 3 && <div className={`wz-line ${step > n ? 'done' : ''}`} />}
             </div>
           ))}
         </div>
 
+        {/* Step 1 — Courses */}
         {step === 1 && (
           <div>
             <div className="wz-title">What school levels do you teach?</div>
-            <div className="wz-sub">Select all that apply. This shapes which textbooks appear below.</div>
+            <div className="wz-sub">Select all that apply — this shapes which textbooks appear below.</div>
             <div className="level-chips">
-              {[
-                { key: 'es', label: 'Elementary School' },
-                { key: 'jhs', label: 'Junior High School' },
-                { key: 'hs', label: 'High School' },
-              ].map(({ key, label }) => (
-                <button
-                  key={key}
-                  type="button"
-                  className={`level-chip ${levels[key] ? 'active' : ''}`}
-                  onClick={() => toggleLevel(key)}
-                >
+              {[{key:'es',label:'Elementary'},{key:'jhs',label:'Junior High'},{key:'hs',label:'High School'}].map(({ key, label }) => (
+                <button key={key} type="button" className={`level-chip ${levels[key] ? 'active' : ''}`} onClick={() => toggleLevel(key)}>
                   {label}
                 </button>
               ))}
             </div>
 
-            <div className="wz-section-title">Your curricula</div>
-            <div className="wz-sub">A curriculum is a named set of lessons. The grade tag is the short label that appears on class cards and dropdowns — keep it simple like "Grade 3" or "SNC".</div>
+            <div className="wz-section-title">Courses</div>
+            <div className="wz-sub">A course is a named set of lessons — one per textbook or class type. The grade tag is the short label shown on class cards, like "Grade 3" or "SNC".</div>
 
             <div className="curricula-list">
               {curricula.map(c => (
                 <div key={c.id} className="curriculum-item">
                   <div className="ci-name">{c.name}</div>
                   {c.gradeTag && <span className="ci-tag">{c.gradeTag}</span>}
-                  <span className="ci-book">
-                    {TEXTBOOKS[c.level]?.find(t => t.value === c.textbook)?.label ?? c.textbook}
-                  </span>
-                  <button className="remove-btn" onClick={() => removeCurriculum(c.id)}>×</button>
+                  <span className="ci-book">{TEXTBOOKS[c.level]?.find(t => t.value === c.textbook)?.label ?? c.textbook}</span>
+                  <button className="remove-btn" onClick={() => setCurricula(prev => prev.filter(x => x.id !== c.id))}><X size={12} /></button>
                 </div>
               ))}
             </div>
 
             <div className="curriculum-form">
+              <div className="wz-field-label">TEXTBOOK</div>
               <div className="curriculum-form-row">
-                <select
-                  value={newCurriculum.level}
-                  onChange={e => setNewCurriculum(prev => ({ ...prev, level: e.target.value, textbook: 'original' }))}
-                  style={{ flex: '0 0 70px' }}
-                >
-                  {activeLevels.map(l => (
-                    <option key={l} value={l}>{l.toUpperCase()}</option>
-                  ))}
+                <select value={newCurriculum.level} onChange={e => setNewCurriculum(prev => ({ ...prev, level: e.target.value, textbook: 'original' }))} style={{flex:'0 0 76px'}}>
+                  {activeLevels.map(l => <option key={l} value={l}>{l.toUpperCase()}</option>)}
                 </select>
-                <select
-                  value={newCurriculum.textbook}
-                  onChange={e => updateNewCurriculumTextbook(e.target.value)}
-                >
-                  {(TEXTBOOKS[newCurriculum.level] ?? TEXTBOOKS.other).map(t => (
-                    <option key={t.value} value={t.value}>{t.label}</option>
-                  ))}
+                <select value={newCurriculum.textbook} onChange={e => updateTextbook(e.target.value)}>
+                  {(TEXTBOOKS[newCurriculum.level] ?? TEXTBOOKS.es).map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
                 </select>
               </div>
+              <div className="wz-field-label" style={{marginTop:4}}>COURSE NAME &amp; GRADE TAG</div>
               <div className="curriculum-form-row">
-                <input
-                  placeholder="Curriculum name e.g. Grade 3"
-                  value={newCurriculum.name}
-                  onChange={e => setNewCurriculum(prev => ({ ...prev, name: e.target.value }))}
-                  onKeyDown={e => e.key === 'Enter' && addCurriculum()}
-                />
-                <input
-                  placeholder="Grade tag e.g. G3"
-                  value={newCurriculum.gradeTag}
-                  onChange={e => setNewCurriculum(prev => ({ ...prev, gradeTag: e.target.value }))}
-                  style={{ flex: '0 0 130px' }}
-                  onKeyDown={e => e.key === 'Enter' && addCurriculum()}
-                />
-                <button
-                  className="confirm-btn"
-                  onClick={addCurriculum}
-                  disabled={!newCurriculum.name.trim()}
-                  title="Add curriculum"
-                >
-                  ✓
-                </button>
+                <input placeholder="e.g. Let's Try 1" value={newCurriculum.name} onChange={e => setNewCurriculum(prev => ({ ...prev, name: e.target.value }))} onKeyDown={e => e.key === 'Enter' && addCurriculum()} />
+                <input placeholder="e.g. Grade 3" value={newCurriculum.gradeTag} onChange={e => setNewCurriculum(prev => ({ ...prev, gradeTag: e.target.value }))} style={{flex:'0 0 140px'}} onKeyDown={e => e.key === 'Enter' && addCurriculum()} />
+                <button className="confirm-btn" onClick={addCurriculum} disabled={!newCurriculum.name.trim()}><Check size={14} /></button>
               </div>
             </div>
 
@@ -362,91 +275,58 @@ export default function Wizard() {
           </div>
         )}
 
+        {/* Step 2 — Schools */}
         {step === 2 && (
           <div>
             <div className="wz-title">Add your schools</div>
-            <div className="wz-sub">Add each school you visit, its level, and which days you go there.</div>
+            <div className="wz-sub">Add each school you teach at. You'll set up your weekly schedule in the app after this.</div>
 
             <div className="school-list">
               {schools.map(s => (
                 <div key={s.id} className="school-item">
                   <span className="school-name">{s.name}</span>
                   <span className="school-level-tag">{s.level.toUpperCase()}</span>
-                  <div className="school-days">
-                    {s.days.map(d => (
-                      <span key={d} className="school-day">{d.slice(0, 3)}</span>
-                    ))}
-                  </div>
-                  <button className="remove-btn" onClick={() => removeSchool(s.id)}>×</button>
+                  <button className="remove-btn" style={{marginLeft:'auto'}} onClick={() => {
+                    setSchools(prev => { const u = prev.filter(x => x.id !== s.id); if (activeSchoolId === s.id) setActiveSchoolId(u[0]?.id ?? null); return u })
+                    setClasses(prev => { const n = {...prev}; delete n[s.id]; return n })
+                  }}><X size={12} /></button>
                 </div>
               ))}
             </div>
 
-            <div className="add-school-wrap">
+            <div className="curriculum-form">
+              <div className="wz-field-label">SCHOOL NAME</div>
               <div className="curriculum-form-row">
-                <input
-                  placeholder="School name…"
-                  value={newSchoolName}
-                  onChange={e => setNewSchoolName(e.target.value)}
-                  onKeyDown={e => e.key === 'Enter' && addSchool()}
-                />
-                <select
-                  value={newSchoolLevel}
-                  onChange={e => setNewSchoolLevel(e.target.value)}
-                  style={{ flex: '0 0 70px' }}
-                >
-                  {activeLevels.map(l => (
-                    <option key={l} value={l}>{l.toUpperCase()}</option>
-                  ))}
+                <input placeholder="e.g. Oda Elementary School" value={newSchoolName} onChange={e => setNewSchoolName(e.target.value)} onKeyDown={e => e.key === 'Enter' && addSchool()} />
+                <select value={newSchoolLevel} onChange={e => setNewSchoolLevel(e.target.value)} style={{flex:'0 0 76px'}}>
+                  {activeLevels.map(l => <option key={l} value={l}>{l.toUpperCase()}</option>)}
                 </select>
-                <button
-                  className="confirm-btn"
-                  onClick={addSchool}
-                  disabled={!newSchoolName.trim() || newSchoolDays.length === 0}
-                  title="Add school"
-                >
-                  ✓
-                </button>
-              </div>
-              <div className="day-chips">
-                {DAYS.map(d => (
-                  <button
-                    key={d}
-                    type="button"
-                    className={`day-chip ${newSchoolDays.includes(d) ? 'active' : ''}`}
-                    onClick={() => toggleNewDay(d)}
-                  >
-                    {d.slice(0, 3)}
-                  </button>
-                ))}
+                <button className="confirm-btn" onClick={addSchool} disabled={!newSchoolName.trim()}><Check size={14} /></button>
               </div>
             </div>
 
             <div className="wz-btn-row">
               <button className="wz-btn-back" onClick={() => setStep(1)}>← Back</button>
-              <button className="wz-btn-next" onClick={goToStep3} disabled={schools.length === 0}>
+              <button className="wz-btn-next" onClick={() => { setActiveSchoolId(schools[0]?.id ?? null); setStep(3) }} disabled={schools.length === 0}>
                 Next →
               </button>
             </div>
           </div>
         )}
 
+        {/* Step 3 — Classes */}
         {step === 3 && (
           <div>
-            <div className="wz-title">Add classes for each school</div>
-            <div className="wz-sub">Each school needs at least one class. For joint classes, name it something like "1-1 & 2-1".</div>
+            <div className="wz-title">Add classes to each school</div>
+            <div className="wz-sub">Each school needs at least one class. You'll assign classes to specific periods in Schedule after setup.</div>
 
             <div className="school-tabs">
               {schools.map(s => {
                 const hasClasses = (classes[s.id] ?? []).length > 0
                 return (
-                  <button
-                    key={s.id}
-                    className={`school-tab ${activeSchoolId === s.id ? 'active' : ''} ${hasClasses ? 'has-classes' : ''}`}
-                    onClick={() => setActiveSchoolId(s.id)}
-                  >
+                  <button key={s.id} className={`school-tab ${activeSchoolId === s.id ? 'active' : ''} ${hasClasses ? 'has-classes' : ''}`} onClick={() => setActiveSchoolId(s.id)}>
                     {s.name}
-                    {hasClasses && <span className="school-tab-check">✓</span>}
+                    {hasClasses && <span className="school-tab-check"><Check size={11} /></span>}
                   </button>
                 )
               })}
@@ -460,83 +340,52 @@ export default function Wizard() {
                     return (
                       <div key={c.id} className="class-item">
                         <span className="ci-label">{c.label}</span>
-                        {curr && (
-                          <span className="ci-grade">{curr.gradeTag || curr.name}</span>
-                        )}
-                        {curr && (
-                          <span className="ci-book-sm">
-                            {TEXTBOOKS[curr.level]?.find(t => t.value === curr.textbook)?.label ?? ''}
-                          </span>
-                        )}
-                        <span className="ci-freq">
-                          {c.frequency === 'every_week' ? 'Every week'
-                            : c.frequency === 'alternating' ? 'Alternating'
-                            : 'Occasionally'}
-                        </span>
-                        <button className="remove-btn" onClick={() => removeClass(activeSchool.id, c.id)}>×</button>
+                        {curr?.gradeTag && <span className="ci-grade">{curr.gradeTag}</span>}
+                        {curr && <span className="ci-book-sm">{TEXTBOOKS[curr.level]?.find(t => t.value === curr.textbook)?.label ?? curr.name}</span>}
+                        <button className="remove-btn" style={{marginLeft:'auto'}} onClick={() => setClasses(prev => ({ ...prev, [activeSchool.id]: prev[activeSchool.id].filter(x => x.id !== c.id) }))}><X size={12} /></button>
                       </div>
                     )
                   })}
                 </div>
 
-                <div className="class-add-row">
-                  <input
-                    placeholder="Label e.g. 3-1"
-                    value={newClass[activeSchool.id]?.label ?? ''}
-                    onChange={e => setNewClass(prev => ({
-                      ...prev,
-                      [activeSchool.id]: { ...prev[activeSchool.id], label: e.target.value }
-                    }))}
-                    onKeyDown={e => e.key === 'Enter' && addClass(activeSchool.id)}
-                  />
-                  <select
-                    value={newClass[activeSchool.id]?.curriculumId ?? ''}
-                    onChange={e => setNewClass(prev => ({
-                      ...prev,
-                      [activeSchool.id]: { ...prev[activeSchool.id], curriculumId: e.target.value }
-                    }))}
-                  >
-                    <option value="">Curriculum…</option>
-                    {curricula.map(c => (
-                      <option key={c.id} value={c.id}>{c.name}</option>
-                    ))}
-                  </select>
-                  <select
-                    value={newClass[activeSchool.id]?.frequency ?? 'every_week'}
-                    onChange={e => setNewClass(prev => ({
-                      ...prev,
-                      [activeSchool.id]: { ...prev[activeSchool.id], frequency: e.target.value }
-                    }))}
-                    style={{ flex: '0 0 130px' }}
-                  >
-                    <option value="every_week">Every week</option>
-                    <option value="alternating">Alternating</option>
-                    <option value="occasionally">Occasionally</option>
-                  </select>
-                  <button
-                    className="confirm-btn"
-                    onClick={() => addClass(activeSchool.id)}
-                    disabled={!newClass[activeSchool.id]?.label?.trim()}
-                    title="Add class"
-                  >
-                    ✓
-                  </button>
+                <div className="curriculum-form">
+                  <div className="wz-field-label">CLASS LABEL &amp; COURSE</div>
+                  <div className="class-add-row">
+                    <input
+                      placeholder="e.g. 3-1"
+                      value={newClass[activeSchool.id]?.label ?? ''}
+                      onChange={e => setNewClass(prev => ({ ...prev, [activeSchool.id]: { ...prev[activeSchool.id], label: e.target.value } }))}
+                      onKeyDown={e => e.key === 'Enter' && addClass(activeSchool.id)}
+                      style={{flex:'0 0 100px'}}
+                    />
+                    <select
+                      value={newClass[activeSchool.id]?.curriculumId ?? ''}
+                      onChange={e => setNewClass(prev => ({ ...prev, [activeSchool.id]: { ...prev[activeSchool.id], curriculumId: e.target.value } }))}
+                    >
+                      <option value="">No course</option>
+                      {curricula.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                    </select>
+                    <button className="confirm-btn" onClick={() => addClass(activeSchool.id)} disabled={!newClass[activeSchool.id]?.label?.trim()}><Check size={14} /></button>
+                  </div>
                 </div>
+              </div>
+            )}
+
+            {error && (
+              <div style={{marginTop:12,padding:'10px 14px',background:'#FDEAEA',border:'0.5px solid #F5AAAA',borderRadius:8,fontFamily:"'Figtree',sans-serif",fontSize:13,color:'#C03030'}}>
+                {error}
               </div>
             )}
 
             <div className="wz-btn-row">
               <button className="wz-btn-back" onClick={() => setStep(2)}>← Back</button>
-              <button
-                className="wz-btn-finish"
-                onClick={handleFinish}
-                disabled={saving || !allSchoolsHaveClasses}
-              >
+              <button className="wz-btn-finish" onClick={handleFinish} disabled={saving || !allSchoolsHaveClasses}>
                 {saving ? 'Setting up…' : 'Finish setup →'}
               </button>
             </div>
           </div>
         )}
+
       </div>
     </div>
   )

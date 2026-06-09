@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 import { useData } from '../context/DataContext'
 import Layout from '../components/Layout'
+import HintBanner from '../components/HintBanner'
 import { Plus, Trash2, Copy, ChevronDown, X, GripVertical, ArrowLeft, ArrowRight, MoreHorizontal } from 'lucide-react'
 import { useLocation } from 'react-router-dom'
 import './Curriculum.css'
@@ -221,6 +222,7 @@ export default function Curriculum() {
       <div className="curr-count-box">
         <h1 className="curr-title">Courses</h1>
         <span>You currently have <strong>{curricula.length} active courses</strong></span>
+        <HintBanner id="curriculum" message="Build your lesson plans here. Create courses, add lessons, and break each lesson into activity blocks. These plans appear on your Home dashboard when you tap a period." />
         <button className="curr-new-btn" onClick={() => { setCourseForm({ name: '', grade_tag: '' }); setCourseModal(true) }}><Plus size={14} /> New Course</button>
       </div>
       <div className="curr-list">

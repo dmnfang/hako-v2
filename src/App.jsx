@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { supabase } from './lib/supabase'
 import { DataProvider, useData } from './context/DataContext'
 import Home from './pages/Home'
@@ -16,14 +16,24 @@ import TrialGate from './components/TrialGate'
 function AppRoutes({ session }) {
   const { ready, refresh } = useData()
   const [hasSchools, setHasSchools] = useState(undefined)
+  const location = useLocation()
+
+  async function checkSchools() {
+    const { data } = await supabase.from('schools').select('id').limit(1)
+    setHasSchools(data && data.length > 0)
+  }
 
   useEffect(() => {
     if (!session) { setHasSchools(null); return }
-    refresh().then(async () => {
-      const { data } = await supabase.from('schools').select('id').limit(1)
-      setHasSchools(data && data.length > 0)
-    })
+    refresh().then(() => checkSchools())
   }, [session])
+
+  // Re-check when navigating to /home so wizard completion is detected
+  useEffect(() => {
+    if (session && location.pathname.includes('/home')) {
+      checkSchools()
+    }
+  }, [location])
 
   if (session && (hasSchools === undefined || !ready)) return null
 
@@ -74,7 +84,7 @@ export default function App() {
   if (session === undefined) return null
 
   return (
-    <BrowserRouter basename="/hako-v2">
+    <BrowserRouter>
       <DataProvider>
         <AppRoutes session={session} />
       </DataProvider>

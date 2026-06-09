@@ -42,7 +42,27 @@ export function useDaySchedule(date, allClasses, progressCtx) {
     const [{ data: sdRows }, { data: overrideData }, { data: statusData }] = await Promise.all([
       supabase
         .from('school_days')
-        .select('*, school:schools(id,name), periods(*, period_slots(*, class:classes(*, curriculum:curricula(*))))')
+        .select(`
+          id,
+          school_id,
+          periods(
+            id,
+            period_number,
+            school_day_id,
+            frequency,
+            period_slots(
+              id,
+              class_id,
+              school_id,
+              start_time,
+              end_time,
+              week_group,
+              sort_order,
+              school:schools(id, name),
+              class:classes(id, label, school_id, curriculum_id, curriculum:curricula(id, name, grade_tag))
+            )
+          )
+        `)
         .eq('day_of_week', dow),
       supabase.from('period_overrides').select('*').eq('date', dateStr),
       supabase.from('day_status').select('*').eq('date', dateStr).maybeSingle(),
@@ -58,19 +78,45 @@ export function useDaySchedule(date, allClasses, progressCtx) {
       return
     }
 
-    const allPeriods = (sdRows ?? []).flatMap(sd =>
-      (sd.periods ?? []).map(p => ({ ...p, school_id: sd.school_id, school: sd.school }))
-    )
+    // Merge all periods across school_days for this dow
+    const periodMap = {}
+    ;(sdRows ?? []).forEach(sd => {
+      (sd.periods ?? []).forEach(p => {
+        if (!periodMap[p.period_number]) {
+          const slots = (p.period_slots ?? [])
+            .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
+          periodMap[p.period_number] = {
+            id: p.id,
+            period_number: p.period_number,
+            school_day_id: p.school_day_id,
+            frequency: p.frequency ?? 'weekly',
+            slots,
+            // Resolved from slot[0] for convenience
+            school_id: slots[0]?.school_id ?? sd.school_id,
+            school: slots[0]?.school ?? null,
+            start_time: slots[0]?.start_time ?? null,
+            end_time: slots[0]?.end_time ?? null,
+          }
+        }
+      })
+    })
 
-    const sorted = [...allPeriods].sort((a, b) => a.period_number - b.period_number)
+    const sorted = Object.values(periodMap).sort((a, b) => a.period_number - b.period_number)
     setPeriods(sorted)
 
     const ovMap = {}
     overrideData?.forEach(o => { ovMap[o.period_id] = o })
     setPeriodOverrides(ovMap)
 
+    // Collect curriculum IDs for lesson fetching
     const currIds = [...new Set(sorted.flatMap(p =>
-      p.period_slots.map(s => s.class?.curriculum_id).filter(Boolean)
+      p.slots.map(s => {
+        const currId = s.class?.curriculum_id
+        if (currId) return currId
+        // Fallback: look up class in allClasses
+        const cls = allClasses?.find(c => c.id === s.class_id)
+        return cls?.curriculum_id
+      }).filter(Boolean)
     ))]
 
     if (currIds.length > 0) {
@@ -86,10 +132,10 @@ export function useDaySchedule(date, allClasses, progressCtx) {
       const idxMap = {}
       sorted.forEach((period, i) => {
         const override = ovMap[period.id]
-        const classId = override?.class_id ?? period.period_slots[0]?.class?.id
+        const classId = override?.class_id ?? period.slots[0]?.class_id
         if (!classId) return
-        const cls = allClasses.find(c => c.id === classId)
-        if (!cls) return
+        const cls = allClasses?.find(c => c.id === classId)
+        if (!cls?.curriculum_id) return
         const currLessons = lessonMap[cls.curriculum_id] ?? []
         const prog = progressCtx?.[classId]
         const idx = prog?.current_lesson_id
@@ -112,39 +158,42 @@ export function useDaySchedule(date, allClasses, progressCtx) {
     setBlocks(prev => ({ ...prev, [lessonId]: data ?? [] }))
   }
 
-  async function savePeriodSchoolOverride(period, schoolId, changeType, date, dow) {
+  // Save functions — 'once' writes to period_overrides, 'permanent' writes to period_slots
+  async function savePeriodSchoolOverride(period, schoolId, slotIdx = 0, changeType, date) {
     if (!period || !schoolId) return
     if (changeType === 'once') {
       await supabase.from('period_overrides').upsert({
         period_id: period.id,
         date: toLocalDateStr(date),
         school_id: schoolId,
-        class_id: null,
       }, { onConflict: 'period_id,date' })
     } else {
-      await supabase.from('school_days').update({ school_id: schoolId }).eq('id', period.school_day_id)
+      const slot = period.slots[slotIdx]
+      if (slot?.id) {
+        await supabase.from('period_slots').update({ school_id: schoolId }).eq('id', slot.id)
+      }
     }
     fetchDateData(date)
   }
 
-  async function savePeriodClassOverride(period, classId, changeType, date) {
+  async function savePeriodClassOverride(period, classId, slotIdx = 0, changeType, date) {
     if (!period) return
     if (changeType === 'once') {
       await supabase.from('period_overrides').upsert({
         period_id: period.id,
         date: toLocalDateStr(date),
         class_id: classId,
-        school_id: null,
       }, { onConflict: 'period_id,date' })
     } else {
-      if (period.period_slots?.[0]?.id) {
-        await supabase.from('period_slots').update({ class_id: classId }).eq('id', period.period_slots[0].id)
+      const slot = period.slots[slotIdx]
+      if (slot?.id) {
+        await supabase.from('period_slots').update({ class_id: classId || null }).eq('id', slot.id)
       }
     }
     fetchDateData(date)
   }
 
-  async function savePeriodTimeOverride(period, timeForm, changeType, date) {
+  async function savePeriodTimeOverride(period, timeForm, slotIdx = 0, changeType, date) {
     if (!period) return
     const { start_time, end_time } = timeForm
     if (!start_time || !end_time) return
@@ -156,7 +205,10 @@ export function useDaySchedule(date, allClasses, progressCtx) {
         end_time,
       }, { onConflict: 'period_id,date' })
     } else {
-      await supabase.from('periods').update({ start_time, end_time }).eq('id', period.id)
+      const slot = period.slots[slotIdx]
+      if (slot?.id) {
+        await supabase.from('period_slots').update({ start_time, end_time }).eq('id', slot.id)
+      }
     }
     fetchDateData(date)
   }

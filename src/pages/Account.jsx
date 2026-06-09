@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 import Layout from '../components/Layout'
+import HintBanner from '../components/HintBanner'
 import { LogOut, User, CreditCard, Settings, Pencil } from 'lucide-react'
 import { useRef } from 'react'
 import './Account.css'
@@ -108,6 +109,9 @@ export default function Account() {
         </div>
       </div>
 
+      <div style={{padding:"8px 16px"}}>
+        <HintBanner id="account" message="Manage your profile, subscription, and app settings here." />
+      </div>
       <div className="acc-nav">
         {NAV.map(({ key, label, icon: Icon }) => (
           <div

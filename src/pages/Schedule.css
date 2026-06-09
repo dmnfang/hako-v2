@@ -544,6 +544,7 @@
 }
 
 .sch-period-row:last-child { border-bottom: none; }
+.sch-period-row.empty { opacity: 0.4; }
 
 .sch-period-header-row {
   display: flex;

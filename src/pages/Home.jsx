@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useData } from '../context/DataContext'
 import Layout from '../components/Layout'
+import HintBanner from '../components/HintBanner'
 import { useDaySchedule, toLocalDateStr, getDayStatus } from '../hooks/useDaySchedule'
 import { GripVertical, ChevronLeft, ChevronRight, ChevronDown, X, Play, ArrowRightLeft, Pencil } from 'lucide-react'
 import './Home.css'
@@ -49,7 +50,7 @@ export default function Home() {
     const period = periods[selectedPeriodIdx]
     if (!period) return
     const override = periodOverrides[period.id]
-    const classId = override?.class_id ?? period.period_slots?.[0]?.class?.id
+    const classId = override?.class_id ?? period.slots?.[0]?.class_id
     if (!classId) return
     const cls = allClasses.find(c => c.id === classId)
     if (!cls) return
@@ -57,14 +58,13 @@ export default function Home() {
     const lesson = currLessons[lessonIndices[selectedPeriodIdx] ?? 0]
     if (lesson) {
       fetchBlocks(lesson.id)
-      setExpandedBlocks({ [`${lesson.id}_0`]: true })
     }
   }, [selectedPeriodIdx, lessonIndices, periods, lessons])
 
   function navigateLesson(periodIdx, dir) {
     const period = periods[periodIdx]
     const override = periodOverrides[period?.id]
-    const classId = override?.class_id ?? period?.period_slots?.[0]?.class?.id
+    const classId = override?.class_id ?? period?.slots?.[0]?.class_id
     const cls = allClasses.find(c => c.id === classId)
     if (!cls) return
     const currLessons = lessons[cls.curriculum_id] ?? []
@@ -118,7 +118,7 @@ export default function Home() {
 
   const selectedPeriod = periods[selectedPeriodIdx]
   const periodOverride = selectedPeriod ? periodOverrides[selectedPeriod.id] : null
-  const effectiveClassId = periodOverride?.class_id ?? selectedPeriod?.period_slots?.[0]?.class?.id
+  const effectiveClassId = periodOverride?.class_id ?? selectedPeriod?.slots?.[0]?.class_id
   const selectedClass = allClasses.find(c => c.id === effectiveClassId)
   const selectedLessons = lessons[selectedClass?.curriculum_id] ?? []
   const selectedLessonIdx = lessonIndices[selectedPeriodIdx] ?? 0
@@ -129,14 +129,14 @@ export default function Home() {
   // Schools active today (from period schedule)
   const todaySchools = [...new Set(periods.map(p => {
     const ov = periodOverrides[p.id]
-    return ov?.school_id ?? p.school_id
+    return ov?.school_id ?? p.slots?.[0]?.school_id ?? p.school_id
   }))].map(id => schools.find(s => s.id === id)?.name).filter(Boolean)
 
   const dow = selectedDate.toLocaleDateString('en-US', { weekday: 'long' })
   const dateStr = selectedDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
   const classCount = periods.filter(p => {
     const ov = periodOverrides[p.id]
-    return ov?.class_id ?? p.period_slots?.[0]?.class
+    return ov?.class_id ?? p.slots?.[0]?.class_id
   }).length
 
   if (loading) return <Layout sidebar={<div />}><div /></Layout>
@@ -163,6 +163,8 @@ export default function Home() {
           <span className={`home-status-value home-status-${dayStatus.status}`}>{dayStatus.label}</span>
         </div>
 
+        <HintBanner id="home" message="Your daily dashboard. Tap any school, class, or time chip on a period card to make a quick change — you'll be asked if it applies just today or every future occurrence of that day of the week." />
+
         {/* Actions */}
         <div className="home-actions">
           <button
@@ -188,24 +190,29 @@ export default function Home() {
         )}
         {isWorkingDay && periods.map((period, i) => {
           const override = periodOverrides[period.id]
-          const effectiveSId = override?.school_id ?? period.school_id
-          const effectiveCId = override?.class_id ?? period.period_slots?.[0]?.class?.id
+          const slot0 = period.slots?.[0]
+          const effectiveSId = override?.school_id ?? slot0?.school_id ?? period.school_id
+          const effectiveCId = override?.class_id ?? slot0?.class_id ?? slot0?.class?.id
+          const effectiveStartTime = override?.start_time ?? slot0?.start_time
+          const effectiveEndTime = override?.end_time ?? slot0?.end_time
           const cls = allClasses.find(c => c.id === effectiveCId)
           const periodSchool = schools.find(s => s.id === effectiveSId)
           const currLessons = lessons[cls?.curriculum_id] ?? []
           const lesson = currLessons[lessonIndices[i] ?? 0]
           const isSelected = i === selectedPeriodIdx
+          const hasOverride = !!override
 
           return (
             <div
               key={period.id}
-              className={`period-row ${isSelected ? 'selected' : ''} ${!cls ? 'no-class' : ''}`}
+              className={`period-row ${isSelected ? 'selected' : ''} ${(!cls) ? 'no-class' : ''}`}
               onClick={() => setSelectedPeriodIdx(i)}
             >
               {/* Period label row */}
               <div className="period-header-row">
                 <span className={`period-dot ${isSelected ? 'selected' : ''}`} />
                 <span className="period-eyebrow">Period {period.period_number}</span>
+                {hasOverride && <span style={{fontSize:11,fontWeight:600,color:'#007080',background:'#DFFCFF',borderRadius:999,padding:'2px 8px',marginLeft:'auto'}}>Special</span>}
               </div>
 
               {/* School + Time bar */}
@@ -228,13 +235,13 @@ export default function Home() {
                     setSelectedPeriodIdx(i)
                     setModalPeriodIdx(i)
                     setModalTimeForm({
-                      start_time: period.start_time?.slice(0,5) ?? '',
-                      end_time: period.end_time?.slice(0,5) ?? '',
+                      start_time: effectiveStartTime?.slice(0,5) ?? '',
+                      end_time: effectiveEndTime?.slice(0,5) ?? '',
                     })
                     setModalChangeType('once')
                     setModal('period_time')
                   }}>
-                  {period.start_time ? `${period.start_time.slice(0,5)} – ${period.end_time?.slice(0,5)}` : '—'}
+                  {effectiveStartTime ? `${effectiveStartTime.slice(0,5)} – ${effectiveEndTime?.slice(0,5)}` : '—'}
                 </button>
               </div>
 
