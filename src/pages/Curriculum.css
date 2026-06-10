@@ -1,9 +1,10 @@
 .curr-sidebar {
   width: 100%;
+  flex: 1;
+  min-height: 0;
   display: flex;
   flex-direction: column;
-  height: 100%;
-  overflow-y: auto;
+  overflow: visible;
 }
 
 .curr-count-box {
