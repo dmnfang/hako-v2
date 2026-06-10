@@ -13,6 +13,7 @@ html, body, #root {
   height: 100%;
   overflow: hidden;
   background: #F5F5F5;
+  touch-action: none;
 }
 
 /* Left unit — 30% of shell, rail + sidebar side by side */
@@ -97,6 +98,7 @@ html, body, #root {
   background: #FFFFFF;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
+  touch-action: pan-y;
 }
 
 /* Main panel — floating with padding all around */
@@ -110,4 +112,5 @@ html, body, #root {
   flex-direction: column;
   padding: 12px;
   overscroll-behavior: contain;
+  touch-action: pan-y;
 }
