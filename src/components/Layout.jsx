@@ -1,3 +1,4 @@
+import { useState, useRef } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { Home, CalendarDays, School, BookOpen, User } from 'lucide-react'
 import './Layout.css'
@@ -10,43 +11,64 @@ const NAV = [
   { path: '/account', icon: User, label: 'Account' },
 ]
 
+function NavButton({ path, icon: Icon, label, isActive, onClick }) {
+  const [tooltipVisible, setTooltipVisible] = useState(false)
+  const timerRef = useRef(null)
+
+  function showTooltip() {
+    setTooltipVisible(true)
+    clearTimeout(timerRef.current)
+    timerRef.current = setTimeout(() => setTooltipVisible(false), 1000)
+  }
+
+  function hideTooltip() {
+    clearTimeout(timerRef.current)
+    setTooltipVisible(false)
+  }
+
+  return (
+    <div
+      className="nav-btn-wrap"
+      onMouseEnter={showTooltip}
+      onMouseLeave={hideTooltip}
+    >
+      <button
+        className={`nav-btn ${isActive ? 'active' : ''}`}
+        onClick={() => { hideTooltip(); onClick() }}
+      >
+        <Icon size={16} />
+      </button>
+      <span className={`nav-tooltip ${tooltipVisible ? 'visible' : ''}`}>{label}</span>
+    </div>
+  )
+}
+
 export default function Layout({ children, sidebar }) {
   const navigate = useNavigate()
   const location = useLocation()
 
   return (
     <div className="shell">
-
-      {/* Left unit: rail + sidebar flush together */}
       <div className="left-unit">
-
-        {/* Rail */}
         <div className="rail">
-          {NAV.map(({ path, icon: Icon, label }) => (
-            <div key={path} className="nav-btn-wrap">
-              <button
-                className={`nav-btn ${location.pathname === path ? 'active' : ''}`}
-                onClick={() => navigate(path)}
-              >
-                <Icon size={16} />
-              </button>
-              <span className="nav-tooltip">{label}</span>
-            </div>
+          {NAV.map(({ path, icon, label }) => (
+            <NavButton
+              key={path}
+              path={path}
+              icon={icon}
+              label={label}
+              isActive={location.pathname === path}
+              onClick={() => navigate(path)}
+            />
           ))}
         </div>
-
-        {/* Sidebar content */}
         <div className="sidebar">
           {sidebar}
         </div>
-
       </div>
-
-      {/* Main panel */}
       <div className="main">
         {children}
       </div>
-
     </div>
   )
 }

@@ -64,7 +64,7 @@ html, body, #root {
 
 .nav-tooltip {
   position: absolute;
-  left: calc(100% + 10px);
+  left: calc(100% + 8px);
   top: 50%;
   transform: translateY(-50%);
   background: #0A100D;
@@ -81,7 +81,7 @@ html, body, #root {
   z-index: 200;
 }
 
-.nav-btn-wrap:hover .nav-tooltip { opacity: 1; }
+.nav-tooltip.visible { opacity: 1; }
 
 /* Sidebar — fills remaining left-unit width, scrollable */
 .sidebar {

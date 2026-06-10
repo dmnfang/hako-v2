@@ -141,7 +141,7 @@
 
 /* ── Shared Panel Header ── */
 .sc-panel-header {
-  padding: 12px;
+  padding: 12px 12px 12px 16px;
   border-bottom: 0.5px solid #E0E0E0;
   flex-shrink: 0;
   display: flex;
