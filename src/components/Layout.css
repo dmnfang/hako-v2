@@ -16,7 +16,7 @@ html, body, #root {
 
 /* Left unit — 30% of shell, rail + sidebar side by side */
 .left-unit {
-  width: 30%;
+  width: 35%;
   flex-shrink: 0;
   display: flex;
   flex-direction: row;
