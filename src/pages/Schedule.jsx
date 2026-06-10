@@ -692,10 +692,10 @@ export default function Schedule() {
           ? <HintBanner id="schedule_regular" message="Set your standard weekly schedule here. Changes you make apply to every future occurrence of that day — this is your baseline." />
           : <HintBanner id="schedule_calendar" message="Make date-specific overrides here. Tap any chip on a period to change it for a specific date only, or update all future occurrences of that day." />
         }
-      </div>
-      <div className="sch-sidebar-tabs">
-        <button className={`sch-sidebar-tab ${tab === 'regular' ? 'active' : ''}`} onClick={() => setTab('regular')}>Regular Week</button>
-        <button className={`sch-sidebar-tab ${tab === 'calendar' ? 'active' : ''}`} onClick={() => setTab('calendar')}>Calendar</button>
+        <div className="sch-sidebar-tabs">
+          <button className={`sch-sidebar-tab ${tab === 'regular' ? 'active' : ''}`} onClick={() => setTab('regular')}>Regular Week</button>
+          <button className={`sch-sidebar-tab ${tab === 'calendar' ? 'active' : ''}`} onClick={() => setTab('calendar')}>Calendar</button>
+        </div>
       </div>
 
       {tab === 'regular' && (

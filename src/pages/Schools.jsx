@@ -3,7 +3,7 @@ import { supabase } from '../lib/supabase'
 import { useData } from '../context/DataContext'
 import Layout from '../components/Layout'
 import HintBanner from '../components/HintBanner'
-import { Plus, ChevronLeft, ChevronRight, X } from 'lucide-react'
+import { Plus, ChevronLeft, ChevronRight, X, Trash2 } from 'lucide-react'
 import './Schools.css'
 
 function ClassModal({ classForm, setClassForm, formLessonIdx, setFormLessonIdx, editingClass, curricula, lessonsByCurriculum, onSave, onCancel, onDelete }) {
@@ -205,6 +205,30 @@ export default function Schools() {
     refreshData()
   }
 
+  const [deleteSchoolModal, setDeleteSchoolModal] = useState(false)
+  const [deletingSchool, setDeletingSchool] = useState(null)
+
+  async function deleteSchool() {
+    if (!deletingSchool) return
+    // Delete in order: period_slots, periods, school_days, classes, then school
+    const { data: sdRows } = await supabase.from('school_days').select('id, periods(id)').eq('school_id', deletingSchool.id)
+    for (const sd of sdRows ?? []) {
+      for (const p of sd.periods ?? []) {
+        await supabase.from('period_slots').delete().eq('period_id', p.id)
+        await supabase.from('period_overrides').delete().eq('period_id', p.id)
+      }
+      await supabase.from('periods').delete().eq('school_day_id', sd.id)
+    }
+    await supabase.from('school_days').delete().eq('school_id', deletingSchool.id)
+    await supabase.from('classes').delete().eq('school_id', deletingSchool.id)
+    await supabase.from('schools').delete().eq('id', deletingSchool.id)
+    setDeleteSchoolModal(false)
+    setDeletingSchool(null)
+    if (selectedSchoolId === deletingSchool.id) setSelectedSchoolId(schools.filter(s => s.id !== deletingSchool.id)[0]?.id ?? null)
+    fetchBase()
+    refreshData()
+  }
+
   function getCurriculumName(curriculumId) {
     return curricula.find(c => c.id === curriculumId)?.name ?? ''
   }
@@ -247,9 +271,14 @@ export default function Schools() {
         <div className="sc-classes-panel">
           <div className="sc-panel-header">
             <span className="sc-panel-title">{selectedSchool?.name} Classes</span>
-            <button className="sc-add-btn" onClick={openNewClass}>
-              <Plus size={14} /> New Class
-            </button>
+            <div style={{display:'flex',gap:8}}>
+              <button className="sc-add-btn" onClick={openNewClass}>
+                <Plus size={14} /> New Class
+              </button>
+              <button className="sc-more-btn" onClick={() => { setDeletingSchool(selectedSchool); setDeleteSchoolModal(true) }} title="Delete school">
+                <Trash2 size={14} />
+              </button>
+            </div>
           </div>
 
           <div className="sc-class-list">
@@ -300,6 +329,27 @@ export default function Schools() {
           onCancel={closeModal}
           onDelete={() => deleteClass(editingClass)}
         />
+      )}
+
+      {/* Delete School modal */}
+      {deleteSchoolModal && deletingSchool && (
+        <div className="sc-modal-overlay" onClick={() => setDeleteSchoolModal(false)}>
+          <div className="sc-modal" onClick={e => e.stopPropagation()}>
+            <div className="sc-modal-header">
+              <span className="sc-modal-title">Delete {deletingSchool.name}?</span>
+              <button className="sc-modal-close" onClick={() => setDeleteSchoolModal(false)}><X size={14} /></button>
+            </div>
+            <div className="sc-modal-body" style={{display:'flex',flexDirection:'column',gap:12}}>
+              <div style={{padding:'12px 16px',background:'#FDEAEA',border:'0.5px solid #F5AAAA',borderRadius:10,fontFamily:"'Figtree',sans-serif",fontSize:14,color:'#C03030',lineHeight:1.6}}>
+                By deleting <strong>{deletingSchool.name}</strong> you will also delete <strong>{classCounts[deletingSchool.id] ?? 0} {(classCounts[deletingSchool.id] ?? 0) === 1 ? 'class' : 'classes'}</strong> and all associated schedule data. This action cannot be undone.
+              </div>
+            </div>
+            <div className="sc-modal-footer">
+              <button className="sc-form-cancel" onClick={() => setDeleteSchoolModal(false)}>Cancel</button>
+              <button className="sc-form-danger" onClick={deleteSchool}><Trash2 size={14} /> Delete School</button>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* New School modal */}
