@@ -9,7 +9,7 @@
 }
 
 .home-date-block {
-  padding: 16px 16px;
+  padding: 12px 12px;
   border-bottom: 0.5px solid #E0E0E0;
   flex-shrink: 0;
   display: flex;
@@ -26,14 +26,14 @@
 
 .home-date-at, .home-dow, .home-date, .home-school {
   font-family: 'Figtree', sans-serif;
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 600;
   color: #0A100D;
 }
 
 .home-class-count {
   font-family: 'Figtree', sans-serif;
-  font-size: 14px;
+  font-size: 13px;
   color: #3D3D3D;
   line-height: 20px;
 }
@@ -53,7 +53,7 @@
   background: #96F4FF;
   color: #003A40;
   font-family: 'Figtree', sans-serif;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.15s;
@@ -80,7 +80,7 @@
 }
 
 .no-periods {
-  padding: 32px 24px;
+  padding: 12px 12px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -90,7 +90,7 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  padding: 16px 16px 16px 16px;
+  padding: 12px;
   border-bottom: 0.5px solid #E0E0E0;
   cursor: pointer;
   transition: background 0.15s;
@@ -125,7 +125,7 @@
 
 .period-eyebrow {
   font-family: 'Figtree', sans-serif;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
   color: #787878;
 }
@@ -148,7 +148,7 @@
   border: 0.5px solid #E0E0E0;
   background: #FFFFFF;
   font-family: 'Figtree', sans-serif;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   color: #606060;
   cursor: pointer;
@@ -197,7 +197,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 16px 16px 16px 20px;
+  padding: 12px 12px 12px 16px;
   border-bottom: 0.5px solid #E0E0E0;
   flex-shrink: 0;
 }
@@ -236,7 +236,7 @@
 
 .lesson-count {
   font-family: 'Figtree', sans-serif;
-  font-size: 14px;
+  font-size: 13px;
   color: #787878;
   min-width: 52px;
   text-align: center;
@@ -251,7 +251,7 @@
   background: #96F4FF;
   color: #003A40;
   font-family: 'Figtree', sans-serif;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.15s;
@@ -275,7 +275,7 @@
 .no-blocks {
   padding: 24px;
   font-family: 'Figtree', sans-serif;
-  font-size: 14px;
+  font-size: 13px;
   color: #787878;
   text-align: center;
 }
@@ -287,7 +287,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 16px;
+  padding: 12px;
   cursor: pointer;
   transition: background 0.1s;
 }
@@ -298,7 +298,7 @@
 
 .block-title {
   font-family: 'Figtree', sans-serif;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
   color: #0A100D;
   flex: 1;
@@ -312,7 +312,7 @@
   border: 0.5px solid #E0E0E0;
   background: #FFFFFF;
   font-family: 'Figtree', sans-serif;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   color: #606060;
   cursor: pointer;
@@ -360,7 +360,7 @@
 .block-chevron.open { transform: rotate(180deg); }
 
 .block-content {
-  padding: 16px 16px 16px 44px;
+  padding: 12px 12px 12px 44px;
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -371,7 +371,7 @@
   display: flex;
   gap: 8px;
   font-family: 'Figtree', sans-serif;
-  font-size: 14px;
+  font-size: 13px;
   color: #3D3D3D;
   line-height: 1.5;
 }
@@ -414,13 +414,13 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px;
+  padding: 12px;
   border-bottom: 0.5px solid #E0E0E0;
 }
 
 .modal-title {
   font-family: 'Figtree', sans-serif;
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 600;
   color: #0A100D;
 }
@@ -441,7 +441,7 @@
 
 .modal-close:hover { background: #F5F5F5; }
 
-.modal-body { padding: 16px; }
+.modal-body { padding: 12px; }
 
 .modal-label {
   font-family: 'Figtree', sans-serif;
@@ -453,7 +453,7 @@
 
 .modal-sub {
   font-family: 'Figtree', sans-serif;
-  font-size: 14px;
+  font-size: 13px;
   color: #3D3D3D;
   margin-bottom: 14px;
 }
@@ -472,7 +472,7 @@
   border: 0.5px solid #E0E0E0;
   background: #FFFFFF;
   font-family: 'Figtree', sans-serif;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   color: #606060;
   cursor: pointer;
@@ -541,7 +541,7 @@
 
 .modal-change-title {
   font-family: 'Figtree', sans-serif;
-  font-size: 14px;
+  font-size: 13px;
   line-height: 18px;
   font-weight: 600;
   color: #0A100D;
@@ -560,7 +560,7 @@
   align-items: center;
   justify-content: flex-end;
   gap: 8px;
-  padding: 16px;
+  padding: 12px;
   border-top: 0.5px solid #E0E0E0;
 }
 
@@ -572,7 +572,7 @@
   border: 0.5px solid #E0E0E0;
   background: #FFFFFF;
   font-family: 'Figtree', sans-serif;
-  font-size: 14px;
+  font-size: 13px;
   color: #606060;
   cursor: pointer;
   transition: background 0.15s;
@@ -589,7 +589,7 @@
   background: #96F4FF;
   color: #003A40;
   font-family: 'Figtree', sans-serif;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
   transition: opacity 0.15s;
@@ -607,7 +607,7 @@
 
 .cal-modal-month {
   font-family: 'Figtree', sans-serif;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
   color: #0A100D;
 }
@@ -636,7 +636,7 @@
 
 .cal-modal-dow {
   font-family: 'Figtree', sans-serif;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   color: #787878;
   text-align: center;
@@ -649,7 +649,7 @@
   border: none;
   background: transparent;
   font-family: 'Figtree', sans-serif;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
   color: #3D3D3D;
   cursor: pointer;
@@ -680,7 +680,7 @@
 
 .cal-modal-selected-label {
   font-family: 'Figtree', sans-serif;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 500;
   color: #3D3D3D;
   flex: 1;
@@ -702,7 +702,7 @@
 
 .lesson-main-title {
   font-family: 'Figtree', sans-serif;
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 600;
   color: #0A100D;
   white-space: nowrap;
@@ -718,7 +718,7 @@
 
 .lesson-sub-title {
   font-family: 'Figtree', sans-serif;
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 400;
   color: #787878;
   white-space: nowrap;
@@ -736,7 +736,7 @@
 
 .modal-no-classes-label {
   font-family: 'Figtree', sans-serif;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   color: #3D3D3D;
 }
@@ -750,7 +750,7 @@
 .period-school-chip {
   height: 32px;
   font-family: 'Figtree', sans-serif;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   color: #A05000;
   background: #FFFFFF;
@@ -778,7 +778,7 @@
   background: #FFFFFF;
   color: #606060;
   font-family: 'Figtree', sans-serif;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.15s;
@@ -796,7 +796,7 @@
   align-items: center;
   gap: 6px;
   font-family: 'Figtree', sans-serif;
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .home-status-label { color: #787878; font-weight: 500; }
@@ -817,7 +817,7 @@
   border: 0.5px solid #E0E0E0;
   background: #FFFFFF;
   font-family: 'Figtree', sans-serif;
-  font-size: 14px;
+  font-size: 13px;
   color: #0A100D;
   outline: none;
   transition: border-color 0.15s;

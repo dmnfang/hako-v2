@@ -12,7 +12,7 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
-  padding: 20px 16px;
+  padding: 12px;
   border-bottom: 0.5px solid #E0E0E0;
   flex-shrink: 0;
 }
@@ -58,7 +58,7 @@
 
 .acc-email {
   font-family: 'Figtree', sans-serif;
-  font-size: 13px;
+  font-size: 12px;
   color: #787878;
   white-space: nowrap;
   overflow: hidden;
@@ -133,13 +133,13 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 20px;
+  padding: 12px 16px;
   border-bottom: 0.5px solid #E0E0E0;
 }
 
 .acc-card-title {
   font-family: 'Figtree', sans-serif;
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 600;
   color: #0A100D;
 }
@@ -160,7 +160,7 @@
 }
 
 .acc-card-body {
-  padding: 20px;
+  padding: 16px;
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -218,7 +218,7 @@
   border: 0.5px solid #E0E0E0;
   background: #F5F5F5;
   font-family: 'Figtree', sans-serif;
-  font-size: 14px;
+  font-size: 13px;
   color: #0A100D;
   outline: none;
   transition: border-color 0.15s, background 0.15s;
@@ -274,13 +274,13 @@
 
 .acc-trial-label {
   font-family: 'Figtree', sans-serif;
-  font-size: 13px;
+  font-size: 12px;
   color: #3D3D3D;
 }
 
 .acc-plan-desc {
   font-family: 'Figtree', sans-serif;
-  font-size: 14px;
+  font-size: 13px;
   color: #3D3D3D;
   line-height: 1.6;
   margin: 0;
@@ -309,7 +309,7 @@
 
 .acc-setting-sub {
   font-family: 'Figtree', sans-serif;
-  font-size: 13px;
+  font-size: 12px;
   color: #787878;
 }
 
@@ -355,7 +355,7 @@
   border: 0.5px solid #E0E0E0;
   background: #F5F5F5;
   font-family: 'Figtree', sans-serif;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   color: #3D3D3D;
   cursor: pointer;
@@ -376,7 +376,7 @@
   background: #96F4FF;
   color: #003A40;
   font-family: 'Figtree', sans-serif;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
   transition: opacity 0.15s;
@@ -392,7 +392,7 @@
   border: 0.5px solid #E0E0E0;
   background: transparent;
   font-family: 'Figtree', sans-serif;
-  font-size: 14px;
+  font-size: 13px;
   color: #3D3D3D;
   cursor: pointer;
   transition: background 0.15s;
@@ -408,7 +408,7 @@
   border: 0.5px solid #E0E0E0;
   background: #F5F5F5;
   font-family: 'Figtree', sans-serif;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   color: #3D3D3D;
   cursor: pointer;
@@ -427,7 +427,7 @@
   background: #96F4FF;
   color: #003A40;
   font-family: 'Figtree', sans-serif;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
   transition: opacity 0.15s;
@@ -446,7 +446,7 @@
   border: 0.5px solid #F5AAAA;
   background: transparent;
   font-family: 'Figtree', sans-serif;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   color: #C03030;
   cursor: pointer;
@@ -504,7 +504,7 @@
   flex-direction: column;
   align-items: center;
   gap: 4px;
-  padding: 16px 12px;
+  padding: 12px;
   background: #FAFAFA;
   border-radius: 10px;
   border: 0.5px solid #E0E0E0;

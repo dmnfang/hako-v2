@@ -25,7 +25,7 @@
   border: none;
   background: transparent;
   font-family: 'Figtree', sans-serif;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   color: #787878;
   cursor: pointer;
@@ -41,13 +41,13 @@
 
 .sch-sidebar-bigtitle {
   font-family: 'Figtree', sans-serif;
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 600;
   color: #0A100D;
 }
 
 .sch-sidebar-header {
-  padding: 16px;
+  padding: 12px;
   border-bottom: 0.5px solid #E0E0E0;
   display: flex;
   flex-direction: column;
@@ -57,7 +57,7 @@
 
 .sch-sidebar-title {
   font-family: 'Figtree', sans-serif;
-  font-size: 14px;
+  font-size: 13px;
   color: #3D3D3D;
 }
 
@@ -70,7 +70,7 @@
   background: #96F4FF;
   color: #003A40;
   font-family: 'Figtree', sans-serif;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
   display: inline-flex;
@@ -91,7 +91,7 @@
 
 .sch-row {
   position: relative;
-  padding: 16px;
+  padding: 12px;
   border-bottom: 0.5px solid #E0E0E0;
   cursor: pointer;
   transition: all 0.15s;
@@ -123,7 +123,7 @@
 
 .sch-row-name {
   font-family: 'Figtree', sans-serif;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
   color: #0A100D;
   transition: color 0.15s;
@@ -184,14 +184,14 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 16px 16px 16px 20px;
+  padding: 12px 12px 12px 16px;
   border-bottom: 0.5px solid #E0E0E0;
   flex-shrink: 0;
 }
 
 .sch-main-title {
   font-family: 'Figtree', sans-serif;
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 600;
   color: #0A100D;
 }
@@ -206,7 +206,7 @@
 
 .sch-main-sub {
   font-family: 'Figtree', sans-serif;
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 400;
   color: #787878;
 }
@@ -219,7 +219,7 @@
   border: 0.5px solid #E0E0E0;
   background: #FFFFFF;
   font-family: 'Figtree', sans-serif;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   color: #606060;
   cursor: pointer;
@@ -256,7 +256,7 @@
 }
 
 .sch-panel-header {
-  padding: 16px;
+  padding: 12px;
   border-bottom: 0.5px solid #E0E0E0;
   flex-shrink: 0;
   display: flex;
@@ -266,14 +266,14 @@
 
 .sch-panel-title {
   font-family: 'Figtree', sans-serif;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
   color: #0A100D;
 }
 
 .sch-panel-sub {
   font-family: 'Figtree', sans-serif;
-  font-size: 14px;
+  font-size: 13px;
   color: #787878;
 }
 
@@ -296,7 +296,7 @@
   border: 0.5px solid #E0E0E0;
   background: #FFFFFF;
   font-family: 'Figtree', sans-serif;
-  font-size: 13px;
+  font-size: 12px;
   color: #0A100D;
   outline: none;
   transition: border-color 0.15s;
@@ -312,7 +312,7 @@
   border: 0.5px solid #E0E0E0;
   background: #FFFFFF;
   font-family: 'Figtree', sans-serif;
-  font-size: 13px;
+  font-size: 12px;
   color: #0A100D;
   outline: none;
   cursor: pointer;
@@ -350,7 +350,7 @@
   border: 0.5px solid #E0E0E0;
   background: #FFFFFF;
   color: #606060;
-  font-size: 14px;
+  font-size: 13px;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -365,7 +365,7 @@
 .sch-lesson-picker-val {
   flex: 1;
   font-family: 'Figtree', sans-serif;
-  font-size: 13px;
+  font-size: 12px;
   color: #0A100D;
   text-align: center;
 }
@@ -385,7 +385,7 @@
   background: #96F4FF;
   color: #003A40;
   font-family: 'Figtree', sans-serif;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
   transition: opacity 0.15s;
@@ -402,7 +402,7 @@
   background: #FFFFFF;
   color: #606060;
   font-family: 'Figtree', sans-serif;
-  font-size: 14px;
+  font-size: 13px;
   cursor: pointer;
 }
 
@@ -417,7 +417,7 @@
 .sch-empty {
   padding: 24px;
   font-family: 'Figtree', sans-serif;
-  font-size: 13px;
+  font-size: 12px;
   color: #787878;
   text-align: center;
 }
@@ -426,7 +426,7 @@
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  padding: 16px;
+  padding: 12px;
   border-bottom: 0.5px solid #E0E0E0;
   gap: 8px;
 }
@@ -453,7 +453,7 @@
 
 .sch-class-label {
   font-family: 'Figtree', sans-serif;
-  font-size: 16px;
+  font-size: 15px;
   line-height: 24px;
   font-weight: 700;
   color: #0A100D;
@@ -462,7 +462,7 @@
 
 .sch-class-lesson-curr {
   font-family: 'Figtree', sans-serif;
-  font-size: 16px;
+  font-size: 15px;
   line-height: 24px;
   color: #787878;
 }
@@ -478,7 +478,7 @@
 
 .sch-class-lesson-text {
   font-family: 'Figtree', sans-serif;
-  font-size: 16px;
+  font-size: 15px;
   line-height: 24px;
   color: #787878;
   font-weight: 500;
@@ -521,7 +521,7 @@
   border: 0.5px solid #E0E0E0;
   background: #FFFFFF;
   font-family: 'Figtree', sans-serif;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   color: #606060;
   cursor: pointer;
@@ -544,7 +544,7 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  padding: 16px;
+  padding: 12px;
   border-bottom: 0.5px solid #E0E0E0;
 }
 
@@ -562,7 +562,7 @@
 
 .sch-period-eyebrow {
   font-family: 'Figtree', sans-serif;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
   color: #787878;
   margin-right: 2px;
@@ -584,7 +584,7 @@
   border: 0.5px solid #E0E0E0;
   background: #FFFFFF;
   font-family: 'Figtree', sans-serif;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   color: #606060;
   cursor: pointer;
@@ -629,7 +629,7 @@
   border: 0.5px solid #E0E0E0;
   background: #FFFFFF;
   font-family: 'Figtree', sans-serif;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   color: #606060;
   display: inline-flex;
@@ -700,7 +700,7 @@
   border: 0.5px solid #E0E0E0;
   background: #FFFFFF;
   font-family: 'Figtree', sans-serif;
-  font-size: 13px;
+  font-size: 12px;
   color: #0A100D;
   outline: none;
   width: 120px;
@@ -732,7 +732,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 16px 16px 20px;
+  padding: 12px 12px 12px 16px;
   border-bottom: 0.5px solid #E0E0E0;
 }
 
@@ -760,7 +760,7 @@
 
 .sch-modal-close:hover { background: #F5F5F5; }
 
-.sch-modal-body { padding: 16px 20px; }
+.sch-modal-body { padding: 12px 16px; }
 
 .sch-modal-footer {
   display: flex;
@@ -785,7 +785,7 @@
   border: 0.5px solid #E0E0E0;
   background: #FFFFFF;
   font-family: 'Figtree', sans-serif;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   color: #606060;
   cursor: pointer;
@@ -844,7 +844,7 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  padding: 16px;
+  padding: 12px;
   gap: 8px;
 }
 
@@ -899,7 +899,7 @@
   border: none;
   background: transparent;
   font-family: 'Figtree', sans-serif;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 500;
   color: #3D3D3D;
   cursor: pointer;

@@ -188,7 +188,7 @@ export default function Home() {
         {isWorkingDay && periods.length === 0 && (
           <div className="no-periods">
             <div style={{fontFamily:"'Figtree',sans-serif",fontSize:15,fontWeight:600,color:'#0A100D',marginBottom:6}}>No classes scheduled today.</div>
-            <div style={{fontFamily:"'Figtree',sans-serif",fontSize:14,color:'#787878',lineHeight:1.6,marginBottom:16}}>Your schedule for this day hasn't been set up yet. Head to Schedule to add schools and classes to your regular week.</div>
+            <div style={{fontFamily:"'Figtree',sans-serif",fontSize:14,color:'#787878',lineHeight:1.6,marginBottom:12}}>Your schedule for this day hasn't been set up yet. Head to Schedule to add schools and classes to your regular week.</div>
             <button
               onClick={() => navigate('/schedule')}
               style={{height:32,padding:'0 14px',borderRadius:8,border:'0.5px solid #E0E0E0',background:'#FFFFFF',fontFamily:"'Figtree',sans-serif",fontSize:14,fontWeight:600,color:'#606060',cursor:'pointer',transition:'all 0.15s'}}
