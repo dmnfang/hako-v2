@@ -64,6 +64,15 @@ export default function App() {
   const [session, setSession] = useState(undefined)
 
   useEffect(() => {
+    const handler = (e) => {
+      if (e.target.closest('.sidebar, .main, .period-list, .right-panel, .sch-list, .sch-period-list, .curr-list, .curr-lesson-list, .acc-nav, .acc-main, .sc-list, .sc-class-list')) return
+      e.preventDefault()
+    }
+    document.addEventListener('touchmove', handler, { passive: false })
+    return () => document.removeEventListener('touchmove', handler)
+  }, [])
+
+  useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => setSession(session))
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session)
