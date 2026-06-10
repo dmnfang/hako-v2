@@ -52,6 +52,7 @@
 .curr-new-btn:hover { opacity: 0.85; }
 
 .curr-list {
+  overscroll-behavior: contain;
   flex: 1;
   overflow-y: auto;
   display: flex;
@@ -244,6 +245,7 @@
 .curr-more-btn:hover { background: #F5F5F5; }
 
 .curr-lesson-list {
+  overscroll-behavior: contain;
   flex: 1;
   overflow-y: auto;
   display: flex;

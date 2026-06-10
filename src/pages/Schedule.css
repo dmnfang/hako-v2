@@ -83,6 +83,7 @@
 .sch-new-btn:hover { opacity: 0.85; }
 
 .sch-list {
+  overscroll-behavior: contain;
   flex: 1;
   overflow-y: auto;
   display: flex;
@@ -534,6 +535,7 @@
 
 /* Period rows */
 .sch-period-list {
+  overscroll-behavior: contain;
   flex: 1;
   overflow-y: auto;
   display: flex;

@@ -4,6 +4,7 @@ html, body, #root {
   height: 100%;
   overflow: hidden;
   overscroll-behavior: none;
+  -webkit-overflow-scrolling: auto;
 }
 
 .shell {
@@ -95,6 +96,7 @@ html, body, #root {
   flex-direction: column;
   background: #FFFFFF;
   -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
 }
 
 /* Main panel — floating with padding all around */
@@ -107,4 +109,5 @@ html, body, #root {
   display: flex;
   flex-direction: column;
   padding: 12px;
+  overscroll-behavior: contain;
 }
