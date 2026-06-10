@@ -5,3 +5,7 @@ export default defineConfig({
   base: '/hako-v2/',
   plugins: [react()],
 })
+
+server: {
+  open: '/hako-v2/'
+}

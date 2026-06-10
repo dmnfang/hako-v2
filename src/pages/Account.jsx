@@ -102,16 +102,16 @@ export default function Account() {
     <div className="acc-sidebar">
 
       <div className="acc-profile-block">
-        <div className="acc-avatar">{initials}</div>
-        <div className="acc-profile-text">
-          <span className="acc-name">{displayName || 'No name set'}</span>
-          <span className="acc-email">{user.email}</span>
+        <div className="acc-profile-identity">
+          <div className="acc-avatar">{initials}</div>
+          <div className="acc-profile-text">
+            <span className="acc-name">{displayName || 'No name set'}</span>
+            <span className="acc-email">{user.email}</span>
+          </div>
         </div>
-      </div>
-
-      <div style={{padding:"8px 16px"}}>
         <HintBanner id="account" message="Manage your profile, subscription, and app settings here." />
       </div>
+
       <div className="acc-nav">
         {NAV.map(({ key, label, icon: Icon }) => (
           <div

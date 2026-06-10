@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { supabase } from './lib/supabase'
 import { DataProvider, useData } from './context/DataContext'
 import Home from './pages/Home'
@@ -12,11 +12,9 @@ import Login from './pages/Login'
 import Runner from './pages/Runner'
 import TrialGate from './components/TrialGate'
 
-// Inner component so it can use useData after the provider mounts
 function AppRoutes({ session }) {
   const { ready, refresh } = useData()
   const [hasSchools, setHasSchools] = useState(undefined)
-  const location = useLocation()
 
   async function checkSchools() {
     const { data } = await supabase.from('schools').select('id').limit(1)
@@ -28,24 +26,17 @@ function AppRoutes({ session }) {
     refresh().then(() => checkSchools())
   }, [session])
 
-  // Re-check when navigating to /home so wizard completion is detected
-  useEffect(() => {
-    if (session && location.pathname.includes('/home')) {
-      checkSchools()
-    }
-  }, [location])
-
   if (session && (hasSchools === undefined || !ready)) return null
 
   return (
     <Routes>
-      {/* Public */}
       <Route path="/login" element={!session ? <Login /> : <Navigate to="/home" />} />
       <Route path="/runner/:classId/:lessonId" element={session ? <Runner /> : <Navigate to="/login" />} />
 
-      {/* Authenticated */}
       <Route path="/wizard" element={
-        session ? <TrialGate><Wizard /></TrialGate> : <Navigate to="/login" />
+        session
+          ? <TrialGate><Wizard onComplete={() => { setHasSchools(true); refresh() }} /></TrialGate>
+          : <Navigate to="/login" />
       } />
       <Route path="/home" element={
         !session ? <Navigate to="/login" /> :
@@ -61,7 +52,6 @@ function AppRoutes({ session }) {
       <Route path="/schools" element={
         session ? <TrialGate><Schools /></TrialGate> : <Navigate to="/login" />
       } />
-      {/* Account outside TrialGate so expired users can still sign out/upgrade */}
       <Route path="/account" element={
         session ? <Account /> : <Navigate to="/login" />
       } />
@@ -84,7 +74,7 @@ export default function App() {
   if (session === undefined) return null
 
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/hako-v2">
       <DataProvider>
         <AppRoutes session={session} />
       </DataProvider>

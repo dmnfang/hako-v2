@@ -28,7 +28,7 @@ export default function Layout({ children, sidebar }) {
                 className={`nav-btn ${location.pathname === path ? 'active' : ''}`}
                 onClick={() => navigate(path)}
               >
-                <Icon size={20} />
+                <Icon size={16} />
               </button>
               <span className="nav-tooltip">{label}</span>
             </div>

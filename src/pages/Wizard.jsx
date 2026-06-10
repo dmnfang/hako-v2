@@ -93,7 +93,7 @@ function buildLessons(curriculumId, textbook) {
   return lessons
 }
 
-export default function Wizard() {
+export default function Wizard({ onComplete }) {
   const navigate = useNavigate()
   const [step, setStep] = useState(1)
   const [saving, setSaving] = useState(false)
@@ -196,6 +196,7 @@ export default function Wizard() {
         }
       }
 
+      onComplete()
       navigate('/home')
     } catch (err) {
       console.error(err)

@@ -216,8 +216,8 @@ export default function Schools() {
   const sidebar = (
     <div className="sc-sidebar">
       <div className="sc-sidebar-header">
-          <HintBanner id="schools" message="Manage your schools and classes here. Classes you add to a school will appear as options when setting up your schedule." />
         <h1 className="sc-sidebar-title">Schools</h1>
+          <HintBanner id="schools" message="Manage your schools and classes here. Classes you add to a school will appear as options when setting up your schedule." />
         <button className="sc-new-btn" onClick={() => { setNewSchoolName(''); setNewSchoolModal(true) }}>
           <Plus size={14} /> New School
         </button>
