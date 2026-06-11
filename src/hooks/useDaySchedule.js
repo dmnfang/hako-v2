@@ -113,7 +113,6 @@ export function useDaySchedule(date, allClasses, progressCtx) {
       p.slots.map(s => {
         const currId = s.class?.curriculum_id
         if (currId) return currId
-        // Fallback: look up class in allClasses
         const cls = allClasses?.find(c => c.id === s.class_id)
         return cls?.curriculum_id
       }).filter(Boolean)
@@ -132,16 +131,32 @@ export function useDaySchedule(date, allClasses, progressCtx) {
       const idxMap = {}
       sorted.forEach((period, i) => {
         const override = ovMap[period.id]
-        const classId = override?.class_id ?? period.slots[0]?.class_id
-        if (!classId) return
-        const cls = allClasses?.find(c => c.id === classId)
-        if (!cls?.curriculum_id) return
-        const currLessons = lessonMap[cls.curriculum_id] ?? []
-        const prog = progressCtx?.[classId]
-        const idx = prog?.current_lesson_id
-          ? Math.max(0, currLessons.findIndex(l => l.id === prog.current_lesson_id))
-          : 0
-        idxMap[i] = idx
+        if (period.frequency === 'alternating') {
+          // Build index for each slot separately
+          period.slots.forEach((slot, slotIdx) => {
+            const classId = slot.class_id
+            if (!classId) return
+            const cls = allClasses?.find(c => c.id === classId)
+            if (!cls?.curriculum_id) return
+            const currLessons = lessonMap[cls.curriculum_id] ?? []
+            const prog = progressCtx?.[classId]
+            const idx = prog?.current_lesson_id
+              ? Math.max(0, currLessons.findIndex(l => l.id === prog.current_lesson_id))
+              : 0
+            idxMap[`${i}_${slotIdx}`] = idx
+          })
+        } else {
+          const classId = override?.class_id ?? period.slots[0]?.class_id
+          if (!classId) return
+          const cls = allClasses?.find(c => c.id === classId)
+          if (!cls?.curriculum_id) return
+          const currLessons = lessonMap[cls.curriculum_id] ?? []
+          const prog = progressCtx?.[classId]
+          const idx = prog?.current_lesson_id
+            ? Math.max(0, currLessons.findIndex(l => l.id === prog.current_lesson_id))
+            : 0
+          idxMap[i] = idx
+        }
       })
       setLessonIndices(idxMap)
     } else {

@@ -24,6 +24,7 @@ export default function Home() {
   const { schools, classes: allClasses, progress: progressCtx, lessons: allLessons, lessonsByCurriculum, refresh: refreshData } = useData()
   const [selectedSchoolId, setSelectedSchoolId] = useState(null)
   const [selectedPeriodIdx, setSelectedPeriodIdx] = useState(0)
+  const [selectedSlotIdx, setSelectedSlotIdx] = useState(0)
   const [expandedBlocks, setExpandedBlocks] = useState({})
 
   const {
@@ -50,7 +51,8 @@ export default function Home() {
     const period = periods[selectedPeriodIdx]
     if (!period) return
     const override = periodOverrides[period.id]
-    const classId = override?.class_id ?? period.slots?.[0]?.class_id
+    const slot = period.slots?.[selectedSlotIdx] ?? period.slots?.[0]
+    const classId = override?.class_id ?? slot?.class_id
     if (!classId) return
     const cls = allClasses.find(c => c.id === classId)
     if (!cls) return
@@ -64,13 +66,15 @@ export default function Home() {
   function navigateLesson(periodIdx, dir) {
     const period = periods[periodIdx]
     const override = periodOverrides[period?.id]
-    const classId = override?.class_id ?? period?.slots?.[0]?.class_id
+    const slot = period?.slots?.[selectedSlotIdx] ?? period?.slots?.[0]
+    const classId = override?.class_id ?? slot?.class_id
     const cls = allClasses.find(c => c.id === classId)
     if (!cls) return
     const currLessons = lessons[cls.curriculum_id] ?? []
-    const current = lessonIndices[periodIdx] ?? 0
+    const key = period?.frequency === 'alternating' ? `${periodIdx}_${selectedSlotIdx}` : periodIdx
+    const current = lessonIndices[key] ?? 0
     const next = Math.max(0, Math.min(currLessons.length - 1, current + dir))
-    setLessonIndices(prev => ({ ...prev, [periodIdx]: next }))
+    setLessonIndices(prev => ({ ...prev, [key]: next }))
   }
 
   function toggleBlock(key) {
@@ -98,17 +102,17 @@ export default function Home() {
   }
 
   async function savePeriodSchoolOverride() {
-    await savePeriodSchoolOverrideHook(periods[modalPeriodIdx], modalSchoolId, modalChangeType, selectedDate)
+    await savePeriodSchoolOverrideHook(periods[modalPeriodIdx], modalSchoolId, selectedSlotIdx, modalChangeType, selectedDate)
     setModal(null)
   }
 
   async function savePeriodClassOverride() {
-    await savePeriodClassOverrideHook(periods[modalPeriodIdx], modalClassId, modalChangeType, selectedDate)
+    await savePeriodClassOverrideHook(periods[modalPeriodIdx], modalClassId, selectedSlotIdx, modalChangeType, selectedDate)
     setModal(null)
   }
 
   async function savePeriodTimeOverride() {
-    await savePeriodTimeOverrideHook(periods[modalPeriodIdx], modalTimeForm, modalChangeType, selectedDate)
+    await savePeriodTimeOverrideHook(periods[modalPeriodIdx], modalTimeForm, selectedSlotIdx, modalChangeType, selectedDate)
     setModal(null)
   }
 
@@ -118,10 +122,12 @@ export default function Home() {
 
   const selectedPeriod = periods[selectedPeriodIdx]
   const periodOverride = selectedPeriod ? periodOverrides[selectedPeriod.id] : null
-  const effectiveClassId = periodOverride?.class_id ?? selectedPeriod?.slots?.[0]?.class_id
+  const isAlternating = selectedPeriod?.frequency === 'alternating'
+  const effectiveClassId = periodOverride?.class_id ?? selectedPeriod?.slots?.[selectedSlotIdx]?.class_id ?? selectedPeriod?.slots?.[0]?.class_id
   const selectedClass = allClasses.find(c => c.id === effectiveClassId)
   const selectedLessons = lessons[selectedClass?.curriculum_id] ?? []
-  const selectedLessonIdx = lessonIndices[selectedPeriodIdx] ?? 0
+  const lessonKey = isAlternating ? `${selectedPeriodIdx}_${selectedSlotIdx}` : selectedPeriodIdx
+  const selectedLessonIdx = lessonIndices[lessonKey] ?? 0
   const selectedLesson = selectedLessons[selectedLessonIdx]
   const selectedBlocks = selectedLesson ? (blocks[selectedLesson.id] ?? []) : []
   const selectedSchool = schools.find(s => s.id === selectedSchoolId)
@@ -188,10 +194,10 @@ export default function Home() {
         {isWorkingDay && periods.length === 0 && (
           <div className="no-periods">
             <div style={{fontFamily:"'Figtree',sans-serif",fontSize:15,fontWeight:600,color:'#0A100D',marginBottom:6}}>No classes scheduled today.</div>
-            <div style={{fontFamily:"'Figtree',sans-serif",fontSize:14,color:'#787878',lineHeight:1.6,marginBottom:12}}>Your schedule for this day hasn't been set up yet. Head to Schedule to add schools and classes to your regular week.</div>
+            <div style={{fontFamily:"'Figtree',sans-serif",fontSize:14,color:'#787878',lineHeight:1.6,marginBottom:16}}>Your schedule for this day hasn't been set up yet. Head to Schedule to add schools and classes to your regular week.</div>
             <button
               onClick={() => navigate('/schedule')}
-              style={{height:32,padding:'0 14px',borderRadius:8,border:'0.5px solid #E0E0E0',background:'#FFFFFF',fontFamily:"'Figtree',sans-serif",fontSize:14,fontWeight:600,color:'#606060',cursor:'pointer',transition:'all 0.15s'}}
+              style={{height:32,padding:'0 14px',borderRadius:6,border:'0.5px solid #E0E0E0',background:'#FFFFFF',fontFamily:"'Figtree',sans-serif",fontSize:14,fontWeight:600,color:'#606060',cursor:'pointer',transition:'all 0.15s'}}
               onMouseEnter={e => e.currentTarget.style.background='#F5F5F5'}
               onMouseLeave={e => e.currentTarget.style.background='#FFFFFF'}
             >
@@ -217,13 +223,13 @@ export default function Home() {
             <div
               key={period.id}
               className={`period-row ${isSelected ? 'selected' : ''} ${(!cls) ? 'no-class' : ''}`}
-              onClick={() => setSelectedPeriodIdx(i)}
+              onClick={() => { setSelectedPeriodIdx(i); if (period.frequency !== 'alternating') setSelectedSlotIdx(0) }}
             >
               {/* Period label row */}
               <div className="period-header-row">
                 <span className={`period-dot ${isSelected ? 'selected' : ''}`} />
                 <span className="period-eyebrow">Period {period.period_number}</span>
-                {hasOverride && <span style={{fontSize:11,fontWeight:600,color:'#007080',background:'#DFFCFF',borderRadius:999,padding:'2px 8px',marginLeft:'auto'}}>Special</span>}
+                {hasOverride && <span className="period-special-badge">Special</span>}
               </div>
 
               {/* School + Time bar */}
@@ -256,27 +262,69 @@ export default function Home() {
                 </button>
               </div>
 
-              {/* Class + Lesson bar */}
-              <div className="period-bar">
-                <button
-                  className={`period-tap-chip class ${!cls ? 'empty' : ''}`}
-                  onClick={e => {
-                    e.stopPropagation()
-                    setSelectedPeriodIdx(i)
-                    setModalPeriodIdx(i)
-                    setModalClassId(cls?.id ?? null)
-                    setModalChangeType('once')
-                    setModal('period_class')
-                  }}
-                >
-                  {cls?.label ?? '—'}
-                </button>
-                {cls && lesson && (
-                  <span className="period-tap-chip" style={{cursor:'default'}}>
-                    {[lesson.tag1, lesson.tag2].filter(Boolean).join(' · ')}
-                  </span>
-                )}
-              </div>
+              {/* Class + Lesson bar(s) */}
+              {period.frequency === 'alternating' ? (
+                period.slots.map((slot, slotIdx) => {
+                  const slotCls = allClasses.find(c => c.id === slot.class_id)
+                  const slotLessons = lessons[slotCls?.curriculum_id] ?? []
+                  const slotLesson = slotLessons[lessonIndices[`${i}_${slotIdx}`] ?? 0]
+                  const slotLabel = ['A','B','C','D'][slotIdx]
+                  const isSlotSelected = isSelected && selectedSlotIdx === slotIdx
+                  return (
+                    <div key={slot.id ?? slotIdx} className="period-bar">
+                      <span className="sch-ab-label">{slotLabel}</span>
+                      <button
+                        className={`period-tap-chip class ${!slotCls ? 'empty' : ''}`}
+                        onClick={e => {
+                          e.stopPropagation()
+                          setSelectedPeriodIdx(i)
+                          setSelectedSlotIdx(slotIdx)
+                          setModalPeriodIdx(i)
+                          setModalClassId(slotCls?.id ?? null)
+                          setModalChangeType('once')
+                          setModal('period_class')
+                        }}
+                      >
+                        {slotCls?.label ?? '—'}
+                      </button>
+                      {slotCls && slotLesson && (
+                        <button
+                          className={`period-tap-chip lesson-chip ${isSlotSelected ? 'active' : ''}`}
+                          onClick={e => {
+                            e.stopPropagation()
+                            setSelectedPeriodIdx(i)
+                            setSelectedSlotIdx(slotIdx)
+                          }}
+                        >
+                          {[slotLesson.tag1, slotLesson.tag2].filter(Boolean).join(' · ')}
+                        </button>
+                      )}
+                    </div>
+                  )
+                })
+              ) : (
+                <div className="period-bar">
+                  <button
+                    className={`period-tap-chip class ${!cls ? 'empty' : ''}`}
+                    onClick={e => {
+                      e.stopPropagation()
+                      setSelectedPeriodIdx(i)
+                      setSelectedSlotIdx(0)
+                      setModalPeriodIdx(i)
+                      setModalClassId(cls?.id ?? null)
+                      setModalChangeType('once')
+                      setModal('period_class')
+                    }}
+                  >
+                    {cls?.label ?? '—'}
+                  </button>
+                  {cls && lesson && (
+                    <span className="period-tap-chip" style={{cursor:'default'}}>
+                      {[lesson.tag1, lesson.tag2].filter(Boolean).join(' · ')}
+                    </span>
+                  )}
+                </div>
+              )}
             </div>
           )
         })}
@@ -341,6 +389,28 @@ export default function Home() {
               })}
             </div>
           </>
+        ) : isAlternating && selectedPeriod ? (
+          <div className="no-lesson-selected" style={{display:'flex',flexDirection:'column',alignItems:'flex-start',gap:12,padding:24}}>
+            <div style={{fontFamily:"'Figtree',sans-serif",fontSize:15,fontWeight:600,color:'#0A100D'}}>Which class are you teaching?</div>
+            <div style={{display:'flex',flexDirection:'column',gap:8,width:'100%'}}>
+              {selectedPeriod.slots.map((slot, slotIdx) => {
+                const slotCls = allClasses.find(c => c.id === slot.class_id)
+                const slotLessons = lessons[slotCls?.curriculum_id] ?? []
+                const slotLesson = slotLessons[lessonIndices[`${selectedPeriodIdx}_${slotIdx}`] ?? 0]
+                const slotLabel = ['A','B','C','D'][slotIdx]
+                return (
+                  <button key={slotIdx} onClick={() => setSelectedSlotIdx(slotIdx)} style={{display:'flex',alignItems:'center',gap:10,padding:'10px 14px',borderRadius:6,border:'0.5px solid #E0E0E0',background:'#FFFFFF',cursor:'pointer',textAlign:'left',transition:'all 0.15s',fontFamily:"'Figtree',sans-serif"}}
+                    onMouseEnter={e => e.currentTarget.style.background='#F5F5F5'}
+                    onMouseLeave={e => e.currentTarget.style.background='#FFFFFF'}
+                  >
+                    <span style={{width:20,height:20,borderRadius:'50%',background:'#0A100D',color:'#FFFFFF',display:'flex',alignItems:'center',justifyContent:'center',fontSize:11,fontWeight:700,flexShrink:0}}>{slotLabel}</span>
+                    <span style={{fontSize:14,fontWeight:600,color:'#0A100D'}}>{slotCls?.label ?? 'No class'}</span>
+                    {slotLesson && <span style={{fontSize:12,color:'#787878',marginLeft:'auto'}}>{[slotLesson.tag1, slotLesson.tag2].filter(Boolean).join(' · ')}</span>}
+                  </button>
+                )
+              })}
+            </div>
+          </div>
         ) : (
           <div className="no-lesson-selected">
             {!isWorkingDay
@@ -550,9 +620,9 @@ export default function Home() {
               </div>
               <div className="modal-body">
                 <div className="modal-sub">{effectiveCls?.label} — {curricula?.find(cu => cu.id === currId)?.name ?? 'No course'}</div>
-                <div className="sch-lesson-picker-row" style={{display:'flex',alignItems:'center',gap:8,background:'#F5F5F5',borderRadius:8,padding:4}}>
+                <div className="sch-lesson-picker-row" style={{display:'flex',alignItems:'center',gap:8,background:'#F5F5F5',borderRadius:6,padding:4}}>
                   <button
-                    style={{width:32,height:32,borderRadius:8,border:'0.5px solid #E0E0E0',background:'#FFFFFF',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center'}}
+                    style={{width:32,height:32,borderRadius:6,border:'0.5px solid #E0E0E0',background:'#FFFFFF',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center'}}
                     onClick={() => setModalLessonIdx(i => Math.max(0, i - 1))}
                     disabled={modalLessonIdx === 0}
                   ><ChevronLeft size={14} /></button>
@@ -562,7 +632,7 @@ export default function Home() {
                       : 'No lessons'}
                   </span>
                   <button
-                    style={{width:32,height:32,borderRadius:8,border:'0.5px solid #E0E0E0',background:'#FFFFFF',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center'}}
+                    style={{width:32,height:32,borderRadius:6,border:'0.5px solid #E0E0E0',background:'#FFFFFF',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center'}}
                     onClick={() => setModalLessonIdx(i => Math.min(currLessons.length - 1, i + 1))}
                     disabled={modalLessonIdx >= currLessons.length - 1}
                   ><ChevronRight size={14} /></button>

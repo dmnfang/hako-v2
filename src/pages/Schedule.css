@@ -14,18 +14,18 @@
   background: #F5F5F5;
   border: 0.5px solid #E0E0E0;
   border-radius: 6px;
-  padding: 4px;
+  padding: 3px;
   flex-shrink: 0;
 }
 
 .sch-sidebar-tab {
   flex: 1;
-  height: 32px;
-  border-radius: 4px;
+  height: 28px;
+  border-radius: 6px;
   border: none;
   background: transparent;
   font-family: 'Figtree', sans-serif;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   color: #787878;
   cursor: pointer;
@@ -499,7 +499,7 @@
   font-family: 'Figtree', sans-serif;
   font-size: 12px;
   font-weight: 500;
-  border-radius: 999px;
+  border-radius: 6px;
   padding: 5px 10px;
   flex-shrink: 0;
 }
@@ -646,8 +646,8 @@
 
 /* A / B labels */
 .sch-ab-label {
-  height: 24px;
-  width: 24px;
+  height: 32px;
+  width: 32px;
   border-radius: 6px;
   background: #E0E0E0;
   border: none;
@@ -762,14 +762,14 @@
 
 .sch-modal-close:hover { background: #F5F5F5; }
 
-.sch-modal-body { padding: 12px 12px; }
+.sch-modal-body { padding: 12px 16px; }
 
 .sch-modal-footer {
   display: flex;
   align-items: center;
   justify-content: flex-end;
   gap: 8px;
-  padding: 12px 12px;
+  padding: 12px 20px;
   border-top: 0.5px solid #E0E0E0;
 }
 

@@ -117,7 +117,7 @@
   font-weight: 600;
   color: #787878;
   background: #F5F5F5;
-  border-radius: 999px;
+  border-radius: 6px;
   height: 24px;
   min-width: 24px;
   justify-content: center;
@@ -139,7 +139,7 @@
   font-weight: 500;
   color: #007080;
   background: #DFFCFF;
-  border-radius: 999px;
+  border-radius: 6px;
   padding: 5px 10px;
 }
 
