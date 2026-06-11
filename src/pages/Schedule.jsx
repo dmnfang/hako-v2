@@ -307,7 +307,7 @@ function RegularWeekTab({ schools, allClasses, selectedDay, refreshSidebar }) {
             <div className="sch-modal-body" style={{display:'flex',flexDirection:'column',gap:12}}>
               <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8}}>
                 {[{v:'weekly',title:'Weekly',desc:'Same school & class every week.'},{v:'alternating',title:'Alternating',desc:'Different school/class combos rotate.'}].map(opt => (
-                  <div key={opt.v} onClick={() => setModalFreq(opt.v)} style={{border:modalFreq===opt.v?'1.5px solid #2DE6FF':'1.5px solid #E0E0E0',borderRadius:12,padding:12,cursor:'pointer',background:modalFreq===opt.v?'#DFFCFF':'#FFFFFF',display:'flex',gap:10,transition:'all 0.15s'}}>
+                  <div key={opt.v} onClick={() => setModalFreq(opt.v)} style={{border:modalFreq===opt.v?'1.5px solid #2DE6FF':'1.5px solid #E0E0E0',borderRadius:6,padding:10,cursor:'pointer',background:modalFreq===opt.v?'#DFFCFF':'#FFFFFF',display:'flex',gap:10,transition:'all 0.15s'}}>
                     <div style={{width:14,height:14,borderRadius:'50%',border:modalFreq===opt.v?'none':'1.5px solid #E0E0E0',background:modalFreq===opt.v?'#00C8E0':'#FFFFFF',flexShrink:0,marginTop:2}} />
                     <div>
                       <div style={{fontFamily:"'Figtree',sans-serif",fontSize:14,fontWeight:600,color:'#0A100D',marginBottom:4}}>{opt.title}</div>
