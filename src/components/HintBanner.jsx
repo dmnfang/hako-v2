@@ -24,7 +24,7 @@ export default function HintBanner({ id, message }) {
       gap: 12,
       background: '#EDFFD4',
       border: '0.5px solid #B8F060',
-      borderRadius: 10,
+      borderRadius: 6,
       padding: '10px 14px',
       flexShrink: 0,
     }}>

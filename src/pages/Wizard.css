@@ -107,7 +107,7 @@
 .level-chip {
   height: 32px;
   padding: 0 14px;
-  border-radius: 999px;
+  border-radius: 6px;
   border: 0.5px solid #E0E0E0;
   background: #FFFFFF;
   font-family: 'Figtree', sans-serif;
@@ -134,7 +134,7 @@
   align-items: center;
   gap: 8px;
   padding: 10px 12px;
-  border-radius: 8px;
+  border-radius: 6px;
   border: 0.5px solid #E0E0E0;
   background: #FFFFFF;
 }
@@ -197,7 +197,7 @@
 .class-add-row input,
 .class-add-row select {
   height: 36px;
-  border-radius: 8px;
+  border-radius: 6px;
   border: 0.5px solid #E0E0E0;
   background: #FFFFFF;
   padding: 0 12px;
@@ -229,7 +229,7 @@
   align-items: center;
   gap: 8px;
   padding: 10px 14px;
-  border-radius: 8px;
+  border-radius: 6px;
   border: 0.5px solid #E0E0E0;
   background: #FFFFFF;
 }
@@ -284,7 +284,7 @@
 .school-tab {
   height: 32px;
   padding: 0 14px;
-  border-radius: 999px;
+  border-radius: 6px;
   border: 0.5px solid #E0E0E0;
   background: #FFFFFF;
   font-family: 'Figtree', sans-serif;
@@ -312,7 +312,7 @@
   align-items: center;
   gap: 8px;
   padding: 8px 12px;
-  border-radius: 8px;
+  border-radius: 6px;
   border: 0.5px solid #E0E0E0;
   background: #FFFFFF;
 }
@@ -348,7 +348,7 @@
 .confirm-btn {
   width: 36px;
   height: 36px;
-  border-radius: 8px;
+  border-radius: 6px;
   border: 0.5px solid #2DE6FF;
   background: #96F4FF;
   color: #003A40;
@@ -382,7 +382,7 @@
 .wz-btn-back {
   height: 36px;
   padding: 0 16px;
-  border-radius: 8px;
+  border-radius: 6px;
   border: 0.5px solid #E0E0E0;
   background: #FFFFFF;
   font-family: 'Figtree', sans-serif;
@@ -398,7 +398,7 @@
 .wz-btn-next {
   height: 36px;
   padding: 0 20px;
-  border-radius: 8px;
+  border-radius: 6px;
   border: 0.5px solid #E0E0E0;
   background: #0A100D;
   font-family: 'Figtree', sans-serif;
@@ -415,7 +415,7 @@
 .wz-btn-finish {
   height: 36px;
   padding: 0 20px;
-  border-radius: 8px;
+  border-radius: 6px;
   border: 0.5px solid #2DE6FF;
   background: #96F4FF;
   color: #003A40;

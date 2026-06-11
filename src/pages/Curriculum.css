@@ -34,7 +34,7 @@
 .curr-new-btn {
   height: 32px;
   padding: 0 12px;
-  border-radius: 8px;
+  border-radius: 6px;
   border: 0.5px solid #2DE6FF;
   background: #96F4FF;
   color: #003A40;
@@ -168,7 +168,7 @@
 .curr-back-btn {
   width: 32px;
   height: 32px;
-  border-radius: 8px;
+  border-radius: 6px;
   border: 0.5px solid #E0E0E0;
   background: #FFFFFF;
   color: #606060;
@@ -209,7 +209,7 @@
 .curr-action-btn {
   height: 32px;
   padding: 0 12px;
-  border-radius: 8px;
+  border-radius: 6px;
   border: 0.5px solid #E0E0E0;
   background: #FFFFFF;
   font-family: 'Figtree', sans-serif;
@@ -230,7 +230,7 @@
 .curr-more-btn {
   width: 32px;
   height: 32px;
-  border-radius: 8px;
+  border-radius: 6px;
   border: 0.5px solid #E0E0E0;
   background: #FFFFFF;
   color: #606060;
@@ -308,7 +308,7 @@
 .curr-lesson-arrow {
   width: 32px;
   height: 32px;
-  border-radius: 8px;
+  border-radius: 6px;
   border: 0.5px solid #E0E0E0;
   background: #FFFFFF;
   color: #606060;
@@ -369,7 +369,7 @@
 .curr-block-copy-btn {
   height: 32px;
   padding: 0 12px;
-  border-radius: 8px;
+  border-radius: 6px;
   border: 0.5px solid #E0E0E0;
   background: #FFFFFF;
   font-family: 'Figtree', sans-serif;
@@ -390,7 +390,7 @@
 .curr-block-chevron-btn {
   width: 32px;
   height: 32px;
-  border-radius: 8px;
+  border-radius: 6px;
   border: 0.5px solid #E0E0E0;
   background: #FFFFFF;
   color: #606060;
@@ -422,7 +422,7 @@
   color: #3D3D3D;
   background: #FAFAFA;
   border: 0.5px solid #E0E0E0;
-  border-radius: 8px;
+  border-radius: 6px;
   padding: 10px 12px;
   resize: none;
   outline: none;
@@ -442,7 +442,7 @@
 .curr-block-action {
   height: 32px;
   padding: 0 12px;
-  border-radius: 8px;
+  border-radius: 6px;
   border: 0.5px solid #E0E0E0;
   background: #FFFFFF;
   font-family: 'Figtree', sans-serif;
@@ -466,7 +466,7 @@
   top: calc(100% + 4px);
   background: #FFFFFF;
   border: 0.5px solid #E0E0E0;
-  border-radius: 8px;
+  border-radius: 6px;
   z-index: 100;
   min-width: 160px;
   overflow: hidden;
@@ -504,7 +504,7 @@
 .curr-lesson-edit-input {
   height: 32px;
   padding: 0 10px;
-  border-radius: 8px;
+  border-radius: 6px;
   border: 0.5px solid #E0E0E0;
   background: #FFFFFF;
   font-family: 'Figtree', sans-serif;
@@ -560,7 +560,7 @@
 .sc-modal-close {
   width: 32px;
   height: 32px;
-  border-radius: 8px;
+  border-radius: 6px;
   border: 0.5px solid #E0E0E0;
   background: #FFFFFF;
   color: #606060;
@@ -620,7 +620,7 @@
 .sc-form-cancel {
   height: 32px;
   padding: 0 12px;
-  border-radius: 8px;
+  border-radius: 6px;
   border: 0.5px solid #E0E0E0;
   background: #FFFFFF;
   color: #606060;
@@ -635,7 +635,7 @@
 .sc-form-save {
   height: 32px;
   padding: 0 12px;
-  border-radius: 8px;
+  border-radius: 6px;
   border: 0.5px solid #2DE6FF;
   background: #96F4FF;
   color: #003A40;

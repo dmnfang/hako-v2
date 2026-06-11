@@ -50,7 +50,7 @@
   flex: 1;
   height: 32px;
   border: none;
-  border-radius: 8px;
+  border-radius: 6px;
   background: transparent;
   font-family: 'Figtree', sans-serif;
   font-size: 13px;
@@ -75,7 +75,7 @@
 
 .login-form input {
   height: 40px;
-  border-radius: 8px;
+  border-radius: 6px;
   border: 0.5px solid #E0E0E0;
   background: #F5F5F5;
   padding: 0 14px;
@@ -97,13 +97,13 @@
   color: #C03030;
   padding: 8px 12px;
   background: #FDEAEA;
-  border-radius: 8px;
+  border-radius: 6px;
   border: 0.5px solid #F5AAAA;
 }
 
 .login-btn-primary {
   height: 40px;
-  border-radius: 8px;
+  border-radius: 6px;
   border: 0.5px solid #2DE6FF;
   background: #96F4FF;
   color: #003A40;
@@ -138,7 +138,7 @@
 
 .login-btn-google {
   height: 40px;
-  border-radius: 8px;
+  border-radius: 6px;
   border: 0.5px solid #E0E0E0;
   background: #FFFFFF;
   color: #606060;
@@ -161,7 +161,7 @@
   color: #2A7A52;
   background: #D6F2E5;
   border: 0.5px solid #6FCF97;
-  border-radius: 8px;
+  border-radius: 6px;
   padding: 12px;
   text-align: center;
   line-height: 1.6;

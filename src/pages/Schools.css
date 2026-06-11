@@ -34,7 +34,7 @@
 .sc-new-btn {
   height: 32px;
   padding: 0 12px;
-  border-radius: 8px;
+  border-radius: 6px;
   border: 0.5px solid #2DE6FF;
   background: #96F4FF;
   color: #003A40;
@@ -177,7 +177,7 @@
 .sc-add-btn {
   height: 32px;
   padding: 0 12px;
-  border-radius: 8px;
+  border-radius: 6px;
   border: 0.5px solid #E0E0E0;
   background: #FFFFFF;
   font-family: 'Figtree', sans-serif;
@@ -257,7 +257,7 @@
   gap: 8px;
   background: #F5F5F5;
   border: 0.5px solid #E0E0E0;
-  border-radius: 8px;
+  border-radius: 6px;
   padding: 4px;
 }
 
@@ -265,7 +265,7 @@
 .sc-lesson-arrow {
   width: 32px;
   height: 32px;
-  border-radius: 8px;
+  border-radius: 6px;
   border: 0.5px solid #E0E0E0;
   background: #FFFFFF;
   color: #606060;
@@ -306,7 +306,7 @@
 .sc-form-delete {
   height: 32px;
   padding: 0 12px;
-  border-radius: 8px;
+  border-radius: 6px;
   border: 0.5px solid #F5AAAA;
   background: #FFFFFF;
   font-family: 'Figtree', sans-serif;
@@ -323,7 +323,7 @@
 .sc-form-save {
   height: 32px;
   padding: 0 12px;
-  border-radius: 8px;
+  border-radius: 6px;
   border: 0.5px solid #2DE6FF;
   background: #96F4FF;
   color: #003A40;
@@ -340,7 +340,7 @@
 .sc-form-cancel {
   height: 32px;
   padding: 0 12px;
-  border-radius: 8px;
+  border-radius: 6px;
   border: 0.5px solid #E0E0E0;
   background: #FFFFFF;
   color: #606060;
@@ -460,7 +460,7 @@
 .sc-class-btn {
   height: 32px;
   padding: 0 12px;
-  border-radius: 8px;
+  border-radius: 6px;
   border: 0.5px solid #E0E0E0;
   background: #FFFFFF;
   font-family: 'Figtree', sans-serif;
@@ -514,7 +514,7 @@
 .sc-modal-close {
   width: 32px;
   height: 32px;
-  border-radius: 8px;
+  border-radius: 6px;
   border: 0.5px solid #E0E0E0;
   background: #FFFFFF;
   color: #606060;
@@ -558,7 +558,7 @@
 .sc-more-btn {
   width: 32px;
   height: 32px;
-  border-radius: 8px;
+  border-radius: 6px;
   border: 0.5px solid #E0E0E0;
   background: #FFFFFF;
   color: #787878;
@@ -576,7 +576,7 @@
 .sc-form-danger {
   height: 32px;
   padding: 0 12px;
-  border-radius: 8px;
+  border-radius: 6px;
   border: 0.5px solid #F5AAAA;
   background: #FFFFFF;
   font-family: 'Figtree', sans-serif;

@@ -216,7 +216,7 @@
   flex: 1;
   height: 32px;
   padding: 0 10px;
-  border-radius: 8px;
+  border-radius: 6px;
   border: 0.5px solid #E0E0E0;
   background: #F5F5F5;
   font-family: 'Figtree', sans-serif;
@@ -353,7 +353,7 @@
 .acc-btn-edit {
   height: 32px;
   padding: 0 12px;
-  border-radius: 8px;
+  border-radius: 6px;
   border: 0.5px solid #E0E0E0;
   background: #F5F5F5;
   font-family: 'Figtree', sans-serif;
@@ -373,7 +373,7 @@
 .acc-btn-save {
   height: 32px;
   padding: 0 12px;
-  border-radius: 8px;
+  border-radius: 6px;
   border: none;
   background: #96F4FF;
   color: #003A40;
@@ -390,7 +390,7 @@
 .acc-btn-cancel {
   height: 32px;
   padding: 0 12px;
-  border-radius: 8px;
+  border-radius: 6px;
   border: 0.5px solid #E0E0E0;
   background: transparent;
   font-family: 'Figtree', sans-serif;
@@ -406,7 +406,7 @@
 .acc-btn-grace {
   height: 32px;
   padding: 0 12px;
-  border-radius: 8px;
+  border-radius: 6px;
   border: 0.5px solid #E0E0E0;
   background: #F5F5F5;
   font-family: 'Figtree', sans-serif;
@@ -424,7 +424,7 @@
 .acc-btn-upgrade {
   height: 32px;
   padding: 0 12px;
-  border-radius: 8px;
+  border-radius: 6px;
   border: 0.5px solid #2DE6FF;
   background: #96F4FF;
   color: #003A40;
@@ -444,7 +444,7 @@
 .acc-btn-danger {
   height: 32px;
   padding: 0 12px;
-  border-radius: 8px;
+  border-radius: 6px;
   border: 0.5px solid #F5AAAA;
   background: transparent;
   font-family: 'Figtree', sans-serif;
