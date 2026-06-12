@@ -190,6 +190,76 @@
   flex-shrink: 0;
 }
 
+/* Calendar tab — header with status row */
+.sch-cal-header {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.sch-cal-header-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.sch-change-status-btn {
+  margin-left: auto;
+  height: 32px;
+  padding: 0 12px;
+  font-size: 14px;
+}
+
+.sch-cal-status-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Figtree', sans-serif;
+  font-size: 14px;
+}
+
+.sch-cal-status-label {
+  color: #787878;
+  font-weight: 500;
+}
+
+.sch-cal-status-value {
+  font-weight: 600;
+}
+
+/* Calendar tab — non-working day empty states */
+.sch-cal-empty-state {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 8px;
+  font-family: 'Figtree', sans-serif;
+  font-size: 15px;
+  color: #787878;
+  text-align: center;
+  padding: 32px;
+}
+
+.sch-cal-empty-state-simple {
+  font-size: 14px;
+}
+
+.sch-cal-empty-emoji {
+  font-size: 32px;
+}
+
+.sch-cal-empty-title {
+  font-weight: 600;
+  color: #0A100D;
+}
+
+.sch-cal-empty-sub {
+  font-size: 13px;
+}
+
 .sch-main-title {
   font-family: 'Figtree', sans-serif;
   font-size: 18px;
@@ -801,6 +871,20 @@
 
 .sch-modal-body { padding: 12px 16px; }
 
+.sch-modal-body-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.modal-label-spaced {
+  margin-bottom: 8px;
+}
+
+.sch-option-grid-spaced {
+  margin-top: 16px;
+}
+
 .modal-label {
   font-family: 'Figtree', sans-serif;
   font-size: 15px;
@@ -983,6 +1067,15 @@
   gap: 8px;
 }
 
+.sch-cal-container {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+  overflow: hidden;
+}
+
 .sch-cal-nav {
   display: flex;
   align-items: center;
@@ -990,9 +1083,14 @@
   flex-shrink: 0;
 }
 
+.sch-cal-nav-arrows {
+  display: flex;
+  gap: 8px;
+}
+
 .sch-cal-today {
   height: 32px;
-  width: 68px;
+  width: 72px;
   border-radius: 6px;
   border: 0.5px solid #E0E0E0;
   background: #FFFFFF;
@@ -1016,7 +1114,7 @@
 .sch-cal-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 2px;
+  gap: 4px;
 }
 
 .sch-cal-dow {

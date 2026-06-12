@@ -317,7 +317,7 @@ function RegularWeekTab({ schools, allClasses, selectedDay, refreshSidebar }) {
             </div>
             <div className="sch-modal-body" style={{display:'flex',flexDirection:'column',gap:16}}>
               <div>
-                <div className="modal-label" style={{marginBottom:8}}>Single class or multi class?</div>
+                <div className="modal-label modal-label-spaced">Single class or multi class?</div>
                 <div className="sch-option-grid">
                   {[{v:'weekly',title:'Single Class',desc:'This period is always the same class.'},{v:'alternating',title:'Multi Class',desc:'This period could be any of a pool of classes — choose which one each day.'}].map(opt => (
                     <div key={opt.v} onClick={() => changeModalFreq(opt.v)} className={`sch-option-card ${modalFreq===opt.v ? 'active' : ''}`}>
@@ -332,7 +332,7 @@ function RegularWeekTab({ schools, allClasses, selectedDay, refreshSidebar }) {
               </div>
 
               <div>
-                <div className="modal-label" style={{marginBottom:8}}>Which school?</div>
+                <div className="modal-label modal-label-spaced">Which school?</div>
                 <div className="sch-modal-chips">
                   {schools.map(s => (
                     <button key={s.id} className={`sch-modal-chip school ${modalSchoolId === s.id ? 'active' : ''}`} onClick={() => changeModalSchool(s.id)}>
@@ -343,7 +343,7 @@ function RegularWeekTab({ schools, allClasses, selectedDay, refreshSidebar }) {
               </div>
 
               <div>
-                <div className="modal-label" style={{marginBottom:8}}>
+                <div className="modal-label modal-label-spaced">
                   {modalFreq === 'alternating' ? 'Which classes? (select all that apply)' : 'Which class?'}
                 </div>
                 {!modalSchoolId ? (
@@ -363,7 +363,7 @@ function RegularWeekTab({ schools, allClasses, selectedDay, refreshSidebar }) {
               </div>
 
               <div>
-                <div className="modal-label" style={{marginBottom:8}}>What time?</div>
+                <div className="modal-label modal-label-spaced">What time?</div>
                 <div style={{display:'flex',gap:12}}>
                   <div className="sc-field"><span className="sc-field-label">START TIME</span><input className="sch-time-input" type="time" value={timeForm.start_time} onChange={e => setTimeForm(p=>({...p,start_time:e.target.value}))} /></div>
                   <div className="sc-field"><span className="sc-field-label">END TIME</span><input className="sch-time-input" type="time" value={timeForm.end_time} onChange={e => setTimeForm(p=>({...p,end_time:e.target.value}))} /></div>
@@ -431,27 +431,27 @@ function CalendarTab({ schools, allClasses, progressCtx, selectedDate }) {
   return (
     <div className="sch-tab-content">
       <div className="sch-main">
-        <div className="sch-main-header" style={{flexDirection:'column',alignItems:'flex-start',gap:4}}>
-          <div style={{display:'flex',alignItems:'center',gap:12,width:'100%'}}>
+        <div className="sch-main-header sch-cal-header">
+          <div className="sch-cal-header-row">
             <span className="sch-main-title">{selectedDate.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})}</span>
-            <button className="sch-form-save" style={{marginLeft:'auto',height:32,padding:'0 12px',fontSize:14}} onClick={() => { setModalStatus(dayStatus.status); setModal('status') }}>
+            <button className="sch-form-save sch-change-status-btn" onClick={() => { setModalStatus(dayStatus.status); setModal('status') }}>
               Change Status
             </button>
           </div>
-          <div style={{display:'flex',alignItems:'center',gap:6,fontFamily:"'Figtree',sans-serif",fontSize:14}}>
-            <span style={{color:'#787878',fontWeight:500}}>Status:</span>
-            <span style={{fontWeight:600}} className={`home-status-${dayStatus.status}`}>{dayStatus.label}</span>
+          <div className="sch-cal-status-row">
+            <span className="sch-cal-status-label">Status:</span>
+            <span className={`sch-cal-status-value home-status-${dayStatus.status}`}>{dayStatus.label}</span>
           </div>
         </div>
 
         {dayStatus.status === 'weekend' ? (
-          <div style={{flex:1,display:'flex',alignItems:'center',justifyContent:'center',flexDirection:'column',gap:8,fontFamily:"'Figtree',sans-serif",fontSize:15,color:'#787878',textAlign:'center',padding:32}}>
-            <div style={{fontSize:32}}>🌅</div>
-            <div style={{fontWeight:600,color:'#0A100D'}}>Enjoy your weekend!</div>
-            <div style={{fontSize:13}}>No classes scheduled.</div>
+          <div className="sch-cal-empty-state">
+            <div className="sch-cal-empty-emoji">🌅</div>
+            <div className="sch-cal-empty-title">Enjoy your weekend!</div>
+            <div className="sch-cal-empty-sub">No classes scheduled.</div>
           </div>
         ) : dayStatus.status !== 'working' ? (
-          <div style={{flex:1,display:'flex',alignItems:'center',justifyContent:'center',fontFamily:"'Figtree',sans-serif",fontSize:14,color:'#787878',padding:32}}>
+          <div className="sch-cal-empty-state sch-cal-empty-state-simple">
             No classes — {dayStatus.label}
           </div>
         ) : (
@@ -549,7 +549,7 @@ function CalendarTab({ schools, allClasses, progressCtx, selectedDate }) {
               <span className="sch-modal-title">School — Period {modalPeriod?.period_number}</span>
               <button className="sch-modal-close" onClick={() => setModal(null)}><X size={14} /></button>
             </div>
-            <div className="sch-modal-body" style={{display:'flex',flexDirection:'column',gap:12}}>
+            <div className="sch-modal-body sch-modal-body-form">
               <div className="sch-modal-chips">
                 {schools.map(s => (
                   <button key={s.id} className={`sch-modal-chip school ${modalSchoolId === s.id ? 'active' : ''}`} onClick={() => setModalSchoolId(s.id)}>{s.name}</button>
@@ -583,7 +583,7 @@ function CalendarTab({ schools, allClasses, progressCtx, selectedDate }) {
               <span className="sch-modal-title">Class — Period {modalPeriod.period_number}</span>
               <button className="sch-modal-close" onClick={() => setModal(null)}><X size={14} /></button>
             </div>
-            <div className="sch-modal-body" style={{display:'flex',flexDirection:'column',gap:12}}>
+            <div className="sch-modal-body sch-modal-body-form">
               <div className="sch-modal-chips">
                 <button className={`sch-modal-chip ${!modalClassId ? 'active' : ''}`} onClick={() => setModalClassId(null)}>No class</button>
                 {modalSchoolClasses.map(cl => (
@@ -618,7 +618,7 @@ function CalendarTab({ schools, allClasses, progressCtx, selectedDate }) {
               <span className="sch-modal-title">Time — Period {modalPeriod.period_number}</span>
               <button className="sch-modal-close" onClick={() => setModal(null)}><X size={14} /></button>
             </div>
-            <div className="sch-modal-body" style={{display:'flex',flexDirection:'column',gap:12}}>
+            <div className="sch-modal-body sch-modal-body-form">
               <div className="sc-field"><span className="sc-field-label">START TIME</span><input className="sch-time-input" type="time" value={modalTimeForm.start_time} onChange={e => setModalTimeForm(p=>({...p,start_time:e.target.value}))} autoFocus /></div>
               <div className="sc-field"><span className="sc-field-label">END TIME</span><input className="sch-time-input" type="time" value={modalTimeForm.end_time} onChange={e => setModalTimeForm(p=>({...p,end_time:e.target.value}))} /></div>
               <div className="sch-option-grid">
@@ -657,7 +657,7 @@ function CalendarTab({ schools, allClasses, progressCtx, selectedDate }) {
                 <button className="sch-modal-close" onClick={() => setModal(null)}><X size={14} /></button>
               </div>
               <div className="sch-modal-body">
-                <div className="modal-label" style={{marginBottom:8}}>
+                <div className="modal-label modal-label-spaced">
                   Which class is this on {selectedDate.toLocaleDateString('en-US',{month:'short',day:'numeric'})}?
                 </div>
                 <div className="sch-multi-class-options">
@@ -706,7 +706,7 @@ function CalendarTab({ schools, allClasses, progressCtx, selectedDate }) {
                 )}
 
                 {modalOtherClassId && (
-                  <div className="sch-option-grid" style={{marginTop:16}}>
+                  <div className="sch-option-grid sch-option-grid-spaced">
                     {[{v:'once',title:`Just ${selectedDate.toLocaleDateString('en-US',{month:'short',day:'numeric'})}`,desc:"One-time choice. This class isn't added to the rotation."},{v:'permanent',title:'Add to rotation',desc:'This class becomes a permanent option for this period.'}].map(opt => (
                       <div key={opt.v} onClick={() => setModalMultiChangeType(opt.v)} className={`sch-option-card ${modalMultiChangeType===opt.v ? 'active' : ''}`}>
                         <div className="sch-option-radio" />
@@ -806,11 +806,11 @@ export default function Schedule() {
       )}
 
       {tab === 'calendar' && (
-        <div style={{padding:16,display:'flex',flexDirection:'column',gap:8,flex:1,overflow:'hidden'}}>
+        <div className="sch-cal-container">
           <div className="sch-cal-nav">
             <button className="sch-cal-today" onClick={() => { const t = new Date(); setCalDate(new Date(t.getFullYear(),t.getMonth(),1)); setCalSelectedDate(t) }}>Today</button>
             <span className="sch-cal-month">{calDate.toLocaleDateString('en-US',{month:'long',year:'numeric'})}</span>
-            <div style={{display:'flex',gap:4}}>
+            <div className="sch-cal-nav-arrows">
               <button className="sch-modal-close" onClick={() => setCalDate(d => new Date(d.getFullYear(), d.getMonth()-1, 1))}><ChevronLeft size={14} /></button>
               <button className="sch-modal-close" onClick={() => setCalDate(d => new Date(d.getFullYear(), d.getMonth()+1, 1))}><ChevronRight size={14} /></button>
             </div>
