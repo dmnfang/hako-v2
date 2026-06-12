@@ -91,7 +91,7 @@ export function useDaySchedule(date, allClasses, progressCtx) {
             school_day_id: p.school_day_id,
             frequency: p.frequency ?? 'weekly',
             slots,
-            // Resolved from slot[0] for convenience
+            // Resolved from slot[0] for convenience (school/time shared across pool)
             school_id: slots[0]?.school_id ?? sd.school_id,
             school: slots[0]?.school ?? null,
             start_time: slots[0]?.start_time ?? null,
@@ -108,15 +108,21 @@ export function useDaySchedule(date, allClasses, progressCtx) {
     overrideData?.forEach(o => { ovMap[o.period_id] = o })
     setPeriodOverrides(ovMap)
 
-    // Collect curriculum IDs for lesson fetching
-    const currIds = [...new Set(sorted.flatMap(p =>
-      p.slots.map(s => {
+    // Collect curriculum IDs for lesson fetching — from all pool slots plus any override class
+    const currIds = [...new Set(sorted.flatMap(p => {
+      const ids = p.slots.map(s => {
         const currId = s.class?.curriculum_id
         if (currId) return currId
         const cls = allClasses?.find(c => c.id === s.class_id)
         return cls?.curriculum_id
-      }).filter(Boolean)
-    ))]
+      })
+      const overrideClassId = ovMap[p.id]?.class_id
+      if (overrideClassId) {
+        const cls = allClasses?.find(c => c.id === overrideClassId)
+        if (cls?.curriculum_id) ids.push(cls.curriculum_id)
+      }
+      return ids.filter(Boolean)
+    }))]
 
     if (currIds.length > 0) {
       const { data: lessonData } = await supabase
@@ -131,32 +137,22 @@ export function useDaySchedule(date, allClasses, progressCtx) {
       const idxMap = {}
       sorted.forEach((period, i) => {
         const override = ovMap[period.id]
+        let classId
         if (period.frequency === 'alternating') {
-          // Build index for each slot separately
-          period.slots.forEach((slot, slotIdx) => {
-            const classId = slot.class_id
-            if (!classId) return
-            const cls = allClasses?.find(c => c.id === classId)
-            if (!cls?.curriculum_id) return
-            const currLessons = lessonMap[cls.curriculum_id] ?? []
-            const prog = progressCtx?.[classId]
-            const idx = prog?.current_lesson_id
-              ? Math.max(0, currLessons.findIndex(l => l.id === prog.current_lesson_id))
-              : 0
-            idxMap[`${i}_${slotIdx}`] = idx
-          })
+          // Multi Class — only resolve a lesson once today's class has been chosen
+          classId = override?.class_id ?? null
         } else {
-          const classId = override?.class_id ?? period.slots[0]?.class_id
-          if (!classId) return
-          const cls = allClasses?.find(c => c.id === classId)
-          if (!cls?.curriculum_id) return
-          const currLessons = lessonMap[cls.curriculum_id] ?? []
-          const prog = progressCtx?.[classId]
-          const idx = prog?.current_lesson_id
-            ? Math.max(0, currLessons.findIndex(l => l.id === prog.current_lesson_id))
-            : 0
-          idxMap[i] = idx
+          classId = override?.class_id ?? period.slots[0]?.class_id
         }
+        if (!classId) return
+        const cls = allClasses?.find(c => c.id === classId)
+        if (!cls?.curriculum_id) return
+        const currLessons = lessonMap[cls.curriculum_id] ?? []
+        const prog = progressCtx?.[classId]
+        const idx = prog?.current_lesson_id
+          ? Math.max(0, currLessons.findIndex(l => l.id === prog.current_lesson_id))
+          : 0
+        idxMap[i] = idx
       })
       setLessonIndices(idxMap)
     } else {
@@ -173,7 +169,9 @@ export function useDaySchedule(date, allClasses, progressCtx) {
     setBlocks(prev => ({ ...prev, [lessonId]: data ?? [] }))
   }
 
-  // Save functions — 'once' writes to period_overrides, 'permanent' writes to period_slots
+  // Save functions — 'once' writes to period_overrides, 'permanent' writes to period_slots.
+  // For Multi Class periods, school/time changes apply to every slot in the pool
+  // since they all share the same school + time.
   async function savePeriodSchoolOverride(period, schoolId, slotIdx = 0, changeType, date) {
     if (!period || !schoolId) return
     if (changeType === 'once') {
@@ -183,9 +181,15 @@ export function useDaySchedule(date, allClasses, progressCtx) {
         school_id: schoolId,
       }, { onConflict: 'period_id,date' })
     } else {
-      const slot = period.slots[slotIdx]
-      if (slot?.id) {
-        await supabase.from('period_slots').update({ school_id: schoolId }).eq('id', slot.id)
+      if (period.frequency === 'alternating') {
+        for (const slot of period.slots) {
+          if (slot?.id) await supabase.from('period_slots').update({ school_id: schoolId }).eq('id', slot.id)
+        }
+      } else {
+        const slot = period.slots[slotIdx]
+        if (slot?.id) {
+          await supabase.from('period_slots').update({ school_id: schoolId }).eq('id', slot.id)
+        }
       }
     }
     fetchDateData(date)
@@ -220,11 +224,57 @@ export function useDaySchedule(date, allClasses, progressCtx) {
         end_time,
       }, { onConflict: 'period_id,date' })
     } else {
-      const slot = period.slots[slotIdx]
-      if (slot?.id) {
-        await supabase.from('period_slots').update({ start_time, end_time }).eq('id', slot.id)
+      if (period.frequency === 'alternating') {
+        for (const slot of period.slots) {
+          if (slot?.id) await supabase.from('period_slots').update({ start_time, end_time }).eq('id', slot.id)
+        }
+      } else {
+        const slot = period.slots[slotIdx]
+        if (slot?.id) {
+          await supabase.from('period_slots').update({ start_time, end_time }).eq('id', slot.id)
+        }
       }
     }
+    fetchDateData(date)
+  }
+
+  // Multi Class — resolve today's class from the pool (or a class outside the pool).
+  // If addToPool is true, the class is also added to period_slots as a permanent
+  // pool member (so it appears as an option on future days too).
+  async function resolveTodayClass(period, classId, addToPool, date) {
+    if (!period || !classId) return
+    await supabase.from('period_overrides').upsert({
+      period_id: period.id,
+      date: toLocalDateStr(date),
+      class_id: classId,
+    }, { onConflict: 'period_id,date' })
+
+    if (addToPool) {
+      const alreadyInPool = period.slots.some(s => s.class_id === classId)
+      if (!alreadyInPool) {
+        const nextSort = Math.max(0, ...period.slots.map(s => s.sort_order ?? 0)) + 1
+        await supabase.from('period_slots').insert({
+          period_id: period.id,
+          school_id: period.school_id,
+          start_time: period.start_time,
+          end_time: period.end_time,
+          class_id: classId,
+          week_group: 'A',
+          sort_order: nextSort,
+        })
+      }
+    }
+
+    fetchDateData(date)
+  }
+
+  // Clear today's resolved class for a Multi Class period (back to "Multi Class" state)
+  async function clearTodayClass(period, date) {
+    if (!period) return
+    await supabase.from('period_overrides')
+      .update({ class_id: null })
+      .eq('period_id', period.id)
+      .eq('date', toLocalDateStr(date))
     fetchDateData(date)
   }
 
@@ -242,5 +292,7 @@ export function useDaySchedule(date, allClasses, progressCtx) {
     savePeriodSchoolOverride,
     savePeriodClassOverride,
     savePeriodTimeOverride,
+    resolveTodayClass,
+    clearTodayClass,
   }
 }

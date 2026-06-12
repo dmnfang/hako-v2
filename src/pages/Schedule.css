@@ -13,19 +13,19 @@
   gap: 2px;
   background: #F5F5F5;
   border: 0.5px solid #E0E0E0;
-  border-radius: 6px;
-  padding: 3px;
+  border-radius: 8px;
+  padding: 4px;
   flex-shrink: 0;
 }
 
 .sch-sidebar-tab {
   flex: 1;
-  height: 28px;
+  height: 32px;
   border-radius: 6px;
   border: none;
   background: transparent;
   font-family: 'Figtree', sans-serif;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   color: #787878;
   cursor: pointer;
@@ -570,6 +570,21 @@
   margin-right: 2px;
 }
 
+.sch-period-eyebrow-chip {
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 6px;
+  border: 0.5px solid #C9AEFF;
+  background: #FFFFFF;
+  font-family: 'Figtree', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: #6B3FD4;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.sch-period-eyebrow-chip:hover { background: #DCC9FF; }
+
 /* Period bar — no background, just flex row */
 .sch-period-bar {
   display: flex;
@@ -615,13 +630,12 @@
 }
 .sch-period-tap-chip.class:hover { background: #DFFCFF; }
 
-/* Freq chip — neutral like time chip */
-.sch-period-tap-chip.freq {
-  border-color: #E0E0E0;
-  color: #606060;
-  font-weight: 600;
+.sch-period-tap-chip.class.empty {
+  border-style: dashed;
+  border-color: #B8B8B8;
+  color: #787878;
 }
-.sch-period-tap-chip.freq:hover { background: #F5F5F5; }
+.sch-period-tap-chip.class.empty:hover { background: #F5F5F5; }
 
 /* Time chip — tappable */
 .sch-period-time-chip {
@@ -660,6 +674,29 @@
   justify-content: center;
   flex-shrink: 0;
 }
+
+/* Multi Class — pool of class chips + manage button */
+.sch-class-pool {
+  flex-wrap: wrap;
+}
+
+.sch-pool-chip {
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 6px;
+  border: 0.5px solid #E0E0E0;
+  background: #FFFFFF;
+  color: #606060;
+  font-family: 'Figtree', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.sch-pool-chip.empty { color: #B8B8B8; }
 
 /* Swap button — secondary */
 .sch-swap-btn {
@@ -763,6 +800,111 @@
 .sch-modal-close:hover { background: #F5F5F5; }
 
 .sch-modal-body { padding: 12px 16px; }
+
+.modal-label {
+  font-family: 'Figtree', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: #0A100D;
+}
+
+/* Option cards — Single/Multi Class, Just Today/All Future, etc. */
+.sch-option-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.sch-option-card {
+  border: 1.5px solid #E0E0E0;
+  border-radius: 6px;
+  padding: 10px;
+  cursor: pointer;
+  background: #FFFFFF;
+  display: flex;
+  gap: 10px;
+  transition: all 0.15s;
+}
+
+.sch-option-card.active {
+  border-color: #2DE6FF;
+  background: #DFFCFF;
+}
+
+.sch-option-radio {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1.5px solid #E0E0E0;
+  background: #FFFFFF;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.sch-option-card.active .sch-option-radio {
+  border: none;
+  background: #00C8E0;
+}
+
+.sch-option-title {
+  font-family: 'Figtree', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #0A100D;
+  margin-bottom: 4px;
+}
+
+.sch-option-desc {
+  font-family: 'Figtree', sans-serif;
+  font-size: 13px;
+  color: #3D3D3D;
+}
+
+/* Multi Class modal — pool options as class chip + lesson chip */
+.sch-multi-class-options {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.sch-multi-class-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s;
+  font-family: 'Figtree', sans-serif;
+}
+
+.sch-multi-class-option:hover { background: #F5F5F5; }
+
+.sch-multi-class-option.active .sch-period-tap-chip.class {
+  background: #DFFCFF;
+}
+
+.sch-multi-class-other-label {
+  font-family: 'Figtree', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  color: #787878;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-top: 16px;
+  margin-bottom: 8px;
+}
+
+.sch-multi-class-other-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
 
 .sch-modal-footer {
   display: flex;

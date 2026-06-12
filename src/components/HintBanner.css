@@ -1,0 +1,36 @@
+.hint-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: #EDFFD4;
+  border: 0.5px solid #B8F060;
+  border-radius: 6px;
+  padding: 10px 10px;
+  flex-shrink: 0;
+}
+
+.hint-banner-text {
+  flex: 1;
+  font-family: 'Figtree', sans-serif;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #2E6600;
+}
+
+.hint-banner-close {
+  width: 20px;
+  height: 20px;
+  border: none;
+  background: transparent;
+  color: #3A8000;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border-radius: 4px;
+  transition: background 0.15s;
+  padding: 0;
+}
+
+.hint-banner-close:hover { background: #C8FA7A; }

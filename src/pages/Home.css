@@ -177,6 +177,14 @@
 }
 .period-tap-chip.class:hover { background: #DFFCFF; }
 
+/* Select Class — dashed stroke, neutral */
+.period-tap-chip.class.empty {
+  border-style: dashed;
+  border-color: #B8B8B8;
+  color: #787878;
+}
+.period-tap-chip.class.empty:hover { background: #F5F5F5; }
+
 .period-no-lesson {
   font-family: 'Figtree', sans-serif;
   font-size: 12px;
@@ -871,4 +879,86 @@
   text-transform: uppercase;
   margin-left: auto;
   flex-shrink: 0;
+}
+
+/* Multi Class prompt in right panel */
+.multi-class-prompt {
+  cursor: pointer;
+  text-align: left;
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding: 24px;
+  line-height: 1.6;
+  transition: color 0.15s;
+}
+
+.multi-class-prompt:hover { color: #0A100D; }
+.multi-class-prompt strong { color: #007080; }
+
+/* Multi Class modal */
+.multi-class-options {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.multi-class-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s;
+  font-family: 'Figtree', sans-serif;
+}
+
+.multi-class-option:hover { background: #F5F5F5; }
+
+.multi-class-option.active .period-tap-chip.class {
+  background: #DFFCFF;
+}
+
+.multi-class-other-label {
+  font-family: 'Figtree', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  color: #787878;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-top: 16px;
+  margin-bottom: 8px;
+}
+
+.multi-class-other-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.multi-class-other-option {
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 6px;
+  border: 0.5px solid #E0E0E0;
+  background: #FFFFFF;
+  font-family: 'Figtree', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: #606060;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.multi-class-other-option:hover { background: #F5F5F5; }
+
+.multi-class-other-option.active {
+  border-color: #2DE6FF;
+  background: #DFFCFF;
+  color: #007080;
 }

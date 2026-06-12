@@ -16,17 +16,45 @@ const DAYS = [
 ]
 
 const PERIOD_NUMBERS = [1, 2, 3, 4, 5, 6]
-const SLOT_LABELS = ['A', 'B', 'C', 'D']
 
-// ─── Period card ───────────────────────────────────────────────────────────
-// Weekly:      [Weekly] [School] [Class] [Time]
-// Alternating: [Alternating]
-//              A [School] [Class] [Time]
-//              B [School] [Class] [Time]
-function PeriodCard({ num, period, onFreqClick, onSchoolClick, onClassClick, onTimeClick }) {
+// ─── Regular Week period card ─────────────────────────────────────────────
+// Period number is a tappable chip that opens the period config modal.
+// Everything below is display-only.
+function RegularPeriodCard({ num, period, onPeriodClick }) {
   const frequency = period?.frequency ?? 'weekly'
   const slots = period?.slots ?? []
   const isEmpty = !period || slots.every(s => !s.class_id)
+  const schoolName = slots[0]?.school?.name ?? 'No school'
+  const timeLabel = slots[0]?.start_time ? `${slots[0].start_time.slice(0,5)} – ${slots[0].end_time?.slice(0,5)}` : 'No time set'
+  const classChips = slots.filter(s => s.class_id).map(s => s.class?.label).filter(Boolean)
+
+  return (
+    <div className={`sch-period-row ${isEmpty ? 'empty' : ''}`}>
+      <div className="sch-period-header-row">
+        <button className="sch-period-eyebrow-chip" onClick={() => onPeriodClick(num)}>Period {num}</button>
+      </div>
+      <div className="sch-period-bar sch-class-pool">
+        <span className="sch-pool-chip">{schoolName}</span>
+        {classChips.length > 0 ? (
+          classChips.map((label, i) => <span key={i} className="sch-pool-chip">{label}</span>)
+        ) : (
+          <span className="sch-pool-chip empty">No class</span>
+        )}
+        <span className="sch-pool-chip">{timeLabel}</span>
+      </div>
+    </div>
+  )
+}
+
+// ─── Calendar period card ──────────────────────────────────────────────────
+// Matches Home's layout exactly:
+// [School] [Time]
+// [Class]  [Lesson]      — Single Class
+// [Select Class]         — Multi Class, unresolved
+// [Class]  [Lesson]       — Multi Class, resolved
+function PeriodCard({ num, period, isMultiClass, resolvedClassLabel, lessonLabel, onSchoolClick, onClassClick, onTimeClick, onMultiClassClick }) {
+  const slots = period?.slots ?? []
+  const isEmpty = !period || !slots[0]?.school_id || (!isMultiClass && !resolvedClassLabel)
 
   if (!period) {
     return (
@@ -35,7 +63,7 @@ function PeriodCard({ num, period, onFreqClick, onSchoolClick, onClassClick, onT
           <span className="sch-period-eyebrow">Period {num}</span>
         </div>
         <div className="sch-period-bar">
-          <button className="sch-period-tap-chip school empty" onClick={() => onSchoolClick(num, null, 0)}>
+          <button className="sch-period-tap-chip school empty" onClick={() => onSchoolClick(num)}>
             No school
           </button>
         </div>
@@ -43,49 +71,42 @@ function PeriodCard({ num, period, onFreqClick, onSchoolClick, onClassClick, onT
     )
   }
 
+  const timeLabel = slots[0]?.start_time ? `${slots[0].start_time.slice(0,5)} – ${slots[0].end_time?.slice(0,5)}` : 'Set time'
+
   return (
     <div className={`sch-period-row ${isEmpty ? 'empty' : ''}`}>
       <div className="sch-period-header-row">
         <span className="sch-period-eyebrow">Period {num}</span>
       </div>
 
-      {/* Freq chip */}
+      {/* School + Time */}
       <div className="sch-period-bar">
-        <button className="sch-period-tap-chip freq" onClick={() => onFreqClick(num)}>
-          {frequency === 'alternating' ? 'Alternating' : 'Weekly'}
+        <button className="sch-period-tap-chip school" onClick={() => onSchoolClick(num)}>
+          {slots[0]?.school?.name ?? 'No school'}
+        </button>
+        <button className="sch-period-time-chip" onClick={() => onTimeClick(num)}>
+          {timeLabel}
         </button>
       </div>
 
-      {/* Weekly — one slot row */}
-      {frequency === 'weekly' && (
-        <div className="sch-period-bar">
-          <button className="sch-period-tap-chip school" onClick={() => onSchoolClick(num, slots[0] ?? null, 0)}>
-            {slots[0]?.school?.name ?? 'No school'}
-          </button>
-          <button className="sch-period-tap-chip class" onClick={() => onClassClick(num, slots[0] ?? null, 0)}>
-            {slots[0]?.class?.label ?? 'No class'}
-          </button>
-          <button className="sch-period-time-chip" onClick={() => onTimeClick(num, slots[0] ?? null, 0)}>
-            {slots[0]?.start_time ? `${slots[0].start_time.slice(0,5)} – ${slots[0].end_time?.slice(0,5)}` : 'Set time'}
-          </button>
-        </div>
-      )}
-
-      {/* Alternating — one row per slot */}
-      {frequency === 'alternating' && slots.map((slot, idx) => (
-        <div key={slot.id ?? idx} className="sch-period-bar">
-          <span className="sch-ab-label">{SLOT_LABELS[idx]}</span>
-          <button className="sch-period-tap-chip school" onClick={() => onSchoolClick(num, slot, idx)}>
-            {slot?.school?.name ?? 'No school'}
-          </button>
-          <button className="sch-period-tap-chip class" onClick={() => onClassClick(num, slot, idx)}>
-            {slot?.class?.label ?? 'No class'}
-          </button>
-          <button className="sch-period-time-chip" onClick={() => onTimeClick(num, slot, idx)}>
-            {slot?.start_time ? `${slot.start_time.slice(0,5)} – ${slot.end_time?.slice(0,5)}` : 'Set time'}
-          </button>
-        </div>
-      ))}
+      {/* Class + Lesson */}
+      <div className="sch-period-bar">
+        {isMultiClass ? (
+          resolvedClassLabel ? (
+            <>
+              <button className="sch-period-tap-chip class" onClick={() => onMultiClassClick(num)}>{resolvedClassLabel}</button>
+              {lessonLabel && <span className="sch-pool-chip" style={{cursor:'default'}}>{lessonLabel}</span>}
+            </>
+          ) : (
+            <button className="sch-period-tap-chip class empty" onClick={() => onMultiClassClick(num)}>Select Class</button>
+          )
+        ) : (
+          <>
+            <button className="sch-period-tap-chip class" onClick={() => onClassClick(num)}>{resolvedClassLabel ?? 'No class'}</button>
+            {lessonLabel && <span className="sch-pool-chip" style={{cursor:'default'}}>{lessonLabel}</span>}
+          </>
+        )}
+      </div>
     </div>
   )
 }
@@ -95,12 +116,9 @@ function RegularWeekTab({ schools, allClasses, selectedDay, refreshSidebar }) {
   const [schedule, setSchedule] = useState([])
   const [modal, setModal] = useState(null)
   const [modalPeriodNum, setModalPeriodNum] = useState(null)
-  const [modalSlot, setModalSlot] = useState(null)
-  const [modalSlotIdx, setModalSlotIdx] = useState(0)
   const [modalFreq, setModalFreq] = useState('weekly')
-  const [modalSlotCount, setModalSlotCount] = useState(2)
-  const [modalSelectedSchoolId, setModalSelectedSchoolId] = useState(null)
-  const [modalSelectedClassId, setModalSelectedClassId] = useState(null)
+  const [modalSchoolId, setModalSchoolId] = useState(null)
+  const [modalClassIds, setModalClassIds] = useState([])
   const [timeForm, setTimeForm] = useState({ start_time: '', end_time: '' })
 
   useEffect(() => { fetchDaySchedule() }, [selectedDay])
@@ -163,87 +181,107 @@ function RegularWeekTab({ schools, allClasses, selectedDay, refreshSidebar }) {
     return { sdId: sd.id, periodId: period.id }
   }
 
-  async function saveFrequency(periodNum, frequency, slotCount) {
-    const existing = schedule.find(s => s.period_number === periodNum)
-    if (!existing) return
-    await supabase.from('periods').update({ frequency }).eq('id', existing.id)
-    const labels = SLOT_LABELS
-    const existingSlots = existing.slots
-    if (frequency === 'alternating') {
-      for (let i = 0; i < slotCount; i++) {
-        if (existingSlots[i]) {
-          await supabase.from('period_slots').update({ week_group: labels[i], sort_order: i + 1 }).eq('id', existingSlots[i].id)
-        } else {
-          // Copy school/time from first slot for convenience
-          await supabase.from('period_slots').insert({
-            period_id: existing.id,
-            class_id: null,
-            school_id: existingSlots[0]?.school_id ?? null,
-            start_time: existingSlots[0]?.start_time ?? null,
-            end_time: existingSlots[0]?.end_time ?? null,
-            week_group: labels[i],
-            sort_order: i + 1,
-          })
-        }
-      }
-      for (const s of existingSlots.slice(slotCount)) {
-        await supabase.from('period_slots').delete().eq('id', s.id)
-      }
+  function openPeriodModal(num) {
+    const existing = schedule.find(s => s.period_number === num)
+    const slots = existing?.slots ?? []
+    setModalPeriodNum(num)
+    setModalFreq(existing?.frequency ?? 'weekly')
+    setModalSchoolId(slots[0]?.school_id ?? null)
+    setModalClassIds(slots.filter(s => s.class_id).map(s => s.class_id))
+    setTimeForm({
+      start_time: slots[0]?.start_time?.slice(0,5) ?? '',
+      end_time: slots[0]?.end_time?.slice(0,5) ?? '',
+    })
+    setModal('period_config')
+  }
+
+  function toggleModalClass(classId) {
+    if (modalFreq === 'weekly') {
+      setModalClassIds(prev => prev[0] === classId ? [] : [classId])
+    } else {
+      setModalClassIds(prev => prev.includes(classId) ? prev.filter(id => id !== classId) : [...prev, classId])
     }
-    if (frequency === 'weekly') {
+  }
+
+  function changeModalFreq(freq) {
+    setModalFreq(freq)
+    if (freq === 'weekly' && modalClassIds.length > 1) {
+      setModalClassIds(prev => prev.slice(0, 1))
+    }
+  }
+
+  function changeModalSchool(schoolId) {
+    setModalSchoolId(schoolId)
+    setModalClassIds([])
+  }
+
+  async function savePeriodConfig() {
+    const { start_time, end_time } = timeForm
+    const existing = schedule.find(s => s.period_number === modalPeriodNum)
+    let periodId = existing?.id
+
+    if (!periodId) {
+      if (!modalSchoolId) { setModal(null); return }
+      const created = await getOrCreatePeriod(modalPeriodNum, modalSchoolId)
+      periodId = created.periodId
+    }
+
+    await supabase.from('periods').update({ frequency: modalFreq }).eq('id', periodId)
+
+    const existingSlots = existing?.slots ?? []
+
+    if (modalFreq === 'weekly') {
+      const classId = modalClassIds[0] ?? null
+      if (existingSlots[0]) {
+        await supabase.from('period_slots').update({
+          school_id: modalSchoolId, class_id: classId, start_time, end_time,
+        }).eq('id', existingSlots[0].id)
+      } else {
+        await supabase.from('period_slots').insert({
+          period_id: periodId, school_id: modalSchoolId, class_id: classId,
+          start_time, end_time, week_group: 'A', sort_order: 1,
+        })
+      }
       for (const s of existingSlots.slice(1)) {
         await supabase.from('period_slots').delete().eq('id', s.id)
       }
-    }
-    await fetchDaySchedule()
-    setModal(null)
-  }
-
-  async function saveSchool(periodNum, slot, slotIdx, schoolId) {
-    if (!schoolId) return
-    if (slot?.id) {
-      await supabase.from('period_slots').update({ school_id: schoolId }).eq('id', slot.id)
     } else {
-      // No slot yet — create period+slot
-      const { periodId } = await getOrCreatePeriod(periodNum, schoolId)
-      await supabase.from('period_slots').insert({
-        period_id: periodId, school_id: schoolId, class_id: null,
-        week_group: 'A', sort_order: 1,
-      })
+      // Multi Class — sync the pool to modalClassIds, all sharing school/time
+      const existingClassIds = existingSlots.filter(s => s.class_id).map(s => s.class_id)
+      for (const s of existingSlots) {
+        if (s.class_id && !modalClassIds.includes(s.class_id)) {
+          await supabase.from('period_slots').delete().eq('id', s.id)
+        } else {
+          await supabase.from('period_slots').update({
+            school_id: modalSchoolId, start_time, end_time,
+          }).eq('id', s.id)
+        }
+      }
+      let nextSort = Math.max(0, ...existingSlots.map(s => s.sort_order ?? 0)) + 1
+      for (const classId of modalClassIds) {
+        if (!existingClassIds.includes(classId)) {
+          await supabase.from('period_slots').insert({
+            period_id: periodId, class_id: classId, school_id: modalSchoolId,
+            start_time, end_time, week_group: 'A', sort_order: nextSort++,
+          })
+        }
+      }
+      // Ensure at least one slot exists to carry school/time even with an empty pool
+      const remaining = existingSlots.filter(s => modalClassIds.includes(s.class_id) || !s.class_id)
+      if (modalClassIds.length === 0 && remaining.length === 0) {
+        await supabase.from('period_slots').insert({
+          period_id: periodId, class_id: null, school_id: modalSchoolId,
+          start_time, end_time, week_group: 'A', sort_order: 1,
+        })
+      }
     }
+
     await fetchDaySchedule()
     refreshSidebar()
     setModal(null)
   }
 
-  async function saveClass(slot, classId, periodId) {
-    if (slot?.id) {
-      await supabase.from('period_slots').update({ class_id: classId || null }).eq('id', slot.id)
-    } else {
-      await supabase.from('period_slots').insert({
-        period_id: periodId, class_id: classId || null, week_group: 'A', sort_order: 1,
-      })
-    }
-    await fetchDaySchedule()
-    setModal(null)
-  }
-
-  async function saveTime(slot, periodId) {
-    const { start_time, end_time } = timeForm
-    if (!start_time || !end_time) return
-    if (slot?.id) {
-      await supabase.from('period_slots').update({ start_time, end_time }).eq('id', slot.id)
-    } else {
-      await supabase.from('period_slots').insert({
-        period_id: periodId, start_time, end_time, week_group: 'A', sort_order: 1,
-      })
-    }
-    await fetchDaySchedule()
-    setModal(null)
-  }
-
-  const modalPeriod = schedule.find(s => s.period_number === modalPeriodNum)
-  const modalSchoolClasses = allClasses.filter(c => c.school_id === (modalSlot?.school_id ?? modalSelectedSchoolId))
+  const modalSchoolClasses = allClasses.filter(c => c.school_id === modalSchoolId)
   const dayLabel = DAYS.find(d => d.value === selectedDay)?.label
 
   return (
@@ -258,153 +296,85 @@ function RegularWeekTab({ schools, allClasses, selectedDay, refreshSidebar }) {
           {PERIOD_NUMBERS.map(num => {
             const period = schedule.find(s => s.period_number === num)
             return (
-              <PeriodCard
+              <RegularPeriodCard
                 key={num}
                 num={num}
                 period={period}
-                onFreqClick={n => {
-                  const p = schedule.find(s => s.period_number === n)
-                  setModalPeriodNum(n)
-                  setModalFreq(p?.frequency ?? 'weekly')
-                  setModalSlotCount(p?.slots?.length ?? 2)
-                  setModal('freq')
-                }}
-                onSchoolClick={(n, slot, idx) => {
-                  setModalPeriodNum(n)
-                  setModalSlot(slot)
-                  setModalSlotIdx(idx)
-                  setModalSelectedSchoolId(slot?.school_id ?? null)
-                  setModal('school')
-                }}
-                onClassClick={(n, slot, idx) => {
-                  setModalPeriodNum(n)
-                  setModalSlot(slot)
-                  setModalSlotIdx(idx)
-                  setModalSelectedClassId(slot?.class_id ?? null)
-                  setModal('class')
-                }}
-                onTimeClick={(n, slot, idx) => {
-                  setModalPeriodNum(n)
-                  setModalSlot(slot)
-                  setModalSlotIdx(idx)
-                  setTimeForm({ start_time: slot?.start_time?.slice(0,5) ?? '', end_time: slot?.end_time?.slice(0,5) ?? '' })
-                  setModal('time')
-                }}
+                onPeriodClick={openPeriodModal}
               />
             )
           })}
         </div>
       </div>
 
-      {/* Freq modal */}
-      {modal === 'freq' && (
+      {/* Period config modal */}
+      {modal === 'period_config' && (
         <div className="sch-modal-overlay" onClick={() => setModal(null)}>
           <div className="sch-modal" onClick={e => e.stopPropagation()}>
             <div className="sch-modal-header">
-              <span className="sch-modal-title">Frequency — Period {modalPeriodNum}</span>
+              <span className="sch-modal-title">Period {modalPeriodNum} — {dayLabel}</span>
               <button className="sch-modal-close" onClick={() => setModal(null)}><X size={14} /></button>
             </div>
-            <div className="sch-modal-body" style={{display:'flex',flexDirection:'column',gap:12}}>
-              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8}}>
-                {[{v:'weekly',title:'Weekly',desc:'Same school & class every week.'},{v:'alternating',title:'Alternating',desc:'Different school/class combos rotate.'}].map(opt => (
-                  <div key={opt.v} onClick={() => setModalFreq(opt.v)} style={{border:modalFreq===opt.v?'1.5px solid #2DE6FF':'1.5px solid #E0E0E0',borderRadius:10,padding:12,cursor:'pointer',background:modalFreq===opt.v?'#DFFCFF':'#FFFFFF',display:'flex',gap:10,transition:'all 0.15s'}}>
-                    <div style={{width:14,height:14,borderRadius:'50%',border:modalFreq===opt.v?'none':'1.5px solid #E0E0E0',background:modalFreq===opt.v?'#00C8E0':'#FFFFFF',flexShrink:0,marginTop:2}} />
-                    <div>
-                      <div style={{fontFamily:"'Figtree',sans-serif",fontSize:14,fontWeight:600,color:'#0A100D',marginBottom:4}}>{opt.title}</div>
-                      <div style={{fontFamily:"'Figtree',sans-serif",fontSize:12,color:'#3D3D3D'}}>{opt.desc}</div>
+            <div className="sch-modal-body" style={{display:'flex',flexDirection:'column',gap:16}}>
+              <div>
+                <div className="modal-label" style={{marginBottom:8}}>Single class or multi class?</div>
+                <div className="sch-option-grid">
+                  {[{v:'weekly',title:'Single Class',desc:'This period is always the same class.'},{v:'alternating',title:'Multi Class',desc:'This period could be any of a pool of classes — choose which one each day.'}].map(opt => (
+                    <div key={opt.v} onClick={() => changeModalFreq(opt.v)} className={`sch-option-card ${modalFreq===opt.v ? 'active' : ''}`}>
+                      <div className="sch-option-radio" />
+                      <div>
+                        <div className="sch-option-title">{opt.title}</div>
+                        <div className="sch-option-desc">{opt.desc}</div>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
-              {modalFreq === 'alternating' && (
-                <div style={{display:'flex',flexDirection:'column',gap:8}}>
-                  <span style={{fontFamily:"'Figtree',sans-serif",fontSize:13,color:'#787878'}}>How many rotations?</span>
-                  <div style={{display:'flex',gap:8}}>
-                    {[2,3,4].map(n => (
-                      <button key={n} onClick={() => setModalSlotCount(n)} style={{flex:1,height:40,borderRadius:6,border:modalSlotCount===n?'1.5px solid #2DE6FF':'0.5px solid #E0E0E0',background:modalSlotCount===n?'#DFFCFF':'#FFFFFF',cursor:'pointer',fontFamily:"'Figtree',sans-serif",fontSize:16,fontWeight:700,color:modalSlotCount===n?'#007080':'#606060',transition:'all 0.15s'}}>
-                        {n}
+
+              <div>
+                <div className="modal-label" style={{marginBottom:8}}>Which school?</div>
+                <div className="sch-modal-chips">
+                  {schools.map(s => (
+                    <button key={s.id} className={`sch-modal-chip school ${modalSchoolId === s.id ? 'active' : ''}`} onClick={() => changeModalSchool(s.id)}>
+                      {s.name}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <div className="modal-label" style={{marginBottom:8}}>
+                  {modalFreq === 'alternating' ? 'Which classes? (select all that apply)' : 'Which class?'}
+                </div>
+                {!modalSchoolId ? (
+                  <p style={{fontFamily:"'Figtree',sans-serif",fontSize:13,color:'#787878'}}>Choose a school first.</p>
+                ) : (
+                  <div className="sch-modal-chips">
+                    {modalFreq === 'weekly' && (
+                      <button className={`sch-modal-chip ${modalClassIds.length === 0 ? 'active' : ''}`} onClick={() => setModalClassIds([])}>No class</button>
+                    )}
+                    {modalSchoolClasses.map(cl => (
+                      <button key={cl.id} className={`sch-modal-chip class ${modalClassIds.includes(cl.id) ? 'active' : ''}`} onClick={() => toggleModalClass(cl.id)}>
+                        {cl.label}
                       </button>
                     ))}
                   </div>
+                )}
+              </div>
+
+              <div>
+                <div className="modal-label" style={{marginBottom:8}}>What time?</div>
+                <div style={{display:'flex',gap:12}}>
+                  <div className="sc-field"><span className="sc-field-label">START TIME</span><input className="sch-time-input" type="time" value={timeForm.start_time} onChange={e => setTimeForm(p=>({...p,start_time:e.target.value}))} /></div>
+                  <div className="sc-field"><span className="sc-field-label">END TIME</span><input className="sch-time-input" type="time" value={timeForm.end_time} onChange={e => setTimeForm(p=>({...p,end_time:e.target.value}))} /></div>
                 </div>
-              )}
-              <p style={{fontFamily:"'Figtree',sans-serif",fontSize:13,color:'#787878'}}>This will update all future {dayLabel}s.</p>
-            </div>
-            <div className="sch-modal-footer">
-              <button className="sch-form-cancel" onClick={() => setModal(null)}>Cancel</button>
-              <button className="sch-form-save" onClick={() => saveFrequency(modalPeriodNum, modalFreq, modalFreq==='weekly'?1:modalSlotCount)}>Save</button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* School modal */}
-      {modal === 'school' && (
-        <div className="sch-modal-overlay" onClick={() => setModal(null)}>
-          <div className="sch-modal" onClick={e => e.stopPropagation()}>
-            <div className="sch-modal-header">
-              <span className="sch-modal-title">School — Period {modalPeriodNum}{modalPeriod?.frequency==='alternating'?` (${SLOT_LABELS[modalSlotIdx]})`:''}</span>
-              <button className="sch-modal-close" onClick={() => setModal(null)}><X size={14} /></button>
-            </div>
-            <div className="sch-modal-body">
-              <div className="sch-modal-chips">
-                {schools.map(s => (
-                  <button key={s.id} className={`sch-modal-chip school ${modalSelectedSchoolId === s.id ? 'active' : ''}`} onClick={() => setModalSelectedSchoolId(s.id)}>
-                    {s.name}
-                  </button>
-                ))}
               </div>
-              <p style={{marginTop:12,fontFamily:"'Figtree',sans-serif",fontSize:13,color:'#787878'}}>This will update all future {dayLabel}s.</p>
-            </div>
-            <div className="sch-modal-footer">
-              <button className="sch-form-cancel" onClick={() => setModal(null)}>Cancel</button>
-              <button className="sch-form-save" onClick={() => saveSchool(modalPeriodNum, modalSlot, modalSlotIdx, modalSelectedSchoolId)}>Save</button>
-            </div>
-          </div>
-        </div>
-      )}
 
-      {/* Class modal */}
-      {modal === 'class' && (
-        <div className="sch-modal-overlay" onClick={() => setModal(null)}>
-          <div className="sch-modal" onClick={e => e.stopPropagation()}>
-            <div className="sch-modal-header">
-              <span className="sch-modal-title">Class — Period {modalPeriodNum}{modalPeriod?.frequency==='alternating'?` (${SLOT_LABELS[modalSlotIdx]})`:''}</span>
-              <button className="sch-modal-close" onClick={() => setModal(null)}><X size={14} /></button>
-            </div>
-            <div className="sch-modal-body">
-              <div className="sch-modal-chips">
-                <button className={`sch-modal-chip ${!modalSelectedClassId ? 'active' : ''}`} onClick={() => setModalSelectedClassId(null)}>No class</button>
-                {modalSchoolClasses.map(cl => (
-                  <button key={cl.id} className={`sch-modal-chip class ${modalSelectedClassId === cl.id ? 'active' : ''}`} onClick={() => setModalSelectedClassId(cl.id)}>{cl.label}</button>
-                ))}
-              </div>
-              <p style={{marginTop:12,fontFamily:"'Figtree',sans-serif",fontSize:13,color:'#787878'}}>This will update all future {dayLabel}s.</p>
+              <p style={{fontFamily:"'Figtree',sans-serif",fontSize:13,color:'#787878',margin:0}}>This will update all future {dayLabel}s.</p>
             </div>
             <div className="sch-modal-footer">
               <button className="sch-form-cancel" onClick={() => setModal(null)}>Cancel</button>
-              <button className="sch-form-save" onClick={() => saveClass(modalSlot, modalSelectedClassId, modalPeriod?.id)}>Save</button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Time modal */}
-      {modal === 'time' && (
-        <div className="sch-modal-overlay" onClick={() => setModal(null)}>
-          <div className="sch-modal" onClick={e => e.stopPropagation()}>
-            <div className="sch-modal-header">
-              <span className="sch-modal-title">Time — Period {modalPeriodNum}{modalPeriod?.frequency==='alternating'?` (${SLOT_LABELS[modalSlotIdx]})`:''}</span>
-              <button className="sch-modal-close" onClick={() => setModal(null)}><X size={14} /></button>
-            </div>
-            <div className="sch-modal-body" style={{display:'flex',flexDirection:'column',gap:12}}>
-              <div className="sc-field"><span className="sc-field-label">START TIME</span><input className="sch-time-input" type="time" value={timeForm.start_time} onChange={e => setTimeForm(p=>({...p,start_time:e.target.value}))} autoFocus /></div>
-              <div className="sc-field"><span className="sc-field-label">END TIME</span><input className="sch-time-input" type="time" value={timeForm.end_time} onChange={e => setTimeForm(p=>({...p,end_time:e.target.value}))} /></div>
-              <p style={{fontFamily:"'Figtree',sans-serif",fontSize:13,color:'#787878'}}>This will update all future {dayLabel}s.</p>
-            </div>
-            <div className="sch-modal-footer">
-              <button className="sch-form-cancel" onClick={() => setModal(null)}>Cancel</button>
-              <button className="sch-form-save" onClick={() => saveTime(modalSlot, modalPeriod?.id)}>Save</button>
+              <button className="sch-form-save" onClick={savePeriodConfig} disabled={!modalSchoolId}>Save</button>
             </div>
           </div>
         </div>
@@ -423,10 +393,12 @@ function CalendarTab({ schools, allClasses, progressCtx, selectedDate }) {
   const [modalClassId, setModalClassId] = useState(null)
   const [modalTimeForm, setModalTimeForm] = useState({ start_time: '', end_time: '' })
   const [modalStatus, setModalStatus] = useState('working')
+  const [modalOtherClassId, setModalOtherClassId] = useState(null)
+  const [modalMultiChangeType, setModalMultiChangeType] = useState('once')
 
   const {
-    periods, periodOverrides, dayStatusOverride,
-    savePeriodSchoolOverride, savePeriodClassOverride, savePeriodTimeOverride,
+    periods, periodOverrides, dayStatusOverride, lessons, lessonIndices,
+    savePeriodSchoolOverride, savePeriodClassOverride, savePeriodTimeOverride, resolveTodayClass,
   } = useDaySchedule(selectedDate, allClasses, progressCtx)
 
   const dayStatus = getDayStatus(selectedDate, dayStatusOverride)
@@ -447,6 +419,13 @@ function CalendarTab({ schools, allClasses, progressCtx, selectedDate }) {
       start_time: override?.start_time ?? slot.start_time,
       end_time: override?.end_time ?? slot.end_time,
     }
+  }
+
+  async function handleResolveTodayClass(classId, addToPool) {
+    await resolveTodayClass(periods[modalPeriodIdx], classId, addToPool, selectedDate)
+    setModal(null)
+    setModalOtherClassId(null)
+    setModalMultiChangeType('once')
   }
 
   return (
@@ -478,35 +457,56 @@ function CalendarTab({ schools, allClasses, progressCtx, selectedDate }) {
         ) : (
           <div className="sch-period-list">
             {PERIOD_NUMBERS.map(num => {
-              const period = periods.find(p => p.period_number === num)
+              const i = periods.findIndex(p => p.period_number === num)
+              const period = periods[i]
               const override = period ? periodOverrides[period.id] : null
               const resolvedPeriod = period ? {
                 ...period,
                 slots: period.slots.map((slot, idx) => idx === 0 ? resolveSlot(slot, override) : slot),
               } : null
+              const isMultiClass = period?.frequency === 'alternating'
+              const resolvedClassId = isMultiClass
+                ? (override?.class_id ?? null)
+                : (resolvedPeriod?.slots?.[0]?.class_id ?? null)
+              const resolvedCls = resolvedClassId ? allClasses.find(c => c.id === resolvedClassId) : null
+              const currLessons = lessons[resolvedCls?.curriculum_id] ?? []
+              const lesson = currLessons[lessonIndices[i] ?? 0]
+              const lessonLabel = lesson ? [lesson.tag1, lesson.tag2].filter(Boolean).join(' · ') : null
               return (
                 <PeriodCard
                   key={num}
                   num={num}
                   period={resolvedPeriod}
-                  onFreqClick={() => {}}
-                  onSchoolClick={(n, slot, idx) => {
+                  isMultiClass={isMultiClass}
+                  resolvedClassLabel={resolvedCls?.label ?? null}
+                  lessonLabel={lessonLabel}
+                  onMultiClassClick={n => {
                     setModalPeriodIdx(periods.findIndex(p => p.period_number === n))
-                    setModalSlotIdx(idx)
-                    setModalSchoolId(slot?.school_id ?? null)
+                    setModalOtherClassId(null)
+                    setModalMultiChangeType('once')
+                    setModal('multi_class')
+                  }}
+                  onSchoolClick={n => {
+                    const idx = periods.findIndex(p => p.period_number === n)
+                    setModalPeriodIdx(idx)
+                    setModalSlotIdx(0)
+                    setModalSchoolId(periods[idx]?.slots?.[0]?.school_id ?? null)
                     setModalChangeType('once')
                     setModal('school')
                   }}
-                  onClassClick={(n, slot, idx) => {
-                    setModalPeriodIdx(periods.findIndex(p => p.period_number === n))
-                    setModalSlotIdx(idx)
-                    setModalClassId(slot?.class_id ?? null)
+                  onClassClick={n => {
+                    const idx = periods.findIndex(p => p.period_number === n)
+                    setModalPeriodIdx(idx)
+                    setModalSlotIdx(0)
+                    setModalClassId(periods[idx]?.slots?.[0]?.class_id ?? null)
                     setModalChangeType('once')
                     setModal('class')
                   }}
-                  onTimeClick={(n, slot, idx) => {
-                    setModalPeriodIdx(periods.findIndex(p => p.period_number === n))
-                    setModalSlotIdx(idx)
+                  onTimeClick={n => {
+                    const idx = periods.findIndex(p => p.period_number === n)
+                    const slot = periods[idx]?.slots?.[0]
+                    setModalPeriodIdx(idx)
+                    setModalSlotIdx(0)
                     setModalTimeForm({ start_time: slot?.start_time?.slice(0,5) ?? '', end_time: slot?.end_time?.slice(0,5) ?? '' })
                     setModalChangeType('once')
                     setModal('time')
@@ -546,7 +546,7 @@ function CalendarTab({ schools, allClasses, progressCtx, selectedDate }) {
         <div className="sch-modal-overlay" onClick={() => setModal(null)}>
           <div className="sch-modal" onClick={e => e.stopPropagation()}>
             <div className="sch-modal-header">
-              <span className="sch-modal-title">School — Period {modalPeriod?.period_number}{modalPeriod?.frequency==='alternating'?` (${SLOT_LABELS[modalSlotIdx]})`:''}</span>
+              <span className="sch-modal-title">School — Period {modalPeriod?.period_number}</span>
               <button className="sch-modal-close" onClick={() => setModal(null)}><X size={14} /></button>
             </div>
             <div className="sch-modal-body" style={{display:'flex',flexDirection:'column',gap:12}}>
@@ -555,13 +555,13 @@ function CalendarTab({ schools, allClasses, progressCtx, selectedDate }) {
                   <button key={s.id} className={`sch-modal-chip school ${modalSchoolId === s.id ? 'active' : ''}`} onClick={() => setModalSchoolId(s.id)}>{s.name}</button>
                 ))}
               </div>
-              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8}}>
+              <div className="sch-option-grid">
                 {[{v:'once',title:`Just ${selectedDate.toLocaleDateString('en-US',{month:'short',day:'numeric'})}`,desc:'One-time override only.'},{v:'permanent',title:`All future ${dow}s`,desc:'Updates your recurring schedule.'}].map(opt => (
-                  <div key={opt.v} onClick={() => setModalChangeType(opt.v)} style={{border:modalChangeType===opt.v?'1.5px solid #2DE6FF':'1.5px solid #E0E0E0',borderRadius:10,padding:12,cursor:'pointer',background:modalChangeType===opt.v?'#DFFCFF':'#FFFFFF',display:'flex',gap:10,transition:'all 0.15s'}}>
-                    <div style={{width:14,height:14,borderRadius:'50%',border:modalChangeType===opt.v?'none':'1.5px solid #E0E0E0',background:modalChangeType===opt.v?'#00C8E0':'#FFFFFF',flexShrink:0,marginTop:2}} />
+                  <div key={opt.v} onClick={() => setModalChangeType(opt.v)} className={`sch-option-card ${modalChangeType===opt.v ? 'active' : ''}`}>
+                    <div className="sch-option-radio" />
                     <div>
-                      <div style={{fontFamily:"'Figtree',sans-serif",fontSize:14,fontWeight:600,color:'#0A100D',marginBottom:4}}>{opt.title}</div>
-                      <div style={{fontFamily:"'Figtree',sans-serif",fontSize:12,color:'#3D3D3D'}}>{opt.desc}</div>
+                      <div className="sch-option-title">{opt.title}</div>
+                      <div className="sch-option-desc">{opt.desc}</div>
                     </div>
                   </div>
                 ))}
@@ -580,7 +580,7 @@ function CalendarTab({ schools, allClasses, progressCtx, selectedDate }) {
         <div className="sch-modal-overlay" onClick={() => setModal(null)}>
           <div className="sch-modal" onClick={e => e.stopPropagation()}>
             <div className="sch-modal-header">
-              <span className="sch-modal-title">Class — Period {modalPeriod.period_number}{modalPeriod?.frequency==='alternating'?` (${SLOT_LABELS[modalSlotIdx]})`:''}</span>
+              <span className="sch-modal-title">Class — Period {modalPeriod.period_number}</span>
               <button className="sch-modal-close" onClick={() => setModal(null)}><X size={14} /></button>
             </div>
             <div className="sch-modal-body" style={{display:'flex',flexDirection:'column',gap:12}}>
@@ -590,13 +590,13 @@ function CalendarTab({ schools, allClasses, progressCtx, selectedDate }) {
                   <button key={cl.id} className={`sch-modal-chip class ${modalClassId === cl.id ? 'active' : ''}`} onClick={() => setModalClassId(cl.id)}>{cl.label}</button>
                 ))}
               </div>
-              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8}}>
+              <div className="sch-option-grid">
                 {[{v:'once',title:`Just ${selectedDate.toLocaleDateString('en-US',{month:'short',day:'numeric'})}`,desc:'One-time override only.'},{v:'permanent',title:`All future ${dow}s`,desc:'Updates your recurring schedule.'}].map(opt => (
-                  <div key={opt.v} onClick={() => setModalChangeType(opt.v)} style={{border:modalChangeType===opt.v?'1.5px solid #2DE6FF':'1.5px solid #E0E0E0',borderRadius:10,padding:12,cursor:'pointer',background:modalChangeType===opt.v?'#DFFCFF':'#FFFFFF',display:'flex',gap:10,transition:'all 0.15s'}}>
-                    <div style={{width:14,height:14,borderRadius:'50%',border:modalChangeType===opt.v?'none':'1.5px solid #E0E0E0',background:modalChangeType===opt.v?'#00C8E0':'#FFFFFF',flexShrink:0,marginTop:2}} />
+                  <div key={opt.v} onClick={() => setModalChangeType(opt.v)} className={`sch-option-card ${modalChangeType===opt.v ? 'active' : ''}`}>
+                    <div className="sch-option-radio" />
                     <div>
-                      <div style={{fontFamily:"'Figtree',sans-serif",fontSize:14,fontWeight:600,color:'#0A100D',marginBottom:4}}>{opt.title}</div>
-                      <div style={{fontFamily:"'Figtree',sans-serif",fontSize:12,color:'#3D3D3D'}}>{opt.desc}</div>
+                      <div className="sch-option-title">{opt.title}</div>
+                      <div className="sch-option-desc">{opt.desc}</div>
                     </div>
                   </div>
                 ))}
@@ -615,19 +615,19 @@ function CalendarTab({ schools, allClasses, progressCtx, selectedDate }) {
         <div className="sch-modal-overlay" onClick={() => setModal(null)}>
           <div className="sch-modal" onClick={e => e.stopPropagation()}>
             <div className="sch-modal-header">
-              <span className="sch-modal-title">Time — Period {modalPeriod.period_number}{modalPeriod?.frequency==='alternating'?` (${SLOT_LABELS[modalSlotIdx]})`:''}</span>
+              <span className="sch-modal-title">Time — Period {modalPeriod.period_number}</span>
               <button className="sch-modal-close" onClick={() => setModal(null)}><X size={14} /></button>
             </div>
             <div className="sch-modal-body" style={{display:'flex',flexDirection:'column',gap:12}}>
               <div className="sc-field"><span className="sc-field-label">START TIME</span><input className="sch-time-input" type="time" value={modalTimeForm.start_time} onChange={e => setModalTimeForm(p=>({...p,start_time:e.target.value}))} autoFocus /></div>
               <div className="sc-field"><span className="sc-field-label">END TIME</span><input className="sch-time-input" type="time" value={modalTimeForm.end_time} onChange={e => setModalTimeForm(p=>({...p,end_time:e.target.value}))} /></div>
-              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8}}>
+              <div className="sch-option-grid">
                 {[{v:'once',title:`Just ${selectedDate.toLocaleDateString('en-US',{month:'short',day:'numeric'})}`,desc:'One-time override only.'},{v:'permanent',title:`All future ${dow}s`,desc:'Updates your recurring schedule.'}].map(opt => (
-                  <div key={opt.v} onClick={() => setModalChangeType(opt.v)} style={{border:modalChangeType===opt.v?'1.5px solid #2DE6FF':'1.5px solid #E0E0E0',borderRadius:10,padding:12,cursor:'pointer',background:modalChangeType===opt.v?'#DFFCFF':'#FFFFFF',display:'flex',gap:10,transition:'all 0.15s'}}>
-                    <div style={{width:14,height:14,borderRadius:'50%',border:modalChangeType===opt.v?'none':'1.5px solid #E0E0E0',background:modalChangeType===opt.v?'#00C8E0':'#FFFFFF',flexShrink:0,marginTop:2}} />
+                  <div key={opt.v} onClick={() => setModalChangeType(opt.v)} className={`sch-option-card ${modalChangeType===opt.v ? 'active' : ''}`}>
+                    <div className="sch-option-radio" />
                     <div>
-                      <div style={{fontFamily:"'Figtree',sans-serif",fontSize:14,fontWeight:600,color:'#0A100D',marginBottom:4}}>{opt.title}</div>
-                      <div style={{fontFamily:"'Figtree',sans-serif",fontSize:12,color:'#3D3D3D'}}>{opt.desc}</div>
+                      <div className="sch-option-title">{opt.title}</div>
+                      <div className="sch-option-desc">{opt.desc}</div>
                     </div>
                   </div>
                 ))}
@@ -640,6 +640,94 @@ function CalendarTab({ schools, allClasses, progressCtx, selectedDate }) {
           </div>
         </div>
       )}
+
+      {/* Multi Class modal */}
+      {modal === 'multi_class' && modalPeriod && (() => {
+        const period = modalPeriod
+        const pool = period.slots.filter(s => s.class_id)
+        const poolIds = pool.map(s => s.class_id)
+        const otherClasses = allClasses.filter(cl => cl.school_id === period.school_id && !poolIds.includes(cl.id))
+        const resolvedClassId = periodOverrides[period.id]?.class_id ?? null
+
+        return (
+          <div className="sch-modal-overlay" onClick={() => setModal(null)}>
+            <div className="sch-modal" onClick={e => e.stopPropagation()}>
+              <div className="sch-modal-header">
+                <span className="sch-modal-title">Multi Class — Period {period.period_number}</span>
+                <button className="sch-modal-close" onClick={() => setModal(null)}><X size={14} /></button>
+              </div>
+              <div className="sch-modal-body">
+                <div className="modal-label" style={{marginBottom:8}}>
+                  Which class is this on {selectedDate.toLocaleDateString('en-US',{month:'short',day:'numeric'})}?
+                </div>
+                <div className="sch-multi-class-options">
+                  {pool.map(slot => {
+                    const cls = allClasses.find(c => c.id === slot.class_id)
+                    const currLessons = lessons[cls?.curriculum_id] ?? []
+                    const prog = progressCtx?.[slot.class_id]
+                    const idx = prog?.current_lesson_id
+                      ? Math.max(0, currLessons.findIndex(l => l.id === prog.current_lesson_id))
+                      : 0
+                    const lesson = currLessons[idx]
+                    const isResolved = resolvedClassId === slot.class_id
+                    return (
+                      <button
+                        key={slot.id}
+                        className={`sch-multi-class-option ${isResolved ? 'active' : ''}`}
+                        onClick={() => handleResolveTodayClass(slot.class_id, false)}
+                      >
+                        <span className="sch-period-tap-chip class" style={{cursor:'default'}}>{cls?.label ?? '—'}</span>
+                        {lesson && (
+                          <span className="sch-pool-chip">
+                            {[lesson.tag1, lesson.tag2].filter(Boolean).join(' · ')}
+                          </span>
+                        )}
+                      </button>
+                    )
+                  })}
+                </div>
+
+                {otherClasses.length > 0 && (
+                  <>
+                    <div className="sch-multi-class-other-label">Not in your rotation?</div>
+                    <div className="sch-multi-class-other-options">
+                      {otherClasses.map(cl => (
+                        <button
+                          key={cl.id}
+                          className={`sch-modal-chip class ${modalOtherClassId === cl.id ? 'active' : ''}`}
+                          onClick={() => setModalOtherClassId(cl.id)}
+                        >
+                          {cl.label}
+                        </button>
+                      ))}
+                    </div>
+                  </>
+                )}
+
+                {modalOtherClassId && (
+                  <div className="sch-option-grid" style={{marginTop:16}}>
+                    {[{v:'once',title:`Just ${selectedDate.toLocaleDateString('en-US',{month:'short',day:'numeric'})}`,desc:"One-time choice. This class isn't added to the rotation."},{v:'permanent',title:'Add to rotation',desc:'This class becomes a permanent option for this period.'}].map(opt => (
+                      <div key={opt.v} onClick={() => setModalMultiChangeType(opt.v)} className={`sch-option-card ${modalMultiChangeType===opt.v ? 'active' : ''}`}>
+                        <div className="sch-option-radio" />
+                        <div>
+                          <div className="sch-option-title">{opt.title}</div>
+                          <div className="sch-option-desc">{opt.desc}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+              {modalOtherClassId && (
+                <div className="sch-modal-footer">
+                  <button className="sch-form-cancel" onClick={() => setModalOtherClassId(null)}>Back</button>
+                  <button className="sch-form-save" onClick={() => handleResolveTodayClass(modalOtherClassId, modalMultiChangeType === 'permanent')}>Save</button>
+                </div>
+              )}
+            </div>
+          </div>
+        )
+      })()}
     </div>
   )
 }

@@ -24,7 +24,6 @@ export default function Home() {
   const { schools, classes: allClasses, progress: progressCtx, lessons: allLessons, lessonsByCurriculum, refresh: refreshData } = useData()
   const [selectedSchoolId, setSelectedSchoolId] = useState(null)
   const [selectedPeriodIdx, setSelectedPeriodIdx] = useState(0)
-  const [selectedSlotIdx, setSelectedSlotIdx] = useState(0)
   const [expandedBlocks, setExpandedBlocks] = useState({})
 
   const {
@@ -33,6 +32,8 @@ export default function Home() {
     savePeriodSchoolOverride: savePeriodSchoolOverrideHook,
     savePeriodClassOverride: savePeriodClassOverrideHook,
     savePeriodTimeOverride: savePeriodTimeOverrideHook,
+    resolveTodayClass,
+    clearTodayClass,
   } = useDaySchedule(selectedDate, allClasses, progressCtx)
 
   const [modal, setModal] = useState(null)
@@ -46,13 +47,21 @@ export default function Home() {
   const [modalClassId, setModalClassId] = useState(null)
   const [modalTimeForm, setModalTimeForm] = useState({ start_time: '', end_time: '' })
 
+  // Multi Class modal state
+  const [modalOtherClassId, setModalOtherClassId] = useState(null)
+  const [modalMultiChangeType, setModalMultiChangeType] = useState('once')
+
 
   useEffect(() => {
     const period = periods[selectedPeriodIdx]
     if (!period) return
     const override = periodOverrides[period.id]
-    const slot = period.slots?.[selectedSlotIdx] ?? period.slots?.[0]
-    const classId = override?.class_id ?? slot?.class_id
+    let classId
+    if (period.frequency === 'alternating') {
+      classId = override?.class_id ?? null
+    } else {
+      classId = override?.class_id ?? period.slots?.[0]?.class_id
+    }
     if (!classId) return
     const cls = allClasses.find(c => c.id === classId)
     if (!cls) return
@@ -66,15 +75,18 @@ export default function Home() {
   function navigateLesson(periodIdx, dir) {
     const period = periods[periodIdx]
     const override = periodOverrides[period?.id]
-    const slot = period?.slots?.[selectedSlotIdx] ?? period?.slots?.[0]
-    const classId = override?.class_id ?? slot?.class_id
+    let classId
+    if (period?.frequency === 'alternating') {
+      classId = override?.class_id ?? null
+    } else {
+      classId = override?.class_id ?? period?.slots?.[0]?.class_id
+    }
     const cls = allClasses.find(c => c.id === classId)
     if (!cls) return
     const currLessons = lessons[cls.curriculum_id] ?? []
-    const key = period?.frequency === 'alternating' ? `${periodIdx}_${selectedSlotIdx}` : periodIdx
-    const current = lessonIndices[key] ?? 0
+    const current = lessonIndices[periodIdx] ?? 0
     const next = Math.max(0, Math.min(currLessons.length - 1, current + dir))
-    setLessonIndices(prev => ({ ...prev, [key]: next }))
+    setLessonIndices(prev => ({ ...prev, [periodIdx]: next }))
   }
 
   function toggleBlock(key) {
@@ -102,18 +114,25 @@ export default function Home() {
   }
 
   async function savePeriodSchoolOverride() {
-    await savePeriodSchoolOverrideHook(periods[modalPeriodIdx], modalSchoolId, selectedSlotIdx, modalChangeType, selectedDate)
+    await savePeriodSchoolOverrideHook(periods[modalPeriodIdx], modalSchoolId, 0, modalChangeType, selectedDate)
     setModal(null)
   }
 
   async function savePeriodClassOverride() {
-    await savePeriodClassOverrideHook(periods[modalPeriodIdx], modalClassId, selectedSlotIdx, modalChangeType, selectedDate)
+    await savePeriodClassOverrideHook(periods[modalPeriodIdx], modalClassId, 0, modalChangeType, selectedDate)
     setModal(null)
   }
 
   async function savePeriodTimeOverride() {
-    await savePeriodTimeOverrideHook(periods[modalPeriodIdx], modalTimeForm, selectedSlotIdx, modalChangeType, selectedDate)
+    await savePeriodTimeOverrideHook(periods[modalPeriodIdx], modalTimeForm, 0, modalChangeType, selectedDate)
     setModal(null)
+  }
+
+  async function handleResolveTodayClass(classId, addToPool) {
+    await resolveTodayClass(periods[modalPeriodIdx], classId, addToPool, selectedDate)
+    setModal(null)
+    setModalOtherClassId(null)
+    setModalMultiChangeType('once')
   }
 
   // Derived values
@@ -122,12 +141,12 @@ export default function Home() {
 
   const selectedPeriod = periods[selectedPeriodIdx]
   const periodOverride = selectedPeriod ? periodOverrides[selectedPeriod.id] : null
-  const isAlternating = selectedPeriod?.frequency === 'alternating'
-  const effectiveClassId = periodOverride?.class_id ?? selectedPeriod?.slots?.[selectedSlotIdx]?.class_id ?? selectedPeriod?.slots?.[0]?.class_id
+  const isMultiClass = selectedPeriod?.frequency === 'alternating'
+  const resolvedClassId = periodOverride?.class_id ?? null
+  const effectiveClassId = isMultiClass ? resolvedClassId : (periodOverride?.class_id ?? selectedPeriod?.slots?.[0]?.class_id)
   const selectedClass = allClasses.find(c => c.id === effectiveClassId)
   const selectedLessons = lessons[selectedClass?.curriculum_id] ?? []
-  const lessonKey = isAlternating ? `${selectedPeriodIdx}_${selectedSlotIdx}` : selectedPeriodIdx
-  const selectedLessonIdx = lessonIndices[lessonKey] ?? 0
+  const selectedLessonIdx = lessonIndices[selectedPeriodIdx] ?? 0
   const selectedLesson = selectedLessons[selectedLessonIdx]
   const selectedBlocks = selectedLesson ? (blocks[selectedLesson.id] ?? []) : []
   const selectedSchool = schools.find(s => s.id === selectedSchoolId)
@@ -217,13 +236,15 @@ export default function Home() {
           const currLessons = lessons[cls?.curriculum_id] ?? []
           const lesson = currLessons[lessonIndices[i] ?? 0]
           const isSelected = i === selectedPeriodIdx
-          const hasOverride = !!override
+          const hasOverride = period.frequency === 'alternating'
+            ? !!(override?.school_id || override?.start_time || override?.end_time)
+            : !!override
 
           return (
             <div
               key={period.id}
               className={`period-row ${isSelected ? 'selected' : ''} ${(!cls) ? 'no-class' : ''}`}
-              onClick={() => { setSelectedPeriodIdx(i); if (period.frequency !== 'alternating') setSelectedSlotIdx(0) }}
+              onClick={() => setSelectedPeriodIdx(i)}
             >
               {/* Period label row */}
               <div className="period-header-row">
@@ -262,54 +283,47 @@ export default function Home() {
                 </button>
               </div>
 
-              {/* Class + Lesson bar(s) */}
-              {period.frequency === 'alternating' ? (
-                period.slots.map((slot, slotIdx) => {
-                  const slotCls = allClasses.find(c => c.id === slot.class_id)
-                  const slotLessons = lessons[slotCls?.curriculum_id] ?? []
-                  const slotLesson = slotLessons[lessonIndices[`${i}_${slotIdx}`] ?? 0]
-                  const slotLabel = ['A','B','C','D'][slotIdx]
-                  const isSlotSelected = isSelected && selectedSlotIdx === slotIdx
-                  return (
-                    <div key={slot.id ?? slotIdx} className="period-bar">
-                      <span className="sch-ab-label">{slotLabel}</span>
-                      <button
-                        className={`period-tap-chip class ${!slotCls ? 'empty' : ''}`}
-                        onClick={e => {
-                          e.stopPropagation()
-                          setSelectedPeriodIdx(i)
-                          setSelectedSlotIdx(slotIdx)
-                          setModalPeriodIdx(i)
-                          setModalClassId(slotCls?.id ?? null)
-                          setModalChangeType('once')
-                          setModal('period_class')
-                        }}
-                      >
-                        {slotCls?.label ?? '—'}
-                      </button>
-                      {slotCls && slotLesson && (
-                        <button
-                          className={`period-tap-chip lesson-chip ${isSlotSelected ? 'active' : ''}`}
-                          onClick={e => {
-                            e.stopPropagation()
-                            setSelectedPeriodIdx(i)
-                            setSelectedSlotIdx(slotIdx)
-                          }}
-                        >
-                          {[slotLesson.tag1, slotLesson.tag2].filter(Boolean).join(' · ')}
+              {/* Class + Lesson bar */}
+              {period.frequency === 'alternating' ? (() => {
+                const resolvedClassId = override?.class_id ?? null
+                const resolvedCls = resolvedClassId ? allClasses.find(c => c.id === resolvedClassId) : null
+                const resolvedLessons = lessons[resolvedCls?.curriculum_id] ?? []
+                const resolvedLesson = resolvedLessons[lessonIndices[i] ?? 0]
+                const openMultiModal = e => {
+                  e.stopPropagation()
+                  setSelectedPeriodIdx(i)
+                  setModalPeriodIdx(i)
+                  setModalOtherClassId(null)
+                  setModalMultiChangeType('once')
+                  setModal('multi_class')
+                }
+                return (
+                  <div className="period-bar">
+                    {resolvedCls ? (
+                      <>
+                        <button className="period-tap-chip class" onClick={openMultiModal}>
+                          {resolvedCls.label}
                         </button>
-                      )}
-                    </div>
-                  )
-                })
-              ) : (
+                        {resolvedLesson && (
+                          <span className="period-tap-chip" style={{cursor:'default'}}>
+                            {[resolvedLesson.tag1, resolvedLesson.tag2].filter(Boolean).join(' · ')}
+                          </span>
+                        )}
+                      </>
+                    ) : (
+                      <button className="period-tap-chip class empty" onClick={openMultiModal}>
+                        Select Class
+                      </button>
+                    )}
+                  </div>
+                )
+              })() : (
                 <div className="period-bar">
                   <button
                     className={`period-tap-chip class ${!cls ? 'empty' : ''}`}
                     onClick={e => {
                       e.stopPropagation()
                       setSelectedPeriodIdx(i)
-                      setSelectedSlotIdx(0)
                       setModalPeriodIdx(i)
                       setModalClassId(cls?.id ?? null)
                       setModalChangeType('once')
@@ -389,27 +403,17 @@ export default function Home() {
               })}
             </div>
           </>
-        ) : isAlternating && selectedPeriod ? (
-          <div className="no-lesson-selected" style={{display:'flex',flexDirection:'column',alignItems:'flex-start',gap:12,padding:24}}>
-            <div style={{fontFamily:"'Figtree',sans-serif",fontSize:15,fontWeight:600,color:'#0A100D'}}>Which class are you teaching?</div>
-            <div style={{display:'flex',flexDirection:'column',gap:8,width:'100%'}}>
-              {selectedPeriod.slots.map((slot, slotIdx) => {
-                const slotCls = allClasses.find(c => c.id === slot.class_id)
-                const slotLessons = lessons[slotCls?.curriculum_id] ?? []
-                const slotLesson = slotLessons[lessonIndices[`${selectedPeriodIdx}_${slotIdx}`] ?? 0]
-                const slotLabel = ['A','B','C','D'][slotIdx]
-                return (
-                  <button key={slotIdx} onClick={() => setSelectedSlotIdx(slotIdx)} style={{display:'flex',alignItems:'center',gap:10,padding:'10px 14px',borderRadius:6,border:'0.5px solid #E0E0E0',background:'#FFFFFF',cursor:'pointer',textAlign:'left',transition:'all 0.15s',fontFamily:"'Figtree',sans-serif"}}
-                    onMouseEnter={e => e.currentTarget.style.background='#F5F5F5'}
-                    onMouseLeave={e => e.currentTarget.style.background='#FFFFFF'}
-                  >
-                    <span style={{width:20,height:20,borderRadius:'50%',background:'#0A100D',color:'#FFFFFF',display:'flex',alignItems:'center',justifyContent:'center',fontSize:11,fontWeight:700,flexShrink:0}}>{slotLabel}</span>
-                    <span style={{fontSize:14,fontWeight:600,color:'#0A100D'}}>{slotCls?.label ?? 'No class'}</span>
-                    {slotLesson && <span style={{fontSize:12,color:'#787878',marginLeft:'auto'}}>{[slotLesson.tag1, slotLesson.tag2].filter(Boolean).join(' · ')}</span>}
-                  </button>
-                )
-              })}
-            </div>
+        ) : isMultiClass && selectedPeriod && !resolvedClassId ? (
+          <div
+            className="no-lesson-selected multi-class-prompt"
+            onClick={() => {
+              setModalPeriodIdx(selectedPeriodIdx)
+              setModalOtherClassId(null)
+              setModalMultiChangeType('once')
+              setModal('multi_class')
+            }}
+          >
+            This period rotates between multiple classes. Tap <strong>Select Class</strong> to choose today's class.
           </div>
         ) : (
           <div className="no-lesson-selected">
@@ -475,7 +479,7 @@ export default function Home() {
                 {schools.map(s => (
                   <button
                     key={s.id}
-                    className={`modal-chip ${modalSchoolId === s.id ? 'active' : ''}`}
+                    className={`modal-chip school ${modalSchoolId === s.id ? 'active' : ''}`}
                     onClick={() => setModalSchoolId(s.id)}
                   >
                     {s.name}
@@ -525,7 +529,7 @@ export default function Home() {
                   {schoolClasses.map(cl => (
                     <button
                       key={cl.id}
-                      className={`modal-chip ${modalClassId === cl.id ? 'active' : ''}`}
+                      className={`modal-chip class ${modalClassId === cl.id ? 'active' : ''}`}
                       style={modalClassId === cl.id ? { borderColor: '#2DE6FF', color: '#007080' } : {}}
                       onClick={() => setModalClassId(cl.id)}
                     >
@@ -560,7 +564,100 @@ export default function Home() {
         )
       })()}
 
-      {/* Period Time Override Modal */}
+      {/* Multi Class Modal */}
+      {modal === 'multi_class' && modalPeriodIdx !== null && (() => {
+        const period = periods[modalPeriodIdx]
+        if (!period) return null
+        const pool = period.slots.filter(s => s.class_id)
+        const poolIds = pool.map(s => s.class_id)
+        const otherClasses = allClasses.filter(cl => cl.school_id === period.school_id && !poolIds.includes(cl.id))
+        const resolvedClassId = periodOverrides[period.id]?.class_id ?? null
+
+        return (
+          <div className="modal-overlay" onClick={() => setModal(null)}>
+            <div className="modal" onClick={e => e.stopPropagation()}>
+              <div className="modal-header">
+                <span className="modal-title">Multi Class — Period {period.period_number}</span>
+                <button className="modal-close" onClick={() => setModal(null)}><X size={14} /></button>
+              </div>
+              <div className="modal-body">
+                <div className="modal-label">Which class are you teaching today?</div>
+                <div className="multi-class-options">
+                  {pool.map(slot => {
+                    const cls = allClasses.find(c => c.id === slot.class_id)
+                    const currLessons = lessons[cls?.curriculum_id] ?? []
+                    const prog = progressCtx?.[slot.class_id]
+                    const idx = prog?.current_lesson_id
+                      ? Math.max(0, currLessons.findIndex(l => l.id === prog.current_lesson_id))
+                      : 0
+                    const lesson = currLessons[idx]
+                    const isResolved = resolvedClassId === slot.class_id
+                    return (
+                      <button
+                        key={slot.id}
+                        className={`multi-class-option ${isResolved ? 'active' : ''}`}
+                        onClick={() => handleResolveTodayClass(slot.class_id, false)}
+                      >
+                        <span className="period-tap-chip class" style={{cursor:'default'}}>{cls?.label ?? '—'}</span>
+                        {lesson && (
+                          <span className="period-tap-chip" style={{cursor:'default'}}>
+                            {[lesson.tag1, lesson.tag2].filter(Boolean).join(' · ')}
+                          </span>
+                        )}
+                      </button>
+                    )
+                  })}
+                </div>
+
+                {otherClasses.length > 0 && (
+                  <>
+                    <div className="multi-class-other-label">Not in your rotation?</div>
+                    <div className="multi-class-other-options">
+                      {otherClasses.map(cl => (
+                        <button
+                          key={cl.id}
+                          className={`multi-class-other-option ${modalOtherClassId === cl.id ? 'active' : ''}`}
+                          onClick={() => setModalOtherClassId(cl.id)}
+                        >
+                          {cl.label}
+                        </button>
+                      ))}
+                    </div>
+                  </>
+                )}
+
+                {modalOtherClassId && (
+                  <>
+                    <div className="modal-label" style={{ marginTop: 16 }}>What kind of change is this?</div>
+                    <div className="modal-change-types">
+                      <div className={`modal-change-card ${modalMultiChangeType === 'once' ? 'active' : ''}`} onClick={() => setModalMultiChangeType('once')}>
+                        <div className="modal-change-check" />
+                        <div>
+                          <div className="modal-change-title">Just for today</div>
+                          <div className="modal-change-desc">One-time choice. This class isn't added to the rotation.</div>
+                        </div>
+                      </div>
+                      <div className={`modal-change-card ${modalMultiChangeType === 'permanent' ? 'active' : ''}`} onClick={() => setModalMultiChangeType('permanent')}>
+                        <div className="modal-change-check" />
+                        <div>
+                          <div className="modal-change-title">Add to rotation</div>
+                          <div className="modal-change-desc">This class becomes a permanent option for this period.</div>
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
+              {modalOtherClassId && (
+                <div className="modal-footer">
+                  <button className="modal-btn-cancel" onClick={() => setModalOtherClassId(null)}>Back</button>
+                  <button className="modal-btn-save" onClick={() => handleResolveTodayClass(modalOtherClassId, modalMultiChangeType === 'permanent')}>Save Change</button>
+                </div>
+              )}
+            </div>
+          </div>
+        )
+      })()}
       {modal === 'period_time' && modalPeriodIdx !== null && (
         <div className="modal-overlay" onClick={() => setModal(null)}>
           <div className="modal modal-date" onClick={e => e.stopPropagation()}>
