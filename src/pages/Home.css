@@ -908,17 +908,8 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 4px;
-  border-radius: 6px;
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  text-align: left;
-  transition: all 0.15s;
   font-family: 'Figtree', sans-serif;
 }
-
-.multi-class-option:hover { background: #F5F5F5; }
 
 .multi-class-option.active .period-tap-chip.class {
   background: #DFFCFF;

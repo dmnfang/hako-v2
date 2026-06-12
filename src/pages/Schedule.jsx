@@ -671,18 +671,19 @@ function CalendarTab({ schools, allClasses, progressCtx, selectedDate }) {
                     const lesson = currLessons[idx]
                     const isResolved = resolvedClassId === slot.class_id
                     return (
-                      <button
-                        key={slot.id}
-                        className={`sch-multi-class-option ${isResolved ? 'active' : ''}`}
-                        onClick={() => handleResolveTodayClass(slot.class_id, false)}
-                      >
-                        <span className="sch-period-tap-chip class" style={{cursor:'default'}}>{cls?.label ?? '—'}</span>
+                      <div key={slot.id} className={`sch-multi-class-option ${isResolved ? 'active' : ''}`}>
+                        <button
+                          className="sch-period-tap-chip class"
+                          onClick={() => handleResolveTodayClass(slot.class_id, false)}
+                        >
+                          {cls?.label ?? '—'}
+                        </button>
                         {lesson && (
                           <span className="sch-pool-chip">
                             {[lesson.tag1, lesson.tag2].filter(Boolean).join(' · ')}
                           </span>
                         )}
-                      </button>
+                      </div>
                     )
                   })}
                 </div>

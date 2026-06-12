@@ -593,18 +593,19 @@ export default function Home() {
                     const lesson = currLessons[idx]
                     const isResolved = resolvedClassId === slot.class_id
                     return (
-                      <button
-                        key={slot.id}
-                        className={`multi-class-option ${isResolved ? 'active' : ''}`}
-                        onClick={() => handleResolveTodayClass(slot.class_id, false)}
-                      >
-                        <span className="period-tap-chip class" style={{cursor:'default'}}>{cls?.label ?? '—'}</span>
+                      <div key={slot.id} className={`multi-class-option ${isResolved ? 'active' : ''}`}>
+                        <button
+                          className="period-tap-chip class"
+                          onClick={() => handleResolveTodayClass(slot.class_id, false)}
+                        >
+                          {cls?.label ?? '—'}
+                        </button>
                         {lesson && (
                           <span className="period-tap-chip" style={{cursor:'default'}}>
                             {[lesson.tag1, lesson.tag2].filter(Boolean).join(' · ')}
                           </span>
                         )}
-                      </button>
+                      </div>
                     )
                   })}
                 </div>
