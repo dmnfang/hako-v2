@@ -491,9 +491,11 @@
 .modal-chip:hover { background: #F5F5F5; }
 
 .modal-chip.active {
+  background: #FFF5D6;
   border-color: #FFCC55;
   color: #A05000;
 }
+.modal-chip.active:hover { background: #FFE599; }
 
 .modal-chip.other {
   background: transparent;

@@ -1060,10 +1060,10 @@
 
 /* Status chips — amber style */
 .sch-modal-chip.status {
-  border-color: #FFCC55;
-  color: #A05000;
+  border-color: #E0E0E0;
+  color: #606060;
 }
-.sch-modal-chip.status:hover { background: #FFF5D6; }
+.sch-modal-chip.status:hover { background: #F5F5F5; }
 .sch-modal-chip.status.active {
   background: #FFF5D6;
   border-color: #FFCC55;
