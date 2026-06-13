@@ -484,10 +484,15 @@ export default function Curriculum() {
                     {isOpen && (
                       <div className="curr-block-body">
                         <textarea
+                          ref={el => { if (el) { el.style.height = 'auto'; el.style.height = `${el.scrollHeight}px` } }}
                           className="curr-block-input"
                           value={block.content ?? ''}
                           placeholder="Add notes, steps, or instructions…"
-                          onChange={e => updateBlock(block.id, 'content', e.target.value)}
+                          onChange={e => {
+                            updateBlock(block.id, 'content', e.target.value)
+                            e.target.style.height = 'auto'
+                            e.target.style.height = `${e.target.scrollHeight}px`
+                          }}
                           onBlur={() => saveBlock(block.id)}
                           rows={4}
                         />

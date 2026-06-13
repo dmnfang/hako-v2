@@ -426,6 +426,7 @@
   padding: 10px 12px;
   resize: none;
   outline: none;
+  overflow: hidden;
   line-height: 1.6;
   transition: border-color 0.15s;
 }
