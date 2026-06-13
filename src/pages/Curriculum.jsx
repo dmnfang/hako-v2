@@ -489,7 +489,6 @@ export default function Curriculum() {
                           placeholder="Add notes, steps, or instructions…"
                           onChange={e => updateBlock(block.id, 'content', e.target.value)}
                           onBlur={() => saveBlock(block.id)}
-                          onClick={() => setEditingBlock(block.id)}
                           rows={4}
                         />
                       </div>
