@@ -61,6 +61,9 @@
 
 .curr-row {
   position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
   padding: 12px;
   border-bottom: 0.5px solid #E0E0E0;
   background: transparent;
@@ -150,6 +153,27 @@
   background: #DFFCFF;
   border-radius: 999px;
   padding: 5px 10px;
+}
+
+/* Origin badge — Textbook (blue) vs Original (orange) */
+.curr-origin-tag {
+  display: inline-block;
+  font-family: 'Figtree', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: 999px;
+  padding: 5px 10px;
+  flex-shrink: 0;
+}
+
+.curr-origin-tag.textbook {
+  color: #3D5AFE;
+  background: #E8EBFF;
+}
+
+.curr-origin-tag.original {
+  color: #A05000;
+  background: #FFF5D6;
 }
 
 .curr-main {
@@ -271,6 +295,12 @@
   text-align: center;
 }
 
+.curr-empty-inline {
+  font-family: 'Figtree', sans-serif;
+  font-size: 12px;
+  color: #B8B8B8;
+}
+
 .curr-lesson-row {
   display: flex;
   align-items: center;
@@ -294,11 +324,13 @@
 
 .curr-grip { color: #D3D1C7; flex-shrink: 0; }
 
+.curr-row.dragging,
 .curr-lesson-row.dragging,
 .curr-block-row.dragging {
   opacity: 0.4;
 }
 
+.curr-row.drag-over,
 .curr-lesson-row.drag-over,
 .curr-block-row.drag-over {
   box-shadow: inset 0 2px 0 0 #2DE6FF;
@@ -451,6 +483,26 @@
   font-weight: 600;
   color: #0A100D;
   flex: 1;
+}
+
+.curr-block-title-col {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.curr-block-title-col .curr-block-title,
+.curr-block-title-col .curr-block-title-input {
+  flex: none;
+  width: 100%;
+}
+
+.curr-block-tags-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
 }
 
 .curr-block-title-input {

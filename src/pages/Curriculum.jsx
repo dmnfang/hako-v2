@@ -7,19 +7,18 @@ import { Plus, Trash2, Copy, ChevronDown, X, GripVertical, ArrowLeft, ArrowRight
 import { useLocation } from 'react-router-dom'
 import './Curriculum.css'
 
-const BLOCK_GROUPS = [
+// Seeded default Series group for brand-new users (sidebar) — "New Group" lets
+// them add their textbook series names (Let's Try, New Horizon, etc.)
+const DEFAULT_BLOCK_GROUPS = ['Original']
+
+// Fixed activity-type tabs (top of right panel) — same for every user
+const ACTIVITY_TYPES = [
   { value: 'activities', label: 'Activities' },
-  { value: 'songs_chants', label: 'Songs & Chants' },
+  { value: 'music', label: 'Music' },
   { value: 'warmup', label: 'Warm-up' },
   { value: 'games', label: 'Games' },
   { value: 'routines', label: 'Routines' },
-]
-
-const SERIES_TAGS = [
-  { value: 'all', label: 'All' },
-  { value: 'lets_try', label: "Let's Try" },
-  { value: 'new_horizon', label: 'New Horizon' },
-  { value: 'original', label: 'Original' },
+  { value: 'other', label: 'Other' },
 ]
 
 export default function Curriculum() {
@@ -51,8 +50,9 @@ export default function Curriculum() {
 
   // ─── Lesson Blocks library ──────────────────────────────────────────────
   const [pageMode, setPageMode] = useState('plans') // 'plans' | 'library'
-  const [selectedGroup, setSelectedGroup] = useState('activities')
-  const [seriesFilter, setSeriesFilter] = useState('all')
+  const [selectedGroupId, setSelectedGroupId] = useState(null)
+  const [blockGroups, setBlockGroups] = useState([])
+  const [activityFilter, setActivityFilter] = useState('activities')
   const [libraryBlocks, setLibraryBlocks] = useState([])
   const [libraryCounts, setLibraryCounts] = useState({})
   const [expandedLibraryBlocks, setExpandedLibraryBlocks] = useState({})
@@ -60,20 +60,28 @@ export default function Curriculum() {
   const [openLibraryMenuId, setOpenLibraryMenuId] = useState(null)
   const [dragLibraryId, setDragLibraryId] = useState(null)
   const [dragOverLibraryId, setDragOverLibraryId] = useState(null)
+  const [editingGroupId, setEditingGroupId] = useState(null)
+  const [groupForm, setGroupForm] = useState('')
+  const [openGroupMenuId, setOpenGroupMenuId] = useState(null)
+  const [newGroupModal, setNewGroupModal] = useState(false)
+  const [newGroupName, setNewGroupName] = useState('')
+  const [dragGroupId, setDragGroupId] = useState(null)
+  const [dragOverGroupId, setDragOverGroupId] = useState(null)
 
   // ─── Insert Blocks modal (within lesson editor) ─────────────────────────
   const [insertModal, setInsertModal] = useState(false)
-  const [insertGroup, setInsertGroup] = useState('activities')
-  const [insertSeries, setInsertSeries] = useState('all')
-  const [insertBlocks, setInsertBlocks] = useState([]) // library blocks for insertGroup
+  const [insertGroupId, setInsertGroupId] = useState(null)
+  const [insertActivity, setInsertActivity] = useState('activities')
+  const [insertBlocks, setInsertBlocks] = useState([]) // library blocks for insertGroupId
   const [insertSelectedIds, setInsertSelectedIds] = useState([])
 
   useEffect(() => { fetchCurricula() }, [])
   useEffect(() => { if (selectedCurriculumId) fetchLessons() }, [selectedCurriculumId])
   useEffect(() => { if (selectedLessonId && view === 'blocks') fetchBlocks() }, [selectedLessonId, view])
-  useEffect(() => { if (pageMode === 'library') fetchLibraryBlocks() }, [pageMode, selectedGroup])
-  useEffect(() => { if (pageMode === 'library') fetchLibraryCounts() }, [pageMode])
-  useEffect(() => { if (insertModal) fetchInsertBlocks() }, [insertModal, insertGroup])
+  useEffect(() => { if (pageMode === 'library') fetchBlockGroups() }, [pageMode])
+  useEffect(() => { if (pageMode === 'library' && selectedGroupId) fetchLibraryBlocks() }, [pageMode, selectedGroupId, activityFilter])
+  useEffect(() => { if (pageMode === 'library') fetchLibraryCounts() }, [pageMode, blockGroups])
+  useEffect(() => { if (insertModal) fetchInsertBlocks() }, [insertModal, insertGroupId, insertActivity])
 
   useEffect(() => {
     function handleClick() { setOpenLibraryMenuId(null) }
@@ -82,6 +90,14 @@ export default function Curriculum() {
     }
     return () => document.removeEventListener('click', handleClick)
   }, [openLibraryMenuId])
+
+  useEffect(() => {
+    function handleClick() { setOpenGroupMenuId(null) }
+    if (openGroupMenuId) {
+      setTimeout(() => document.addEventListener('click', handleClick), 0)
+    }
+    return () => document.removeEventListener('click', handleClick)
+  }, [openGroupMenuId])
 
   useEffect(() => {
     function handleClick() { setOpenBlockMenuId(null) }
@@ -138,28 +154,80 @@ export default function Curriculum() {
   }
 
   // ─── Lesson Blocks library ──────────────────────────────────────────────
+  // ─── Block Groups ─────────────────────────────────────────────────────
+  async function fetchBlockGroups() {
+    const { data } = await supabase.from('block_groups').select('*').order('sort_order')
+    if ((data ?? []).length === 0) {
+      // Seed defaults for brand-new users
+      const { data: { user } } = await supabase.auth.getUser()
+      const rows = DEFAULT_BLOCK_GROUPS.map((label, i) => ({ user_id: user.id, label, sort_order: i + 1 }))
+      const { data: seeded } = await supabase.from('block_groups').insert(rows).select().order('sort_order')
+      setBlockGroups(seeded ?? [])
+      if (seeded?.length > 0 && !selectedGroupId) setSelectedGroupId(seeded[0].id)
+    } else {
+      setBlockGroups(data)
+      if (!selectedGroupId) setSelectedGroupId(data[0].id)
+    }
+  }
+
+  async function addBlockGroup() {
+    if (!newGroupName.trim()) return
+    const { data: { user } } = await supabase.auth.getUser()
+    const maxSort = blockGroups.reduce((m, g) => Math.max(m, g.sort_order ?? 0), 0)
+    const { data } = await supabase.from('block_groups').insert({
+      user_id: user.id, label: newGroupName.trim(), sort_order: maxSort + 1,
+    }).select().single()
+    setBlockGroups(prev => [...prev, data])
+    setSelectedGroupId(data.id)
+    setNewGroupModal(false)
+    setNewGroupName('')
+  }
+
+  async function saveGroupName(id) {
+    const group = blockGroups.find(g => g.id === id)
+    if (!group) return
+    await supabase.from('block_groups').update({ label: group.label }).eq('id', id)
+    setEditingGroupId(null)
+  }
+
+  function updateGroupName(id, value) {
+    setBlockGroups(prev => prev.map(g => g.id === id ? { ...g, label: value } : g))
+  }
+
+  async function deleteBlockGroup(id) {
+    if (!confirm('Delete this series and all its blocks?')) return
+    await supabase.from('block_groups').delete().eq('id', id)
+    const remaining = blockGroups.filter(g => g.id !== id)
+    setBlockGroups(remaining)
+    setOpenGroupMenuId(null)
+    if (selectedGroupId === id) setSelectedGroupId(remaining[0]?.id ?? null)
+  }
+
+  // ─── Library blocks ───────────────────────────────────────────────────
   async function fetchLibraryBlocks() {
     const { data } = await supabase
-      .from('lesson_blocks').select('*').eq('block_group', selectedGroup).order('sort_order')
+      .from('lesson_blocks').select('*')
+      .eq('block_group_id', selectedGroupId)
+      .eq('activity_type', activityFilter)
+      .order('sort_order')
     setLibraryBlocks(data ?? [])
     setExpandedLibraryBlocks({})
   }
 
   async function fetchLibraryCounts() {
-    const { data } = await supabase.from('lesson_blocks').select('block_group')
+    const { data } = await supabase.from('lesson_blocks').select('block_group_id')
     const counts = {}
-    data?.forEach(b => { counts[b.block_group] = (counts[b.block_group] ?? 0) + 1 })
+    data?.forEach(b => { counts[b.block_group_id] = (counts[b.block_group_id] ?? 0) + 1 })
     setLibraryCounts(counts)
   }
 
   async function addLibraryBlock() {
     const { data: { user } } = await supabase.auth.getUser()
     const maxSort = libraryBlocks.reduce((m, b) => Math.max(m, b.sort_order ?? 0), 0)
-    const defaultSeries = seriesFilter === 'all' ? 'original' : seriesFilter
     const { data } = await supabase.from('lesson_blocks').insert({
       user_id: user.id,
-      block_group: selectedGroup,
-      series_tag: defaultSeries,
+      block_group_id: selectedGroupId,
+      activity_type: activityFilter,
       title: 'New Block',
       content: '',
       sort_order: maxSort + 1,
@@ -182,11 +250,11 @@ export default function Curriculum() {
     setLibraryBlocks(prev => prev.map(b => b.id === id ? { ...b, [field]: value } : b))
   }
 
-  async function saveLibraryBlock(id) {
-    const block = libraryBlocks.find(b => b.id === id)
+  async function saveLibraryBlock(id, override) {
+    const block = override ?? libraryBlocks.find(b => b.id === id)
     if (!block) return
     await supabase.from('lesson_blocks').update({
-      title: block.title, content: block.content, series_tag: block.series_tag,
+      title: block.title, content: block.content,
     }).eq('id', id)
     setEditingLibraryBlock(null)
   }
@@ -352,16 +420,21 @@ export default function Curriculum() {
 
   // ─── Insert Blocks (from library, into current lesson) ──────────────────
   async function fetchInsertBlocks() {
+    if (!insertGroupId) { setInsertBlocks([]); return }
     const { data } = await supabase
-      .from('lesson_blocks').select('*').eq('block_group', insertGroup).order('sort_order')
+      .from('lesson_blocks').select('*')
+      .eq('block_group_id', insertGroupId)
+      .eq('activity_type', insertActivity)
+      .order('sort_order')
     setInsertBlocks(data ?? [])
   }
 
   function openInsertModal() {
-    setInsertGroup('activities')
-    setInsertSeries('all')
+    setInsertGroupId(blockGroups[0]?.id ?? null)
+    setInsertActivity('activities')
     setInsertSelectedIds([])
     setInsertModal(true)
+    if (blockGroups.length === 0) fetchBlockGroups()
   }
 
   function toggleInsertSelected(id) {
@@ -458,6 +531,26 @@ export default function Curriculum() {
     persistOrder('blocks', next)
   }
 
+  function handleGroupDrop(overId) {
+    if (!dragGroupId || dragGroupId === overId) {
+      setDragGroupId(null); setDragOverGroupId(null); return
+    }
+    const next = reorderList(blockGroups, dragGroupId, overId)
+    setBlockGroups(next)
+    setDragGroupId(null)
+    setDragOverGroupId(null)
+    persistOrder('block_groups', next)
+  }
+
+  function handleGroupDropToEnd() {
+    if (!dragGroupId) return
+    const next = moveToEnd(blockGroups, dragGroupId)
+    setBlockGroups(next)
+    setDragGroupId(null)
+    setDragOverGroupId(null)
+    persistOrder('block_groups', next)
+  }
+
   async function updateBlock(id, field, value) {
     setBlocks(prev => prev.map(b => b.id === id ? { ...b, [field]: value } : b))
   }
@@ -481,6 +574,7 @@ export default function Curriculum() {
   const selectedLesson = lessons.find(l => l.id === selectedLessonId)
   const selectedCurriculum = curricula.find(c => c.id === selectedCurriculumId)
 
+
   if (loading) return <Layout sidebar={<div />}><div /></Layout>
 
   const sidebar = (
@@ -489,7 +583,7 @@ export default function Curriculum() {
         <h1 className="curr-title">Courses</h1>
         {pageMode === 'plans'
           ? <HintBanner id="curriculum" message="Build your lesson plans here. Create courses, add lessons, and break each lesson into activity blocks. These plans appear on your Home dashboard when you tap a period." />
-          : <HintBanner id="curriculum_library" message="Build a library of reusable block templates — generic activities, songs, warm-ups, and routines you can insert into any lesson." />
+          : <HintBanner id="curriculum_library" message="Organize reusable blocks by series — Original, Let's Try, New Horizon, or whatever textbooks you use. Within each, sort blocks by type using the tabs above." />
         }
         <div className="sch-sidebar-tabs">
           <button className={`sch-sidebar-tab ${pageMode === 'plans' ? 'active' : ''}`} onClick={() => setPageMode('plans')}>Lesson Plans</button>
@@ -497,6 +591,9 @@ export default function Curriculum() {
         </div>
         {pageMode === 'plans' && (
           <button className="curr-new-btn" onClick={() => { setCourseForm({ name: '', grade_tag: '' }); setEditingCourseId(null); setCourseModal(true) }}><Plus size={14} /> New Course</button>
+        )}
+        {pageMode === 'library' && (
+          <button className="curr-new-btn" onClick={() => { setNewGroupName(''); setNewGroupModal(true) }}><Plus size={14} /> New Series</button>
         )}
       </div>
       {pageMode === 'plans' ? (
@@ -519,19 +616,70 @@ export default function Curriculum() {
           ))}
         </div>
       ) : (
-        <div className="curr-list">
-          {BLOCK_GROUPS.map(g => (
+        <div
+          className="curr-list"
+          onDragOver={e => { if (dragGroupId) e.preventDefault() }}
+          onDrop={e => { e.preventDefault(); handleGroupDropToEnd() }}
+        >
+          {blockGroups.map(g => (
             <div
-              key={g.value}
-              className={`curr-row ${selectedGroup === g.value ? 'selected' : ''}`}
-              onClick={() => setSelectedGroup(g.value)}
+              key={g.id}
+              className={`curr-row ${selectedGroupId === g.id ? 'selected' : ''} ${dragOverGroupId === g.id ? 'drag-over' : ''} ${dragGroupId === g.id ? 'dragging' : ''}`}
+              onClick={() => editingGroupId !== g.id && setSelectedGroupId(g.id)}
+              onDragOver={e => { e.preventDefault(); if (dragGroupId && dragGroupId !== g.id) setDragOverGroupId(g.id) }}
+              onDragLeave={() => setDragOverGroupId(prev => prev === g.id ? null : prev)}
+              onDrop={e => { e.preventDefault(); e.stopPropagation(); handleGroupDrop(g.id) }}
             >
-              <span className={`curr-dot ${selectedGroup === g.value ? 'active' : ''}`} />
+              <span
+                className="curr-grip-handle"
+                draggable
+                onDragStart={e => { e.stopPropagation(); e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', g.id); setDragGroupId(g.id) }}
+                onDragEnd={() => { setDragGroupId(null); setDragOverGroupId(null) }}
+                onClick={e => e.stopPropagation()}
+              >
+                <GripVertical size={14} className="curr-grip" />
+              </span>
               <div className="curr-row-body">
                 <div className="curr-row-top">
-                  <span className="curr-row-name">{g.label}</span>
-                  <span className="curr-row-count">{libraryCounts[g.value] ?? 0}</span>
+                  {editingGroupId === g.id ? (
+                    <input
+                      className="curr-lesson-edit-input"
+                      value={g.label}
+                      onClick={e => e.stopPropagation()}
+                      onChange={e => updateGroupName(g.id, e.target.value)}
+                      onBlur={() => saveGroupName(g.id)}
+                      onKeyDown={e => { if (e.key === 'Enter') saveGroupName(g.id) }}
+                      autoFocus
+                    />
+                  ) : (
+                    <span className="curr-row-name">{g.label}</span>
+                  )}
+                  <span className="curr-row-count">{libraryCounts[g.id] ?? 0}</span>
                 </div>
+              </div>
+              <div style={{ position: 'relative' }} onClick={e => e.stopPropagation()}>
+                <button
+                  className="curr-more-btn"
+                  onClick={() => setOpenGroupMenuId(openGroupMenuId === g.id ? null : g.id)}
+                >
+                  <MoreHorizontal size={14} />
+                </button>
+                {openGroupMenuId === g.id && (
+                  <div className="curr-block-menu">
+                    <button
+                      className="curr-block-menu-item"
+                      onClick={() => { setEditingGroupId(g.id); setOpenGroupMenuId(null) }}
+                    >
+                      <Pencil size={14} /> Rename series
+                    </button>
+                    <button
+                      className="curr-block-menu-item danger"
+                      onClick={() => deleteBlockGroup(g.id)}
+                    >
+                      <Trash2 size={14} /> Delete series
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           ))}
@@ -832,7 +980,7 @@ export default function Curriculum() {
         {pageMode === 'library' && (
           <>
             <div className="curr-main-header curr-main-header-lessons">
-              <span className="curr-main-title">{BLOCK_GROUPS.find(g => g.value === selectedGroup)?.label}</span>
+              <span className="curr-main-title">{blockGroups.find(g => g.id === selectedGroupId)?.label}</span>
               <span className="curr-main-dot" />
               <span className="curr-main-sub">{libraryBlocks.length} Blocks</span>
               <div style={{ flex: 1 }} />
@@ -842,13 +990,13 @@ export default function Curriculum() {
             </div>
 
             <div className="curr-series-tabs">
-              {SERIES_TAGS.map(s => (
+              {ACTIVITY_TYPES.map(a => (
                 <button
-                  key={s.value}
-                  className={`sch-sidebar-tab ${seriesFilter === s.value ? 'active' : ''}`}
-                  onClick={() => setSeriesFilter(s.value)}
+                  key={a.value}
+                  className={`sch-sidebar-tab ${activityFilter === a.value ? 'active' : ''}`}
+                  onClick={() => setActivityFilter(a.value)}
                 >
-                  {s.label}
+                  {a.label}
                 </button>
               ))}
             </div>
@@ -858,11 +1006,10 @@ export default function Curriculum() {
               onDragOver={e => { if (dragLibraryId) e.preventDefault() }}
               onDrop={e => { e.preventDefault(); handleLibraryDropToEnd() }}
             >
-              {libraryBlocks.filter(b => seriesFilter === 'all' || b.series_tag === seriesFilter).length === 0 && (
+              {libraryBlocks.length === 0 && (
                 <div className="curr-empty">No blocks yet. Add one above.</div>
               )}
               {libraryBlocks
-                .filter(b => seriesFilter === 'all' || b.series_tag === seriesFilter)
                 .map(block => {
                 const isOpen = expandedLibraryBlocks[block.id]
                 const isEditing = editingLibraryBlock === block.id
@@ -901,7 +1048,6 @@ export default function Curriculum() {
                           {block.title}
                         </span>
                       )}
-                      <span className="curr-grade-tag">{SERIES_TAGS.find(s => s.value === block.series_tag)?.label}</span>
                       <div style={{ position: 'relative' }} onClick={e => e.stopPropagation()}>
                         <button
                           className="curr-more-btn"
@@ -935,17 +1081,6 @@ export default function Curriculum() {
                     </div>
                     {isOpen && (
                       <div className="curr-block-body">
-                        <div className="curr-series-select">
-                          {SERIES_TAGS.filter(s => s.value !== 'all').map(s => (
-                            <button
-                              key={s.value}
-                              className={`sch-modal-chip ${block.series_tag === s.value ? 'active' : ''}`}
-                              onClick={() => { updateLibraryBlock(block.id, 'series_tag', s.value); saveLibraryBlock(block.id) }}
-                            >
-                              {s.label}
-                            </button>
-                          ))}
-                        </div>
                         <textarea
                           ref={el => { if (el) { el.style.height = 'auto'; el.style.height = `${el.scrollHeight}px` } }}
                           className="curr-block-input"
@@ -1007,6 +1142,34 @@ export default function Curriculum() {
         </div>
       )}
 
+      {newGroupModal && (
+        <div className="sc-modal-overlay" onClick={() => setNewGroupModal(false)}>
+          <div className="sc-modal" onClick={e => e.stopPropagation()}>
+            <div className="sc-modal-header">
+              <span className="sc-modal-title">New Series</span>
+              <button className="sc-modal-close" onClick={() => setNewGroupModal(false)}><X size={14} /></button>
+            </div>
+            <div className="sc-modal-body" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <div className="sc-field">
+                <span className="sc-field-label">SERIES NAME</span>
+                <input
+                  className="sc-input"
+                  placeholder="e.g. Let's Try, New Horizon, Sunshine"
+                  value={newGroupName}
+                  onChange={e => setNewGroupName(e.target.value)}
+                  onKeyDown={e => { if (e.key === 'Enter') addBlockGroup() }}
+                  autoFocus
+                />
+              </div>
+            </div>
+            <div className="sc-modal-footer">
+              <button className="sc-form-cancel" onClick={() => setNewGroupModal(false)}>Cancel</button>
+              <button className="sc-form-save" onClick={addBlockGroup}>Save</button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {insertModal && (
         <div className="sc-modal-overlay" onClick={() => setInsertModal(false)}>
           <div className="sc-modal sc-modal-wide" onClick={e => e.stopPropagation()}>
@@ -1017,11 +1180,11 @@ export default function Curriculum() {
 
             <div className="curr-insert-body">
               <div className="curr-insert-groups">
-                {BLOCK_GROUPS.map(g => (
+                {blockGroups.map(g => (
                   <div
-                    key={g.value}
-                    className={`curr-insert-group-row ${insertGroup === g.value ? 'selected' : ''}`}
-                    onClick={() => setInsertGroup(g.value)}
+                    key={g.id}
+                    className={`curr-insert-group-row ${insertGroupId === g.id ? 'selected' : ''}`}
+                    onClick={() => setInsertGroupId(g.id)}
                   >
                     {g.label}
                   </div>
@@ -1030,23 +1193,21 @@ export default function Curriculum() {
 
               <div className="curr-insert-content">
                 <div className="curr-insert-tabs">
-                  {SERIES_TAGS.map(s => (
+                  {ACTIVITY_TYPES.map(a => (
                     <button
-                      key={s.value}
-                      className={`sch-modal-chip ${insertSeries === s.value ? 'active' : ''}`}
-                      onClick={() => setInsertSeries(s.value)}
+                      key={a.value}
+                      className={`sch-modal-chip ${insertActivity === a.value ? 'active' : ''}`}
+                      onClick={() => setInsertActivity(a.value)}
                     >
-                      {s.label}
+                      {a.label}
                     </button>
                   ))}
                 </div>
-
                 <div className="curr-insert-list">
-                  {insertBlocks.filter(b => insertSeries === 'all' || b.series_tag === insertSeries).length === 0 && (
+                  {insertBlocks.length === 0 && (
                     <div className="curr-empty">No blocks in this group yet.</div>
                   )}
                   {insertBlocks
-                    .filter(b => insertSeries === 'all' || b.series_tag === insertSeries)
                     .map(b => {
                       const checked = insertSelectedIds.includes(b.id)
                       return (
@@ -1057,7 +1218,6 @@ export default function Curriculum() {
                         >
                           <div className={`curr-insert-checkbox ${checked ? 'checked' : ''}`} />
                           <span className="curr-insert-title">{b.title}</span>
-                          <span className="curr-grade-tag">{SERIES_TAGS.find(s => s.value === b.series_tag)?.label}</span>
                         </div>
                       )
                     })}
