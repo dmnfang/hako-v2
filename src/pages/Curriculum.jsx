@@ -322,10 +322,13 @@ export default function Curriculum() {
       refreshData()
       fetchCurricula()
     } else {
-      const { data } = await supabase.from('curricula').insert({
+      const { data: { user } } = await supabase.auth.getUser()
+      const { data, error } = await supabase.from('curricula').insert({
+        user_id: user.id,
         name: name.trim(),
         grade_tag: grade_tag.trim() || null,
       }).select().single()
+      if (error) { console.error(error); alert('Could not create course: ' + error.message); return }
       setCourseModal(false)
       setCourseForm({ name: '', grade_tag: '' })
       refreshData()
