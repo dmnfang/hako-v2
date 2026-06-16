@@ -64,6 +64,118 @@
 
 .runner-exit-btn:hover { background: #FDEAEA; color: #C03030; border-color: #F5AAAA; }
 
+.runner-memo-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  border: 0.5px solid #E0E0E0;
+  background: #FFFFFF;
+  color: #606060;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+  flex-shrink: 0;
+}
+
+.runner-memo-btn:hover { background: #F5F5F5; }
+.runner-memo-btn.has-memo { color: #2DE6FF; border-color: #2DE6FF; }
+
+.runner-memo-btn.saved {
+  color: #2E6600;
+  background: #B8F060;
+  border-color: #B8F060;
+  transition: all 0.2s;
+}
+
+.runner-memo-panel {
+  padding: 12px 12px;
+  background: #FFFFFF;
+  border: 0.5px solid #E0E0E0;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.memo-previous {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 12px;
+  background: #FFF5D6;
+  border-radius: 6px;
+}
+
+.memo-previous-label {
+  font-family: 'Figtree', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: #A05000;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.memo-current-label {
+  font-family: 'Figtree', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: #787878;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.memo-previous-text {
+  font-family: 'Figtree', sans-serif;
+  font-size: 13px;
+  color: #3D3D3D;
+  line-height: 1.5;
+}
+
+.curr-block-input {
+  width: 100%;
+  font-family: 'Figtree', sans-serif;
+  font-size: 13px;
+  color: #3D3D3D;
+  background: #FAFAFA;
+  border: 0.5px solid #E0E0E0;
+  border-radius: 6px;
+  padding: 10px 12px;
+  resize: none;
+  outline: none;
+  overflow: hidden;
+  line-height: 1.6;
+  transition: border-color 0.15s;
+}
+
+.curr-block-input:focus { border-color: #2DE6FF; }
+
+.memo-save-btn {
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 6px;
+  border: 0.5px solid #E0E0E0;
+  background: #FFFFFF;
+  color: #606060;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  align-self: flex-start;
+  font-family: 'Figtree', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.15s;
+}
+
+.memo-save-btn:hover { background: #F5F5F5; }
+
+.memo-save-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
 .runner-header-dot {
   width: 5px;
   height: 5px;

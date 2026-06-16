@@ -5,7 +5,7 @@ import { useData } from '../context/DataContext'
 import Layout from '../components/Layout'
 import HintBanner from '../components/HintBanner'
 import { useDaySchedule, toLocalDateStr, getDayStatus } from '../hooks/useDaySchedule'
-import { GripVertical, ChevronLeft, ChevronRight, ChevronDown, X, Play, ArrowRightLeft, Pencil } from 'lucide-react'
+import { GripVertical, ChevronLeft, ChevronRight, ChevronDown, X, Play, ArrowRightLeft, Pencil, StickyNote } from 'lucide-react'
 import './Home.css'
 
 const STATUS_OPTIONS = [
@@ -50,6 +50,10 @@ export default function Home() {
   // Multi Class modal state
   const [modalOtherClassId, setModalOtherClassId] = useState(null)
   const [modalMultiChangeType, setModalMultiChangeType] = useState('once')
+
+  const [previousMemo, setPreviousMemo] = useState(null)
+  const [memoExpanded, setMemoExpanded] = useState(false)
+  const [memoDraft, setMemoDraft] = useState('')
 
 
   useEffect(() => {
@@ -149,7 +153,39 @@ export default function Home() {
   const selectedLessonIdx = lessonIndices[selectedPeriodIdx] ?? 0
   const selectedLesson = selectedLessons[selectedLessonIdx]
   const selectedBlocks = selectedLesson ? (blocks[selectedLesson.id] ?? []) : []
+  const previousLesson = selectedLessonIdx > 0 ? selectedLessons[selectedLessonIdx - 1] : null
   const selectedSchool = schools.find(s => s.id === selectedSchoolId)
+
+  useEffect(() => {
+    async function fetchPreviousMemo() {
+      if (!previousLesson || !selectedClass) { setPreviousMemo(null); return }
+      const { data } = await supabase
+        .from('teaching_log')
+        .select('*')
+        .eq('lesson_id', previousLesson.id)
+        .eq('class_id', selectedClass.id)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle()
+      setPreviousMemo(data ?? null)
+    }
+    fetchPreviousMemo()
+    setMemoExpanded(false)
+    setMemoDraft('')
+  }, [previousLesson?.id, selectedClass?.id])
+
+  async function saveMemo() {
+    if (!selectedLesson || !selectedClass || !memoDraft.trim()) return
+    const { data: { user } } = await supabase.auth.getUser()
+    await supabase.from('teaching_log').insert({
+      user_id: user.id,
+      lesson_id: selectedLesson.id,
+      class_id: selectedClass.id,
+      taught_on: toLocalDateStr(selectedDate),
+      note: memoDraft.trim(),
+    })
+    setMemoDraft('')
+  }
 
   // Schools active today (from period schedule)
   const todaySchools = [...new Set(periods.map(p => {
@@ -374,6 +410,38 @@ export default function Home() {
               <button className="start-lesson-btn" onClick={() => navigate(`/runner/${selectedClass.id}/${selectedLesson.id}`)}>
                 <Play size={14} /> Start Lesson
               </button>
+            </div>
+            <div className={`block-row memo-row ${memoExpanded ? 'open' : ''}`}>
+              <div className="memo-row-header" onClick={() => setMemoExpanded(prev => !prev)}>
+                <span className="block-title">Memo</span>
+                <button className="memo-toggle-btn" onClick={e => { e.stopPropagation(); setMemoExpanded(prev => !prev) }}>
+                  <StickyNote size={14} className={`memo-icon ${memoExpanded ? 'open' : ''}`} />
+                </button>
+              </div>
+              {memoExpanded && (
+                <div className="memo-content-body">
+                  {previousMemo && (
+                    <div className="memo-previous">
+                      <span className="memo-previous-label">Previous Lesson Memo</span>
+                      <span className="memo-previous-text">{previousMemo.note}</span>
+                    </div>
+                  )}
+                  <textarea
+                    className="curr-block-input"
+                    value={memoDraft}
+                    placeholder="e.g. Didn't finish Let's Chant — vocab was too hard, slow down next time."
+                    onChange={e => {
+                      setMemoDraft(e.target.value)
+                      e.target.style.height = 'auto'
+                      e.target.style.height = `${e.target.scrollHeight}px`
+                    }}
+                    rows={3}
+                  />
+                  <button className="edit-lesson-btn memo-save-btn" onClick={saveMemo} disabled={!memoDraft.trim()}>
+                    Save Memo
+                  </button>
+                </div>
+              )}
             </div>
             <div className="block-list">
               {selectedBlocks.length === 0 && <div className="no-blocks">No blocks in this lesson yet.</div>}

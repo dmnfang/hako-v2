@@ -866,6 +866,98 @@
   gap: 6px;
 }
 
+/* Previous Lesson Memo / Add Memo accordion */
+.memo-row-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.memo-content-body {
+  padding: 0 12px 12px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.memo-row-header:hover { background: #FAFAFA; }
+
+.memo-toggle-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  border: 0.5px solid #E0E0E0;
+  background: #FFFFFF;
+  color: #606060;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.15s;
+}
+
+.memo-toggle-btn:hover { background: #F5F5F5; }
+
+.memo-icon { transition: transform 0.2s; }
+.memo-icon.open { transform: rotate(180deg); }
+
+.memo-previous {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 12px;
+  background: #FFF5D6;
+  border-radius: 6px;
+}
+
+.memo-previous-label {
+  font-family: 'Figtree', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: #A05000;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.memo-previous-text {
+  font-family: 'Figtree', sans-serif;
+  font-size: 13px;
+  color: #3D3D3D;
+  line-height: 1.5;
+}
+
+.curr-block-input {
+  width: 100%;
+  font-family: 'Figtree', sans-serif;
+  font-size: 13px;
+  color: #3D3D3D;
+  background: #FAFAFA;
+  border: 0.5px solid #E0E0E0;
+  border-radius: 6px;
+  padding: 10px 12px;
+  resize: none;
+  outline: none;
+  overflow: hidden;
+  line-height: 1.6;
+  transition: border-color 0.15s;
+}
+
+.curr-block-input:focus { border-color: #2DE6FF; }
+
+.memo-save-btn {
+  align-self: flex-start;
+  margin-top: 4px;
+}
+
+.memo-save-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
 .period-special-badge {
   height: 24px;
   display: inline-flex;

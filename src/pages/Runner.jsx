@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
-import { ChevronLeft, ChevronRight, X, GripVertical, Check, LogOut } from 'lucide-react'
+import { ChevronLeft, ChevronRight, X, GripVertical, Check, LogOut, StickyNote } from 'lucide-react'
 import './Runner.css'
 
 function formatTime(seconds) {
@@ -28,6 +28,12 @@ export default function Runner() {
   const [loading, setLoading] = useState(true)
   const [dragIdx, setDragIdx] = useState(null)
   const [dragOverIdx, setDragOverIdx] = useState(null)
+
+  const [memoOpen, setMemoOpen] = useState(false)
+  const [previousMemo, setPreviousMemo] = useState(null)
+  const [currentMemo, setCurrentMemo] = useState(null)
+  const [memoDraft, setMemoDraft] = useState('')
+  const [memoSaved, setMemoSaved] = useState(false)
 
   const blockStartRef = useRef(null)
   const periodEndRef = useRef(null)
@@ -80,6 +86,60 @@ export default function Runner() {
 
     setLoading(false)
     startBlockTimer()
+    fetchPreviousMemo(lessonData)
+  }
+
+  async function fetchPreviousMemo(lessonData) {
+    if (!lessonData?.curriculum_id) return
+    const { data: allLessons } = await supabase
+      .from('lessons')
+      .select('id, sort_order')
+      .eq('curriculum_id', lessonData.curriculum_id)
+      .order('sort_order')
+    if (!allLessons) return
+    const currentIdx = allLessons.findIndex(l => l.id === lessonId)
+    const prevLesson = currentIdx > 0 ? allLessons[currentIdx - 1] : null
+    if (!prevLesson) { setPreviousMemo(null) } else {
+      const { data } = await supabase
+        .from('teaching_log')
+        .select('*')
+        .eq('lesson_id', prevLesson.id)
+        .eq('class_id', classId)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle()
+      setPreviousMemo(data ?? null)
+    }
+    fetchCurrentMemo()
+  }
+
+  async function fetchCurrentMemo() {
+    const { data } = await supabase
+      .from('teaching_log')
+      .select('*')
+      .eq('lesson_id', lessonId)
+      .eq('class_id', classId)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle()
+    setCurrentMemo(data ?? null)
+    setMemoDraft(data?.note ?? '')
+  }
+
+  async function saveMemo() {
+    if (!memoDraft.trim()) return
+    const { data: { user } } = await supabase.auth.getUser()
+    await supabase.from('teaching_log').insert({
+      user_id: user.id,
+      lesson_id: lessonId,
+      class_id: classId,
+      taught_on: new Date().toISOString().slice(0, 10),
+      note: memoDraft.trim(),
+    })
+    setMemoOpen(false)
+    setMemoSaved(true)
+    fetchCurrentMemo()
+    setTimeout(() => setMemoSaved(false), 1000)
   }
 
   function startBlockTimer() {
@@ -256,11 +316,41 @@ export default function Runner() {
               <ChevronRight size={14} />
             </button>
           )}
+          <button className={`runner-memo-btn ${previousMemo ? 'has-memo' : ''} ${memoSaved ? 'saved' : ''}`} onClick={() => setMemoOpen(prev => !prev)}>
+            <StickyNote size={14} />
+          </button>
           <button className="runner-exit-btn" onClick={exitRunner}>
             <LogOut size={14} />
           </button>
         </div>
       </div>
+
+      {memoOpen && (
+        <div className="runner-memo-panel">
+          {previousMemo && (
+            <div className="memo-previous">
+              <span className="memo-previous-label">Previous Lesson Memo</span>
+              <span className="memo-previous-text">{previousMemo.note}</span>
+            </div>
+          )}
+          {currentMemo && <span className="memo-current-label">This Lesson's Memo</span>}
+          <textarea
+            ref={el => { if (el) { el.style.height = 'auto'; el.style.height = `${el.scrollHeight}px` } }}
+            className="curr-block-input"
+            value={memoDraft}
+            placeholder="e.g. Didn't finish Let's Chant — vocab was too hard, slow down next time."
+            onChange={e => {
+              setMemoDraft(e.target.value)
+              e.target.style.height = 'auto'
+              e.target.style.height = `${e.target.scrollHeight}px`
+            }}
+            rows={3}
+          />
+          <button className="memo-save-btn" onClick={saveMemo} disabled={!memoDraft.trim()}>
+            Save Memo
+          </button>
+        </div>
+      )}
 
       <div className="runner-body">
 
