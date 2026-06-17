@@ -47,6 +47,9 @@ export default function Curriculum() {
   const [dragOverLessonId, setDragOverLessonId] = useState(null)
   const [dragBlockId, setDragBlockId] = useState(null)
   const [dragOverBlockId, setDragOverBlockId] = useState(null)
+  const [dragCourseId, setDragCourseId] = useState(null)
+  const [dragOverCourseId, setDragOverCourseId] = useState(null)
+  const [courseOrderOverride, setCourseOrderOverride] = useState(null)
 
   // ─── Lesson Blocks library ──────────────────────────────────────────────
   const [pageMode, setPageMode] = useState('plans') // 'plans' | 'library'
@@ -525,6 +528,26 @@ export default function Curriculum() {
     persistOrder('lessons', next)
   }
 
+  function handleCourseDrop(overId) {
+    if (!dragCourseId || dragCourseId === overId) {
+      setDragCourseId(null); setDragOverCourseId(null); return
+    }
+    const next = reorderList(courseOrderOverride ?? curricula, dragCourseId, overId)
+    setCourseOrderOverride(next)
+    setDragCourseId(null)
+    setDragOverCourseId(null)
+    persistOrder('curricula', next).then(() => { refreshData(); setCourseOrderOverride(null) })
+  }
+
+  function handleCourseDropToEnd() {
+    if (!dragCourseId) return
+    const next = moveToEnd(courseOrderOverride ?? curricula, dragCourseId)
+    setCourseOrderOverride(next)
+    setDragCourseId(null)
+    setDragOverCourseId(null)
+    persistOrder('curricula', next).then(() => { refreshData(); setCourseOrderOverride(null) })
+  }
+
   function handleBlockDropToEnd() {
     if (!dragBlockId) return
     const next = moveToEnd(blocks, dragBlockId)
@@ -600,20 +623,36 @@ export default function Curriculum() {
         )}
       </div>
       {pageMode === 'plans' ? (
-        <div className="curr-list">
-          {curricula.map(c => (
+        <div
+          className="curr-list"
+          onDragOver={e => { if (dragCourseId) e.preventDefault() }}
+          onDrop={e => { e.preventDefault(); handleCourseDropToEnd() }}
+        >
+          {(courseOrderOverride ?? curricula).map(c => (
             <div
               key={c.id}
-              className={`curr-row ${selectedCurriculumId === c.id ? 'selected' : ''}`}
+              className={`curr-row ${selectedCurriculumId === c.id ? 'selected' : ''} ${dragOverCourseId === c.id ? 'drag-over' : ''} ${dragCourseId === c.id ? 'dragging' : ''}`}
               onClick={() => { setSelectedCurriculumId(c.id); setView('lessons') }}
+              onDragOver={e => { e.preventDefault(); if (dragCourseId && dragCourseId !== c.id) setDragOverCourseId(c.id) }}
+              onDragLeave={() => setDragOverCourseId(prev => prev === c.id ? null : prev)}
+              onDrop={e => { e.preventDefault(); e.stopPropagation(); handleCourseDrop(c.id) }}
             >
               <span className={`curr-dot ${selectedCurriculumId === c.id ? 'active' : ''}`} />
               <div className="curr-row-body">
                 <div className="curr-row-top">
+                  <span
+                    className="curr-grip-handle"
+                    draggable
+                    onDragStart={e => { e.stopPropagation(); e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', c.id); setDragCourseId(c.id) }}
+                    onDragEnd={() => { setDragCourseId(null); setDragOverCourseId(null) }}
+                    onClick={e => e.stopPropagation()}
+                  >
+                    <GripVertical size={14} className="curr-grip" />
+                  </span>
                   <span className="curr-row-name">{c.name}</span>
                   <span className="curr-row-count">{lessonCounts[c.id] ?? 0}</span>
                 </div>
-                {c.grade_tag && <span className="curr-grade-tag">{c.grade_tag}</span>}
+                {c.grade_tag && <span className="curr-grade-tag grip-offset">{c.grade_tag}</span>}
               </div>
             </div>
           ))}
