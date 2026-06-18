@@ -9,7 +9,6 @@ import { GripVertical, ChevronLeft, ChevronRight, ChevronDown, X, Play, ArrowRig
 import HomeDesktop from './HomeDesktop'
 import HomeMobile from './HomeMobile'
 import { useIsMobile } from '../hooks/useMediaQuery'
-import ResponsiveModal from '../components/ResponsiveModal'
 import './Home.css'
 
 const STATUS_OPTIONS = [
@@ -504,13 +503,33 @@ export default function Home() {
         const currLessons = currId ? lessonsByCurriculum[currId] ?? [] : []
         const currentModalLesson = currLessons[modalLessonIdx]
         return (
-          <ResponsiveModal
-            isMobile={isMobile}
-            open
-            onClose={() => setModal(null)}
-            title="Change Lesson"
-            footer={
-              <>
+          <div className="modal-overlay" onClick={() => setModal(null)}>
+            <div className="modal modal-date" onClick={e => e.stopPropagation()}>
+              <div className="modal-header">
+                <span className="modal-title">Change Lesson</span>
+                <button className="modal-close" onClick={() => setModal(null)}><X size={14} /></button>
+              </div>
+              <div className="modal-body">
+                <div className="modal-sub">{effectiveCls?.label} — {curricula?.find(cu => cu.id === currId)?.name ?? 'No course'}</div>
+                <div className="sch-lesson-picker-row" style={{display:'flex',alignItems:'center',gap:8,background:'#F5F5F5',borderRadius:6,padding:4}}>
+                  <button
+                    style={{width:32,height:32,borderRadius:6,border:'0.5px solid #E0E0E0',background:'#FFFFFF',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center'}}
+                    onClick={() => setModalLessonIdx(i => Math.max(0, i - 1))}
+                    disabled={modalLessonIdx === 0}
+                  ><ChevronLeft size={14} /></button>
+                  <span style={{flex:1,textAlign:'center',fontFamily:"'Figtree',sans-serif",fontSize:14,color:'#0A100D'}}>
+                    {currentModalLesson
+                      ? [currentModalLesson.tag1, currentModalLesson.tag2].filter(Boolean).join(' · ')
+                      : 'No lessons'}
+                  </span>
+                  <button
+                    style={{width:32,height:32,borderRadius:6,border:'0.5px solid #E0E0E0',background:'#FFFFFF',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center'}}
+                    onClick={() => setModalLessonIdx(i => Math.min(currLessons.length - 1, i + 1))}
+                    disabled={modalLessonIdx >= currLessons.length - 1}
+                  ><ChevronRight size={14} /></button>
+                </div>
+              </div>
+              <div className="modal-footer">
                 <button className="modal-btn-cancel" onClick={() => setModal(null)}>Cancel</button>
                 <button className="modal-btn-save" onClick={async () => {
                   if (!currentModalLesson || !effectiveCls) return
@@ -521,28 +540,9 @@ export default function Home() {
                   refreshData()
                   setModal(null)
                 }}>Save</button>
-              </>
-            }
-          >
-            <div className="modal-sub">{effectiveCls?.label} — {curricula?.find(cu => cu.id === currId)?.name ?? 'No course'}</div>
-            <div className="sch-lesson-picker-row" style={{display:'flex',alignItems:'center',gap:8,background:'#F5F5F5',borderRadius:6,padding:4}}>
-              <button
-                style={{width:32,height:32,borderRadius:6,border:'0.5px solid #E0E0E0',background:'#FFFFFF',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center'}}
-                onClick={() => setModalLessonIdx(i => Math.max(0, i - 1))}
-                disabled={modalLessonIdx === 0}
-              ><ChevronLeft size={14} /></button>
-              <span style={{flex:1,textAlign:'center',fontFamily:"'Figtree',sans-serif",fontSize:14,color:'#0A100D'}}>
-                {currentModalLesson
-                  ? [currentModalLesson.tag1, currentModalLesson.tag2].filter(Boolean).join(' · ')
-                  : 'No lessons'}
-              </span>
-              <button
-                style={{width:32,height:32,borderRadius:6,border:'0.5px solid #E0E0E0',background:'#FFFFFF',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center'}}
-                onClick={() => setModalLessonIdx(i => Math.min(currLessons.length - 1, i + 1))}
-                disabled={modalLessonIdx >= currLessons.length - 1}
-              ><ChevronRight size={14} /></button>
+              </div>
             </div>
-          </ResponsiveModal>
+          </div>
         )
       })()}
 
