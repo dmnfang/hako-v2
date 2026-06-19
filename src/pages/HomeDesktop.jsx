@@ -215,10 +215,10 @@ export default function HomeDesktop({
                   <ChevronRight size={14} />
                 </button>
               </div>
-              <button className="edit-lesson-btn" onClick={() => navigate('/curriculum', {
+              <button className="edit-lesson-btn icon-only" title="Edit Lesson" onClick={() => navigate('/curriculum', {
                 state: { lessonId: selectedLesson.id, curriculumId: selectedClass.curriculum_id }
               })}>
-                <Pencil size={14} /> Edit Lesson
+                <Pencil size={14} />
               </button>
               <button className="start-lesson-btn" onClick={() => navigate(`/runner/${selectedClass.id}/${selectedLesson.id}`)}>
                 <Play size={14} /> Start Lesson

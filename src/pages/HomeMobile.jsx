@@ -34,6 +34,9 @@ export default function HomeMobile({
 
   return (
     <div className="home-mobile">
+      <div style={{background:'lime',color:'black',fontSize:20,fontWeight:'bold',padding:20,textAlign:'center'}}>
+        HOME MOBILE IS RENDERING — screen: {screen}
+      </div>
       {screen === 'list' && (
         <div className="hm-screen">
           <div className="hm-topbar">
