@@ -10,6 +10,7 @@ import HomeDesktop from './HomeDesktop'
 import HomeMobile from './HomeMobile'
 import { useIsMobile } from '../hooks/useMediaQuery'
 import ResponsiveModal from '../components/ResponsiveModal'
+import ErrorBoundary from '../components/ErrorBoundary'
 import './Home.css'
 
 const STATUS_OPTIONS = [
@@ -223,7 +224,12 @@ export default function Home() {
 
   return (
     <>
-      {isMobile ? <HomeMobile {...sharedProps} /> : <HomeDesktop {...sharedProps} />}
+      <div style={{position:'fixed',top:0,left:0,zIndex:9999,background:'red',color:'white',fontSize:10,padding:'2px 6px'}}>
+        width:{window.innerWidth} isMobile:{String(isMobile)}
+      </div>
+      <ErrorBoundary>
+        {isMobile ? <HomeMobile {...sharedProps} /> : <HomeDesktop {...sharedProps} />}
+      </ErrorBoundary>
 
       {/* Change Status Modal */}
       {modal === 'status' && (
