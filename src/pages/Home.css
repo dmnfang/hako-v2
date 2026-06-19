@@ -1138,8 +1138,8 @@
 }
 
 .hm-back-btn {
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   border-radius: 6px;
   border: 0.5px solid #E0E0E0;
   background: #FFFFFF;
@@ -1164,8 +1164,8 @@
 }
 
 .hm-memo-icon-btn {
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   border-radius: 6px;
   border: 0.5px solid #E0E0E0;
   background: #FFFFFF;
@@ -1208,8 +1208,8 @@
 }
 
 .hm-edit-btn {
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   border-radius: 6px;
   border: 0.5px solid #E0E0E0;
   background: #FFFFFF;
@@ -1223,8 +1223,8 @@
 
 .hm-start-btn {
   flex: 1;
-  height: 48px;
-  border-radius: 10px;
+  height: 36px;
+  border-radius: 6px;
   border: none;
   background: #0A100D;
   color: #FFFFFF;
@@ -1239,8 +1239,8 @@
 }
 
 .hm-drawer-save-btn {
-  height: 44px;
-  border-radius: 8px;
+  height: 36px;
+  border-radius: 6px;
   border: none;
   background: #0A100D;
   color: #FFFFFF;

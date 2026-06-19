@@ -461,8 +461,8 @@
 }
 
 .rm-back-btn {
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   border-radius: 6px;
   border: 0.5px solid #E0E0E0;
   background: #FFFFFF;
@@ -561,8 +561,8 @@
 }
 
 .rm-icon-btn {
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   border-radius: 6px;
   border: 0.5px solid #E0E0E0;
   background: #FFFFFF;
@@ -586,8 +586,8 @@
 }
 
 .hm-drawer-save-btn {
-  height: 44px;
-  border-radius: 8px;
+  height: 36px;
+  border-radius: 6px;
   border: none;
   background: #0A100D;
   color: #FFFFFF;
