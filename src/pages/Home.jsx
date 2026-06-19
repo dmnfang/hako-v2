@@ -224,9 +224,6 @@ export default function Home() {
 
   return (
     <>
-      <div style={{position:'fixed',top:0,left:0,zIndex:9999,background:'red',color:'white',fontSize:10,padding:'2px 6px'}}>
-        width:{window.innerWidth} isMobile:{String(isMobile)}
-      </div>
       <ErrorBoundary>
         {isMobile ? <HomeMobile {...sharedProps} /> : <HomeDesktop {...sharedProps} />}
       </ErrorBoundary>
@@ -338,7 +335,6 @@ export default function Home() {
                 <button
                   key={cl.id}
                   className={`modal-chip class ${modalClassId === cl.id ? 'active' : ''}`}
-                  style={modalClassId === cl.id ? { borderColor: '#2DE6FF', color: '#007080' } : {}}
                   onClick={() => setModalClassId(cl.id)}
                 >
                   {cl.label}

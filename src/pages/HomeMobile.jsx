@@ -34,32 +34,44 @@ export default function HomeMobile({
 
   return (
     <div className="home-mobile">
-      <div style={{background:'lime',color:'black',fontSize:20,fontWeight:'bold',padding:20,textAlign:'center'}}>
-        HOME MOBILE IS RENDERING — screen: {screen}
-      </div>
       {screen === 'list' && (
         <div className="hm-screen">
-          <div className="hm-topbar">
-            <div className="hm-date-line">
-              <span className="hm-dow">{dow},</span>
-              <span className="hm-date">{dateStr}</span>
+          {/* Reuses home-date-block styling from desktop sidebar */}
+          <div className="home-date-block hm-topbar-block">
+            <div className="home-date-line">
+              <span className="home-dow">{dow},</span>
+              <span className="home-date">{dateStr}</span>
+              {isWorkingDay && todaySchools.length > 0 && (
+                <>
+                  <span className="home-date-at">at</span>
+                  <span className="home-school">{todaySchools.join(' & ')}</span>
+                </>
+              )}
             </div>
-            <button
-              className="hm-status-chip-btn"
-              onClick={() => {
-                setModalStatus(dayStatusOverride?.status ?? 'working')
-                setModalStatusLabel(dayStatusOverride?.label ?? '')
-                setModal('status')
-              }}
-            >
-              <span className={`hm-status-dot home-status-${dayStatus.status}`} />
-              {dayStatus.label}
-            </button>
+
+            <div className="home-status-line">
+              <span className="home-status-label">Status:</span>
+              <span className={`home-status-value home-status-${dayStatus.status}`}>{dayStatus.label}</span>
+            </div>
+
+            <HintBanner id="home_mobile" message="Tap a period to see its lesson plan. Tap any chip on a card to make a quick change." />
+
+            <div className="home-actions">
+              <button
+                className="home-action-btn primary"
+                onClick={() => {
+                  setModalStatus(dayStatusOverride?.status ?? 'working')
+                  setModalStatusLabel(dayStatusOverride?.label ?? '')
+                  setModal('status')
+                }}
+              >
+                <ArrowRightLeft size={14} /> Change Status
+              </button>
+            </div>
           </div>
 
-          <HintBanner id="home_mobile" message="Tap a period to see its lesson plan. Tap any chip on a card to make a quick change." />
-
-          <div className="hm-period-list">
+          {/* Reuses period-list / period-row styling identical to desktop */}
+          <div className="period-list hm-period-list">
             {!isWorkingDay && (
               <div className="no-periods">{dayStatus.label} — no classes scheduled.</div>
             )}
@@ -102,28 +114,77 @@ export default function HomeMobile({
               }
 
               return (
-                <button key={period.id} className="hm-period-card" onClick={() => openPeriod(i)}>
-                  <div className="hm-period-card-top">
-                    <span className="hm-period-eyebrow">Period {period.period_number}</span>
+                <div key={period.id} className="period-row" onClick={() => openPeriod(i)}>
+                  <div className="period-header-row">
+                    <span className="period-eyebrow">Period {period.period_number}</span>
                     {hasOverride && <span className="period-special-badge">Special</span>}
                   </div>
-                  <div className="hm-period-card-main">
-                    <span className="hm-period-school">{periodSchool?.name ?? '—'}</span>
-                    <span className="hm-period-dot" />
-                    <span className="hm-period-time">
+                  <div className="period-bar">
+                    <button
+                      className="period-tap-chip school"
+                      onClick={e => {
+                        e.stopPropagation()
+                        setSelectedPeriodIdx(i)
+                        setModalPeriodIdx(i)
+                        setModalSchoolId(effectiveSId)
+                        setModalChangeType('once')
+                        setModal('period_school')
+                      }}
+                    >
+                      {periodSchool?.name ?? '—'}
+                    </button>
+                    <button
+                      className="period-tap-chip time"
+                      onClick={e => {
+                        e.stopPropagation()
+                        setSelectedPeriodIdx(i)
+                        setModalPeriodIdx(i)
+                        setModalTimeForm({
+                          start_time: effectiveStartTime?.slice(0,5) ?? '',
+                          end_time: effectiveEndTime?.slice(0,5) ?? '',
+                        })
+                        setModalChangeType('once')
+                        setModal('period_time')
+                      }}
+                    >
                       {effectiveStartTime ? `${effectiveStartTime.slice(0,5)} – ${effectiveEndTime?.slice(0,5)}` : '—'}
-                    </span>
+                    </button>
                   </div>
-                  <div className="hm-period-card-sub">
-                    <span className="hm-period-class">{classLabel}</span>
+                  <div className="period-bar">
+                    {period.frequency === 'alternating' ? (
+                      <button
+                        className={`period-tap-chip class ${classLabel === 'Select Class' ? 'empty' : ''}`}
+                        onClick={e => {
+                          e.stopPropagation()
+                          setSelectedPeriodIdx(i)
+                          setModalPeriodIdx(i)
+                          setModalOtherClassId(null)
+                          setModalMultiChangeType('once')
+                          setModal('multi_class')
+                        }}
+                      >
+                        {classLabel}
+                      </button>
+                    ) : (
+                      <button
+                        className={`period-tap-chip class ${classLabel === 'Select Class' ? 'empty' : ''}`}
+                        onClick={e => {
+                          e.stopPropagation()
+                          setSelectedPeriodIdx(i)
+                          setModalPeriodIdx(i)
+                          setModalClassId(cls?.id ?? null)
+                          setModalChangeType('once')
+                          setModal('period_class')
+                        }}
+                      >
+                        {classLabel}
+                      </button>
+                    )}
                     {lessonLabel && (
-                      <>
-                        <span className="hm-period-dot" />
-                        <span className="hm-period-lesson">{lessonLabel}</span>
-                      </>
+                      <span className="period-tap-chip" style={{cursor:'default'}}>{lessonLabel}</span>
                     )}
                   </div>
-                </button>
+                </div>
               )
             })}
           </div>
@@ -149,12 +210,14 @@ export default function HomeMobile({
 
           {selectedLesson ? (
             <>
-              <div className="hm-lesson-nav-row">
+              {/* Reuses lesson-header/lesson-title-group styling identical to desktop */}
+              <div className="lesson-header hm-lesson-header">
                 <button className="lesson-nav-btn" onClick={() => navigateLesson(selectedPeriodIdx, -1)} disabled={selectedLessonIdx === 0}>
                   <ChevronLeft size={14} />
                 </button>
-                <div className="hm-lesson-title-group">
+                <div className="lesson-title-group hm-lesson-title-group">
                   <span className="lesson-main-title">{selectedLesson.tag1 ?? '—'}</span>
+                  <span className="lesson-title-dot" />
                   <span className="lesson-sub-title">{selectedLesson.tag2 ?? selectedLesson.title}</span>
                 </div>
                 <button className="lesson-nav-btn" onClick={() => navigateLesson(selectedPeriodIdx, 1)} disabled={selectedLessonIdx === selectedLessons.length - 1}>
@@ -162,7 +225,7 @@ export default function HomeMobile({
                 </button>
               </div>
 
-              <div className="hm-block-list">
+              <div className="block-list hm-block-list">
                 {selectedBlocks.length === 0 && <div className="no-blocks">No blocks in this lesson yet.</div>}
                 {selectedBlocks.map((block, i) => {
                   const key = `${selectedLesson.id}_${i}`

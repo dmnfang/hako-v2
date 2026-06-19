@@ -249,7 +249,7 @@
 
 /* Block List */
 .runner-block-list {
-  width: 30%;
+  width: 38%;
   flex-shrink: 0;
   background: #FFFFFF;
   border: 0.5px solid #E0E0E0;
@@ -436,4 +436,168 @@
   font-family: 'Figtree', sans-serif;
   font-size: 15px;
   color: #B8B8B8;
+}
+
+/* ───────────────────────────────────────────────────────────────────────
+   Runner Mobile — single active-block view with bottom-pinned controls
+   and the full block list / memo tucked into bottom drawers.
+   ─────────────────────────────────────────────────────────────────────── */
+
+.runner-mobile {
+  position: fixed;
+  inset: 0;
+  background: #FFFFFF;
+  display: flex;
+  flex-direction: column;
+}
+
+.rm-topbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  border-bottom: 0.5px solid #E0E0E0;
+  flex-shrink: 0;
+}
+
+.rm-back-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  border: 0.5px solid #E0E0E0;
+  background: #FFFFFF;
+  color: #606060;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.rm-topbar-subtitle {
+  flex: 1;
+  min-width: 0;
+  font-family: 'Figtree', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: #606060;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rm-global-timer {
+  font-family: 'Figtree', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: #0A100D;
+  flex-shrink: 0;
+}
+
+.rm-global-timer.warning { color: #C03030; }
+
+.rm-active-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px;
+  border-bottom: 0.5px solid #E0E0E0;
+  flex-shrink: 0;
+}
+
+.rm-block-title {
+  font-family: 'Figtree', sans-serif;
+  font-size: 17px;
+  font-weight: 700;
+  color: #0A100D;
+  margin: 0;
+}
+
+.rm-block-timer {
+  font-family: 'Figtree', sans-serif;
+  font-size: 17px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: #0A100D;
+  flex-shrink: 0;
+}
+
+.rm-active-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px;
+}
+
+.rm-bottom-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 12px;
+  padding-bottom: max(12px, env(safe-area-inset-bottom));
+  background: #FFFFFF;
+  border-top: 0.5px solid #E0E0E0;
+  flex-shrink: 0;
+}
+
+.rm-bottom-bar-left,
+.rm-bottom-bar-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.rm-block-count {
+  font-family: 'Figtree', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: #787878;
+  white-space: nowrap;
+  width: 56px;
+  text-align: center;
+  padding: 0 4px;
+  flex-shrink: 0;
+}
+
+.rm-icon-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  border: 0.5px solid #E0E0E0;
+  background: #FFFFFF;
+  color: #606060;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.15s;
+}
+
+.rm-icon-btn:hover { background: #F5F5F5; }
+.rm-icon-btn:disabled { opacity: 0.35; cursor: default; }
+.rm-icon-btn.has-memo { color: #2DE6FF; border-color: #2DE6FF; }
+.rm-icon-btn.finish { background: #0A100D; color: #FFFFFF; border-color: #0A100D; }
+
+.rm-block-drawer-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.hm-drawer-save-btn {
+  height: 44px;
+  border-radius: 8px;
+  border: none;
+  background: #0A100D;
+  color: #FFFFFF;
+  font-family: 'Figtree', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.hm-drawer-save-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
 }
