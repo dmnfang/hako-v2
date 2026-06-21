@@ -9,7 +9,7 @@
 }
 
 .home-date-block {
-  padding: 12px 12px;
+  padding: 16px 16px;
   border-bottom: 0.5px solid var(--stroke-default);
   flex-shrink: 0;
   display: flex;
@@ -81,7 +81,7 @@
 }
 
 .no-periods {
-  padding: 12px;
+  padding: 16px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -91,7 +91,7 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  padding: 12px;
+  padding: 16px;
   border-bottom: 0.5px solid var(--stroke-default);
   cursor: pointer;
   transition: background 0.15s;
@@ -207,7 +207,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 12px 12px 12px 16px;
+  padding: 16px 16px 16px 20px;
   border-bottom: 0.5px solid var(--stroke-default);
   flex-shrink: 0;
 }
@@ -297,7 +297,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 12px;
+  padding: 16px;
   cursor: pointer;
   transition: background 0.1s;
 }
@@ -349,28 +349,8 @@
   flex-shrink: 0;
 }
 
-.block-chevron-btn {
-  width: 32px;
-  height: 32px;
-  border-radius: 6px;
-  border: 0.5px solid var(--stroke-default);
-  background: #FFFFFF;
-  color: var(--text-secondary);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  transition: all 0.15s;
-}
-
-.block-chevron-btn:hover { background: var(--surface-panel); }
-
-.block-chevron { transition: transform 0.2s; }
-.block-chevron.open { transform: rotate(180deg); }
-
 .block-content {
-  padding: 12px 12px 12px 44px;
+  padding: 16px 16px 16px 44px;
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -424,7 +404,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px;
+  padding: 16px;
   border-bottom: 0.5px solid var(--stroke-default);
 }
 
@@ -452,7 +432,7 @@
 .modal-close:hover { background: var(--surface-panel); }
 
 .modal-body {
-  padding: 12px;
+  padding: 16px;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -577,7 +557,7 @@
   align-items: center;
   justify-content: flex-end;
   gap: 8px;
-  padding: 12px;
+  padding: 16px;
   border-top: 0.5px solid var(--stroke-default);
 }
 
@@ -863,7 +843,7 @@
 
 .modal-label-input {
   width: 100%;
-  height: 36px;
+  height: 32px;
   padding: 0 12px;
   border-radius: 6px;
   border: 0.5px solid var(--stroke-default);
@@ -898,10 +878,7 @@
 
 /* Block content in Home right panel */
 .block-content-body {
-  padding: 12px 16px 12px 12px;
-  background: var(--surface-panel);
-  border-radius: 6px;
-  margin: 0 12px 12px 12px;
+  padding: 0 16px 16px 16px;
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -912,13 +889,13 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 12px;
+  padding: 16px;
   cursor: pointer;
   transition: background 0.1s;
 }
 
 .memo-content-body {
-  padding: 0 12px 12px 12px;
+  padding: 0 16px 16px 16px;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -926,25 +903,7 @@
 
 @media (hover: hover) { .memo-row-header:hover { background: var(--surface-panel); } }
 
-.memo-toggle-btn {
-  width: 32px;
-  height: 32px;
-  border-radius: 6px;
-  border: 0.5px solid var(--stroke-default);
-  background: #FFFFFF;
-  color: var(--text-secondary);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  transition: all 0.15s;
-}
-
-.memo-toggle-btn:hover { background: var(--surface-panel); }
-
-.memo-icon { transition: transform 0.2s; }
-.memo-icon.open { transform: rotate(180deg); }
+.memo-icon { color: var(--text-muted); flex-shrink: 0; }
 
 .memo-previous {
   display: flex;
@@ -976,8 +935,8 @@
   font-family: 'Figtree', sans-serif;
   font-size: 13px;
   color: var(--text-secondary);
-  background: #FFFFFF;
-  border: 0.5px solid var(--stroke-default);
+  background: var(--surface-base);
+  border: 0.5px solid var(--stroke-medium);
   border-radius: 6px;
   padding: 10px 12px;
   resize: none;
@@ -1121,12 +1080,16 @@
 }
 
 .hm-topbar-block .home-status-chip {
-  height: 36px;
+  height: 40px;
 }
 
 .hm-period-list {
   flex: 1;
   overflow-y: auto;
+}
+
+.hm-period-list .period-tap-chip {
+  height: 40px;
 }
 
 .hm-empty-title {
@@ -1146,7 +1109,7 @@
 }
 
 .hm-empty-btn {
-  height: 36px;
+  height: 40px;
   padding: 0 14px;
   border-radius: 6px;
   border: 0.5px solid var(--stroke-default);
@@ -1164,15 +1127,15 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 12px;
+  padding: 16px;
   border-bottom: 0.5px solid var(--stroke-default);
   background: #FFFFFF;
   flex-shrink: 0;
 }
 
 .hm-back-btn {
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   border-radius: 6px;
   border: 0.5px solid var(--stroke-default);
   background: #FFFFFF;
@@ -1197,8 +1160,8 @@
 }
 
 .hm-memo-icon-btn {
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   border-radius: 6px;
   border: 0.5px solid var(--stroke-default);
   background: #FFFFFF;
@@ -1216,12 +1179,12 @@
    and let it wrap, since there's no extra header buttons sharing the row */
 .hm-lesson-header {
   justify-content: center;
-  padding: 12px;
+  padding: 16px;
 }
 
 .hm-lesson-header .lesson-nav-btn {
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
 }
 
 .hm-lesson-title-group {
@@ -1238,7 +1201,7 @@
 .hm-bottom-bar {
   display: flex;
   gap: 8px;
-  padding: 12px;
+  padding: 16px;
   padding-bottom: max(12px, env(safe-area-inset-bottom));
   background: #FFFFFF;
   border-top: 0.5px solid var(--stroke-default);
@@ -1246,8 +1209,8 @@
 }
 
 .hm-edit-btn {
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   border-radius: 6px;
   border: 0.5px solid var(--stroke-default);
   background: #FFFFFF;
@@ -1261,7 +1224,7 @@
 
 .hm-start-btn {
   flex: 1;
-  height: 36px;
+  height: 40px;
   border-radius: 6px;
   border: none;
   background: var(--text-primary);
@@ -1277,7 +1240,7 @@
 }
 
 .hm-drawer-save-btn {
-  height: 36px;
+  height: 40px;
   border-radius: 6px;
   border: none;
   background: var(--text-primary);
@@ -1293,10 +1256,11 @@
   cursor: default;
 }
 
-/* Bump all modal tap targets to 36px when rendered inside the mobile bottom drawer */
+/* Bump all modal tap targets to 40px when rendered inside the mobile bottom drawer */
 .drawer-body .modal-chip,
 .drawer-body .modal-label-input,
+.drawer-body .multi-class-other-option,
 .drawer-footer .modal-btn-cancel,
 .drawer-footer .modal-btn-save {
-  height: 36px;
+  height: 40px;
 }

@@ -6,7 +6,7 @@ import Layout from '../components/Layout'
 import HintBanner from '../components/HintBanner'
 import BottomDrawer from '../components/BottomDrawer'
 import { useDaySchedule, toLocalDateStr, getDayStatus } from '../hooks/useDaySchedule'
-import { GripVertical, ChevronLeft, ChevronRight, ChevronDown, X, Play, ArrowLeft, Pencil, StickyNote } from 'lucide-react'
+import { GripVertical, ChevronLeft, ChevronRight, X, Play, ArrowLeft, Pencil, StickyNote } from 'lucide-react'
 import { useIsMobile } from '../hooks/useMediaQuery'
 import ResponsiveModal from '../components/ResponsiveModal'
 import ErrorBoundary from '../components/ErrorBoundary'
@@ -673,10 +673,8 @@ export default function Home() {
               </div>
               <div className={`block-row memo-row ${memoExpanded ? 'open' : ''}`}>
                 <div className="memo-row-header" onClick={() => setMemoExpanded(prev => !prev)}>
+                  <StickyNote size={14} className="memo-icon" />
                   <span className="block-title">Memo</span>
-                  <button className="memo-toggle-btn" onClick={e => { e.stopPropagation(); setMemoExpanded(prev => !prev) }}>
-                    <StickyNote size={14} className={`memo-icon ${memoExpanded ? 'open' : ''}`} />
-                  </button>
                 </div>
                 {memoExpanded && (
                   <div className="memo-content-body">
@@ -712,9 +710,6 @@ export default function Home() {
                     <div key={block.id} className={`block-row ${isOpen ? 'open' : ''}`}>
                       <div className="block-row-header" onClick={() => toggleBlock(key)}>
                         <span className="block-title">{block.title}</span>
-                        <button className="block-chevron-btn" onClick={e => { e.stopPropagation(); toggleBlock(key) }}>
-                          <ChevronDown size={14} className={`block-chevron ${isOpen ? 'open' : ''}`} />
-                        </button>
                       </div>
                       {isOpen && block.content && (
                         <div className="block-content-body">

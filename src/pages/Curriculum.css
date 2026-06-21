@@ -177,9 +177,9 @@
 }
 
 .curr-origin-tag.original {
-  color: var(--peach-text);
-  background: var(--peach-fill);
-  border: 0.5px solid var(--peach-border);
+  color: var(--butter-text);
+  background: var(--butter-fill);
+  border: 0.5px solid var(--butter-border);
 }
 
 .curr-main {
@@ -527,8 +527,8 @@
   font-family: 'Figtree', sans-serif;
   font-size: 13px;
   color: var(--text-secondary);
-  background: #FFFFFF;
-  border: 0.5px solid var(--stroke-default);
+  background: var(--surface-base);
+  border: 0.5px solid var(--stroke-medium);
   border-radius: 6px;
   padding: 10px 12px;
   resize: none;

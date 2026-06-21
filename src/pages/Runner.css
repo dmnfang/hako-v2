@@ -137,9 +137,9 @@
   width: 100%;
   font-family: 'Figtree', sans-serif;
   font-size: 13px;
-  color: #3D3D3D;
-  background: #FAFAFA;
-  border: 0.5px solid #E0E0E0;
+  color: var(--text-secondary);
+  background: var(--surface-base);
+  border: 0.5px solid var(--stroke-medium);
   border-radius: 6px;
   padding: 10px 12px;
   resize: none;
