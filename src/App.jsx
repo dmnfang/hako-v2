@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { supabase } from './lib/supabase'
 import { DataProvider, useData } from './context/DataContext'
 import Home from './pages/Home'
@@ -11,10 +11,14 @@ import Wizard from './pages/Wizard'
 import Login from './pages/Login'
 import Runner from './pages/Runner'
 import TrialGate from './components/TrialGate'
+import MobileTabBar from './components/MobileTabBar'
+import { useIsMobile } from './hooks/useMediaQuery'
 
 function AppRoutes({ session }) {
   const { ready, refresh } = useData()
   const [hasSchools, setHasSchools] = useState(undefined)
+  const isMobile = useIsMobile()
+  const location = useLocation()
 
   async function checkSchools() {
     const { data } = await supabase.from('schools').select('id').limit(1)
@@ -26,37 +30,49 @@ function AppRoutes({ session }) {
     refresh().then(() => checkSchools())
   }, [session])
 
+  const hideTabBar = location.pathname.startsWith('/runner/')
+    || location.pathname === '/login'
+    || location.pathname === '/wizard'
+  const showTabBar = isMobile && session && !hideTabBar
+
+  useEffect(() => {
+    document.body.classList.toggle('has-mobile-tab-bar', showTabBar)
+  }, [showTabBar])
+
   if (session && (hasSchools === undefined || !ready)) return null
 
   return (
-    <Routes>
-      <Route path="/login" element={!session ? <Login /> : <Navigate to="/home" />} />
-      <Route path="/runner/:classId/:lessonId" element={session ? <Runner /> : <Navigate to="/login" />} />
+    <>
+      <Routes>
+        <Route path="/login" element={!session ? <Login /> : <Navigate to="/home" />} />
+        <Route path="/runner/:classId/:lessonId" element={session ? <Runner /> : <Navigate to="/login" />} />
 
-      <Route path="/wizard" element={
-        session
-          ? <TrialGate><Wizard onComplete={() => { setHasSchools(true); refresh() }} /></TrialGate>
-          : <Navigate to="/login" />
-      } />
-      <Route path="/home" element={
-        !session ? <Navigate to="/login" /> :
-        hasSchools === false ? <Navigate to="/wizard" /> :
-        <TrialGate><Home /></TrialGate>
-      } />
-      <Route path="/curriculum" element={
-        session ? <TrialGate><Curriculum /></TrialGate> : <Navigate to="/login" />
-      } />
-      <Route path="/schedule" element={
-        session ? <TrialGate><Schedule /></TrialGate> : <Navigate to="/login" />
-      } />
-      <Route path="/schools" element={
-        session ? <TrialGate><Schools /></TrialGate> : <Navigate to="/login" />
-      } />
-      <Route path="/account" element={
-        session ? <Account /> : <Navigate to="/login" />
-      } />
-      <Route path="*" element={<Navigate to={session ? '/home' : '/login'} />} />
-    </Routes>
+        <Route path="/wizard" element={
+          session
+            ? <TrialGate><Wizard onComplete={() => { setHasSchools(true); refresh() }} /></TrialGate>
+            : <Navigate to="/login" />
+        } />
+        <Route path="/home" element={
+          !session ? <Navigate to="/login" /> :
+          hasSchools === false ? <Navigate to="/wizard" /> :
+          <TrialGate><Home /></TrialGate>
+        } />
+        <Route path="/curriculum" element={
+          session ? <TrialGate><Curriculum /></TrialGate> : <Navigate to="/login" />
+        } />
+        <Route path="/schedule" element={
+          session ? <TrialGate><Schedule /></TrialGate> : <Navigate to="/login" />
+        } />
+        <Route path="/schools" element={
+          session ? <TrialGate><Schools /></TrialGate> : <Navigate to="/login" />
+        } />
+        <Route path="/account" element={
+          session ? <Account /> : <Navigate to="/login" />
+        } />
+        <Route path="*" element={<Navigate to={session ? '/home' : '/login'} />} />
+      </Routes>
+      {showTabBar && <MobileTabBar />}
+    </>
   )
 }
 

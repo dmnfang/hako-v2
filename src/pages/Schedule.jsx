@@ -4,7 +4,9 @@ import { useData } from '../context/DataContext'
 import Layout from '../components/Layout'
 import HintBanner from '../components/HintBanner'
 import { useDaySchedule, toLocalDateStr, getDayStatus } from '../hooks/useDaySchedule'
-import { X, ChevronLeft, ChevronRight } from 'lucide-react'
+import { useIsMobile } from '../hooks/useMediaQuery'
+import { X, ChevronLeft, ChevronRight, ArrowLeft } from 'lucide-react'
+import ResponsiveModal from '../components/ResponsiveModal'
 import './Schedule.css'
 
 const DAYS = [
@@ -112,7 +114,7 @@ function PeriodCard({ num, period, isMultiClass, resolvedClassLabel, lessonLabel
 }
 
 // ─── Regular Week tab ──────────────────────────────────────────────────────
-function RegularWeekTab({ schools, allClasses, selectedDay, refreshSidebar }) {
+function RegularWeekTab({ schools, allClasses, selectedDay, refreshSidebar, isMobile, onBack }) {
   const [schedule, setSchedule] = useState([])
   const [modal, setModal] = useState(null)
   const [modalPeriodNum, setModalPeriodNum] = useState(null)
@@ -288,6 +290,11 @@ function RegularWeekTab({ schools, allClasses, selectedDay, refreshSidebar }) {
     <div className="sch-tab-content">
       <div className="sch-main">
         <div className="sch-main-header">
+          {isMobile && (
+            <button className="hm-back-btn" onClick={onBack}>
+              <ArrowLeft size={16} />
+            </button>
+          )}
           <span className="sch-main-title">{dayLabel}</span>
           <span className="sch-main-dot" />
           <span className="sch-main-sub">{schedule.length} periods</span>
@@ -309,82 +316,83 @@ function RegularWeekTab({ schools, allClasses, selectedDay, refreshSidebar }) {
 
       {/* Period config modal */}
       {modal === 'period_config' && (
-        <div className="sch-modal-overlay" onClick={() => setModal(null)}>
-          <div className="sch-modal" onClick={e => e.stopPropagation()}>
-            <div className="sch-modal-header">
-              <span className="sch-modal-title">Period {modalPeriodNum} — {dayLabel}</span>
-              <button className="sch-modal-close" onClick={() => setModal(null)}><X size={14} /></button>
-            </div>
-            <div className="sch-modal-body" style={{display:'flex',flexDirection:'column',gap:16}}>
-              <div>
-                <div className="modal-label modal-label-spaced">Single class or multi class?</div>
-                <div className="sch-option-grid">
-                  {[{v:'weekly',title:'Single Class',desc:'This period is always the same class.'},{v:'alternating',title:'Multi Class',desc:'This period could be any of a pool of classes — choose which one each day.'}].map(opt => (
-                    <div key={opt.v} onClick={() => changeModalFreq(opt.v)} className={`sch-option-card ${modalFreq===opt.v ? 'active' : ''}`}>
-                      <div className="sch-option-radio" />
-                      <div>
-                        <div className="sch-option-title">{opt.title}</div>
-                        <div className="sch-option-desc">{opt.desc}</div>
-                      </div>
+        <ResponsiveModal
+          isMobile={isMobile}
+          open
+          onClose={() => setModal(null)}
+          title={`Period ${modalPeriodNum} — ${dayLabel}`}
+          footer={
+            <>
+              <button className="sch-form-cancel" onClick={() => setModal(null)}>Cancel</button>
+              <button className="sch-form-save" onClick={savePeriodConfig} disabled={!modalSchoolId}>Save</button>
+            </>
+          }
+        >
+          <div style={{display:'flex',flexDirection:'column',gap:16}}>
+            <div>
+              <div className="modal-label modal-label-spaced">Single class or multi class?</div>
+              <div className="sch-option-grid">
+                {[{v:'weekly',title:'Single Class',desc:'This period is always the same class.'},{v:'alternating',title:'Multi Class',desc:'This period could be any of a pool of classes — choose which one each day.'}].map(opt => (
+                  <div key={opt.v} onClick={() => changeModalFreq(opt.v)} className={`sch-option-card ${modalFreq===opt.v ? 'active' : ''}`}>
+                    <div className="sch-option-radio" />
+                    <div>
+                      <div className="sch-option-title">{opt.title}</div>
+                      <div className="sch-option-desc">{opt.desc}</div>
                     </div>
-                  ))}
-                </div>
+                  </div>
+                ))}
               </div>
+            </div>
 
-              <div>
-                <div className="modal-label modal-label-spaced">Which school?</div>
+            <div>
+              <div className="modal-label modal-label-spaced">Which school?</div>
+              <div className="sch-modal-chips">
+                {schools.map(s => (
+                  <button key={s.id} className={`sch-modal-chip school ${modalSchoolId === s.id ? 'active' : ''}`} onClick={() => changeModalSchool(s.id)}>
+                    {s.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <div className="modal-label modal-label-spaced">
+                {modalFreq === 'alternating' ? 'Which classes? (select all that apply)' : 'Which class?'}
+              </div>
+              {!modalSchoolId ? (
+                <p style={{fontFamily:"'Figtree',sans-serif",fontSize:13,color:'#787878'}}>Choose a school first.</p>
+              ) : (
                 <div className="sch-modal-chips">
-                  {schools.map(s => (
-                    <button key={s.id} className={`sch-modal-chip school ${modalSchoolId === s.id ? 'active' : ''}`} onClick={() => changeModalSchool(s.id)}>
-                      {s.name}
+                  {modalFreq === 'weekly' && (
+                    <button className={`sch-modal-chip ${modalClassIds.length === 0 ? 'active' : ''}`} onClick={() => setModalClassIds([])}>No class</button>
+                  )}
+                  {modalSchoolClasses.map(cl => (
+                    <button key={cl.id} className={`sch-modal-chip class ${modalClassIds.includes(cl.id) ? 'active' : ''}`} onClick={() => toggleModalClass(cl.id)}>
+                      {cl.label}
                     </button>
                   ))}
                 </div>
-              </div>
-
-              <div>
-                <div className="modal-label modal-label-spaced">
-                  {modalFreq === 'alternating' ? 'Which classes? (select all that apply)' : 'Which class?'}
-                </div>
-                {!modalSchoolId ? (
-                  <p style={{fontFamily:"'Figtree',sans-serif",fontSize:13,color:'#787878'}}>Choose a school first.</p>
-                ) : (
-                  <div className="sch-modal-chips">
-                    {modalFreq === 'weekly' && (
-                      <button className={`sch-modal-chip ${modalClassIds.length === 0 ? 'active' : ''}`} onClick={() => setModalClassIds([])}>No class</button>
-                    )}
-                    {modalSchoolClasses.map(cl => (
-                      <button key={cl.id} className={`sch-modal-chip class ${modalClassIds.includes(cl.id) ? 'active' : ''}`} onClick={() => toggleModalClass(cl.id)}>
-                        {cl.label}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              <div>
-                <div className="modal-label modal-label-spaced">What time?</div>
-                <div style={{display:'flex',gap:12}}>
-                  <div className="sc-field"><span className="sc-field-label">START TIME</span><input className="sch-time-input" type="time" value={timeForm.start_time} onChange={e => setTimeForm(p=>({...p,start_time:e.target.value}))} /></div>
-                  <div className="sc-field"><span className="sc-field-label">END TIME</span><input className="sch-time-input" type="time" value={timeForm.end_time} onChange={e => setTimeForm(p=>({...p,end_time:e.target.value}))} /></div>
-                </div>
-              </div>
-
-              <p style={{fontFamily:"'Figtree',sans-serif",fontSize:13,color:'#787878',margin:0}}>This will update all future {dayLabel}s.</p>
+              )}
             </div>
-            <div className="sch-modal-footer">
-              <button className="sch-form-cancel" onClick={() => setModal(null)}>Cancel</button>
-              <button className="sch-form-save" onClick={savePeriodConfig} disabled={!modalSchoolId}>Save</button>
+
+            <div>
+              <div className="modal-label modal-label-spaced">What time?</div>
+              <div style={{display:'flex',gap:12}}>
+                <div className="sc-field"><span className="sc-field-label">START TIME</span><input className="sch-time-input" type="time" value={timeForm.start_time} onChange={e => setTimeForm(p=>({...p,start_time:e.target.value}))} /></div>
+                <div className="sc-field"><span className="sc-field-label">END TIME</span><input className="sch-time-input" type="time" value={timeForm.end_time} onChange={e => setTimeForm(p=>({...p,end_time:e.target.value}))} /></div>
+              </div>
             </div>
+
+            <p style={{fontFamily:"'Figtree',sans-serif",fontSize:13,color:'#787878',margin:0}}>This will update all future {dayLabel}s.</p>
           </div>
-        </div>
+        </ResponsiveModal>
       )}
     </div>
   )
 }
 
 // ─── Calendar tab ──────────────────────────────────────────────────────────
-function CalendarTab({ schools, allClasses, progressCtx, selectedDate }) {
+function CalendarTab({ schools, allClasses, progressCtx, selectedDate, isMobile, onBack }) {
   const [modal, setModal] = useState(null)
   const [modalPeriodIdx, setModalPeriodIdx] = useState(null)
   const [modalSlotIdx, setModalSlotIdx] = useState(0)
@@ -433,14 +441,19 @@ function CalendarTab({ schools, allClasses, progressCtx, selectedDate }) {
       <div className="sch-main">
         <div className="sch-main-header sch-cal-header">
           <div className="sch-cal-header-row">
+            {isMobile && (
+              <button className="hm-back-btn" onClick={onBack}>
+                <ArrowLeft size={16} />
+              </button>
+            )}
             <span className="sch-main-title">{selectedDate.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})}</span>
-            <button className="sch-form-save sch-change-status-btn" onClick={() => { setModalStatus(dayStatus.status); setModal('status') }}>
-              Change Status
+            <button
+              className={`home-status-chip home-status-${dayStatus.status} sch-change-status-btn`}
+              onClick={() => { setModalStatus(dayStatus.status); setModal('status') }}
+            >
+              <span className="home-status-dot" />
+              {dayStatus.label}
             </button>
-          </div>
-          <div className="sch-cal-status-row">
-            <span className="sch-cal-status-label">Status:</span>
-            <span className={`sch-cal-status-value home-status-${dayStatus.status}`}>{dayStatus.label}</span>
           </div>
         </div>
 
@@ -520,125 +533,123 @@ function CalendarTab({ schools, allClasses, progressCtx, selectedDate }) {
 
       {/* Status modal */}
       {modal === 'status' && (
-        <div className="sch-modal-overlay" onClick={() => setModal(null)}>
-          <div className="sch-modal" onClick={e => e.stopPropagation()}>
-            <div className="sch-modal-header">
-              <span className="sch-modal-title">Change Status — {selectedDate.toLocaleDateString('en-US',{month:'short',day:'numeric'})}</span>
-              <button className="sch-modal-close" onClick={() => setModal(null)}><X size={14} /></button>
-            </div>
-            <div className="sch-modal-body">
-              <div className="sch-modal-chips">
-                {[{v:'working',label:'Working Day'},{v:'standby',label:'Standby Day'},{v:'holiday',label:'Public Holiday'},{v:'school_event',label:'School Event'},{v:'personal',label:'Personal Day'}].map(opt => (
-                  <button key={opt.v} className={`sch-modal-chip status ${modalStatus===opt.v?'active':''}`} onClick={() => setModalStatus(opt.v)}>{opt.label}</button>
-                ))}
-              </div>
-            </div>
-            <div className="sch-modal-footer">
+        <ResponsiveModal
+          isMobile={isMobile}
+          open
+          onClose={() => setModal(null)}
+          title={`Change Status — ${selectedDate.toLocaleDateString('en-US',{month:'short',day:'numeric'})}`}
+          footer={
+            <>
               <button className="sch-form-cancel" onClick={() => setModal(null)}>Cancel</button>
               <button className="sch-form-save" onClick={async () => { const { data: { user } } = await supabase.auth.getUser(); await supabase.from('day_status').upsert({ date: toLocalDateStr(selectedDate), status: modalStatus, user_id: user.id }, { onConflict: 'user_id,date' }); setModal(null) }}>Save</button>
-            </div>
+            </>
+          }
+        >
+          <div className="sch-modal-chips">
+            {[{v:'working',label:'Working Day'},{v:'standby',label:'Standby Day'},{v:'holiday',label:'Public Holiday'},{v:'school_event',label:'School Event'},{v:'personal',label:'Personal Day'}].map(opt => (
+              <button key={opt.v} className={`sch-modal-chip status ${modalStatus===opt.v?'active':''}`} onClick={() => setModalStatus(opt.v)}>{opt.label}</button>
+            ))}
           </div>
-        </div>
+        </ResponsiveModal>
       )}
 
       {/* School modal */}
       {modal === 'school' && (
-        <div className="sch-modal-overlay" onClick={() => setModal(null)}>
-          <div className="sch-modal" onClick={e => e.stopPropagation()}>
-            <div className="sch-modal-header">
-              <span className="sch-modal-title">School — Period {modalPeriod?.period_number}</span>
-              <button className="sch-modal-close" onClick={() => setModal(null)}><X size={14} /></button>
-            </div>
-            <div className="sch-modal-body sch-modal-body-form">
-              <div className="sch-modal-chips">
-                {schools.map(s => (
-                  <button key={s.id} className={`sch-modal-chip school ${modalSchoolId === s.id ? 'active' : ''}`} onClick={() => setModalSchoolId(s.id)}>{s.name}</button>
-                ))}
-              </div>
-              <div className="sch-option-grid">
-                {[{v:'once',title:`Just ${selectedDate.toLocaleDateString('en-US',{month:'short',day:'numeric'})}`,desc:'One-time override only.'},{v:'permanent',title:`All future ${dow}s`,desc:'Updates your recurring schedule.'}].map(opt => (
-                  <div key={opt.v} onClick={() => setModalChangeType(opt.v)} className={`sch-option-card ${modalChangeType===opt.v ? 'active' : ''}`}>
-                    <div className="sch-option-radio" />
-                    <div>
-                      <div className="sch-option-title">{opt.title}</div>
-                      <div className="sch-option-desc">{opt.desc}</div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="sch-modal-footer">
+        <ResponsiveModal
+          isMobile={isMobile}
+          open
+          onClose={() => setModal(null)}
+          title={`School — Period ${modalPeriod?.period_number}`}
+          footer={
+            <>
               <button className="sch-form-cancel" onClick={() => setModal(null)}>Cancel</button>
               <button className="sch-form-save" onClick={async () => { await savePeriodSchoolOverride(modalPeriod, modalSchoolId, modalSlotIdx, modalChangeType, selectedDate); setModal(null) }}>Save</button>
-            </div>
+            </>
+          }
+        >
+          <div className="sch-modal-chips">
+            {schools.map(s => (
+              <button key={s.id} className={`sch-modal-chip school ${modalSchoolId === s.id ? 'active' : ''}`} onClick={() => setModalSchoolId(s.id)}>{s.name}</button>
+            ))}
           </div>
-        </div>
+          <div className="sch-option-grid">
+            {[{v:'once',title:`Just ${selectedDate.toLocaleDateString('en-US',{month:'short',day:'numeric'})}`,desc:'One-time override only.'},{v:'permanent',title:`All future ${dow}s`,desc:'Updates your recurring schedule.'}].map(opt => (
+              <div key={opt.v} onClick={() => setModalChangeType(opt.v)} className={`sch-option-card ${modalChangeType===opt.v ? 'active' : ''}`}>
+                <div className="sch-option-radio" />
+                <div>
+                  <div className="sch-option-title">{opt.title}</div>
+                  <div className="sch-option-desc">{opt.desc}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </ResponsiveModal>
       )}
 
       {/* Class modal */}
       {modal === 'class' && modalPeriod && (
-        <div className="sch-modal-overlay" onClick={() => setModal(null)}>
-          <div className="sch-modal" onClick={e => e.stopPropagation()}>
-            <div className="sch-modal-header">
-              <span className="sch-modal-title">Class — Period {modalPeriod.period_number}</span>
-              <button className="sch-modal-close" onClick={() => setModal(null)}><X size={14} /></button>
-            </div>
-            <div className="sch-modal-body sch-modal-body-form">
-              <div className="sch-modal-chips">
-                <button className={`sch-modal-chip ${!modalClassId ? 'active' : ''}`} onClick={() => setModalClassId(null)}>No class</button>
-                {modalSchoolClasses.map(cl => (
-                  <button key={cl.id} className={`sch-modal-chip class ${modalClassId === cl.id ? 'active' : ''}`} onClick={() => setModalClassId(cl.id)}>{cl.label}</button>
-                ))}
-              </div>
-              <div className="sch-option-grid">
-                {[{v:'once',title:`Just ${selectedDate.toLocaleDateString('en-US',{month:'short',day:'numeric'})}`,desc:'One-time override only.'},{v:'permanent',title:`All future ${dow}s`,desc:'Updates your recurring schedule.'}].map(opt => (
-                  <div key={opt.v} onClick={() => setModalChangeType(opt.v)} className={`sch-option-card ${modalChangeType===opt.v ? 'active' : ''}`}>
-                    <div className="sch-option-radio" />
-                    <div>
-                      <div className="sch-option-title">{opt.title}</div>
-                      <div className="sch-option-desc">{opt.desc}</div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="sch-modal-footer">
+        <ResponsiveModal
+          isMobile={isMobile}
+          open
+          onClose={() => setModal(null)}
+          title={`Class — Period ${modalPeriod.period_number}`}
+          footer={
+            <>
               <button className="sch-form-cancel" onClick={() => setModal(null)}>Cancel</button>
               <button className="sch-form-save" onClick={async () => { await savePeriodClassOverride(modalPeriod, modalClassId, modalSlotIdx, modalChangeType, selectedDate); setModal(null) }}>Save</button>
-            </div>
+            </>
+          }
+        >
+          <div className="sch-modal-chips">
+            <button className={`sch-modal-chip ${!modalClassId ? 'active' : ''}`} onClick={() => setModalClassId(null)}>No class</button>
+            {modalSchoolClasses.map(cl => (
+              <button key={cl.id} className={`sch-modal-chip class ${modalClassId === cl.id ? 'active' : ''}`} onClick={() => setModalClassId(cl.id)}>{cl.label}</button>
+            ))}
           </div>
-        </div>
+          <div className="sch-option-grid">
+            {[{v:'once',title:`Just ${selectedDate.toLocaleDateString('en-US',{month:'short',day:'numeric'})}`,desc:'One-time override only.'},{v:'permanent',title:`All future ${dow}s`,desc:'Updates your recurring schedule.'}].map(opt => (
+              <div key={opt.v} onClick={() => setModalChangeType(opt.v)} className={`sch-option-card ${modalChangeType===opt.v ? 'active' : ''}`}>
+                <div className="sch-option-radio" />
+                <div>
+                  <div className="sch-option-title">{opt.title}</div>
+                  <div className="sch-option-desc">{opt.desc}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </ResponsiveModal>
       )}
 
       {/* Time modal */}
       {modal === 'time' && modalPeriod && (
-        <div className="sch-modal-overlay" onClick={() => setModal(null)}>
-          <div className="sch-modal" onClick={e => e.stopPropagation()}>
-            <div className="sch-modal-header">
-              <span className="sch-modal-title">Time — Period {modalPeriod.period_number}</span>
-              <button className="sch-modal-close" onClick={() => setModal(null)}><X size={14} /></button>
-            </div>
-            <div className="sch-modal-body sch-modal-body-form">
-              <div className="sc-field"><span className="sc-field-label">START TIME</span><input className="sch-time-input" type="time" value={modalTimeForm.start_time} onChange={e => setModalTimeForm(p=>({...p,start_time:e.target.value}))} autoFocus /></div>
-              <div className="sc-field"><span className="sc-field-label">END TIME</span><input className="sch-time-input" type="time" value={modalTimeForm.end_time} onChange={e => setModalTimeForm(p=>({...p,end_time:e.target.value}))} /></div>
-              <div className="sch-option-grid">
-                {[{v:'once',title:`Just ${selectedDate.toLocaleDateString('en-US',{month:'short',day:'numeric'})}`,desc:'One-time override only.'},{v:'permanent',title:`All future ${dow}s`,desc:'Updates your recurring schedule.'}].map(opt => (
-                  <div key={opt.v} onClick={() => setModalChangeType(opt.v)} className={`sch-option-card ${modalChangeType===opt.v ? 'active' : ''}`}>
-                    <div className="sch-option-radio" />
-                    <div>
-                      <div className="sch-option-title">{opt.title}</div>
-                      <div className="sch-option-desc">{opt.desc}</div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="sch-modal-footer">
+        <ResponsiveModal
+          isMobile={isMobile}
+          open
+          onClose={() => setModal(null)}
+          title={`Time — Period ${modalPeriod.period_number}`}
+          footer={
+            <>
               <button className="sch-form-cancel" onClick={() => setModal(null)}>Cancel</button>
               <button className="sch-form-save" onClick={async () => { await savePeriodTimeOverride(modalPeriod, modalTimeForm, modalSlotIdx, modalChangeType, selectedDate); setModal(null) }}>Save</button>
+            </>
+          }
+        >
+          <div className="sch-modal-body-form">
+            <div className="sc-field"><span className="sc-field-label">START TIME</span><input className="sch-time-input" type="time" value={modalTimeForm.start_time} onChange={e => setModalTimeForm(p=>({...p,start_time:e.target.value}))} autoFocus /></div>
+            <div className="sc-field"><span className="sc-field-label">END TIME</span><input className="sch-time-input" type="time" value={modalTimeForm.end_time} onChange={e => setModalTimeForm(p=>({...p,end_time:e.target.value}))} /></div>
+            <div className="sch-option-grid">
+              {[{v:'once',title:`Just ${selectedDate.toLocaleDateString('en-US',{month:'short',day:'numeric'})}`,desc:'One-time override only.'},{v:'permanent',title:`All future ${dow}s`,desc:'Updates your recurring schedule.'}].map(opt => (
+                <div key={opt.v} onClick={() => setModalChangeType(opt.v)} className={`sch-option-card ${modalChangeType===opt.v ? 'active' : ''}`}>
+                  <div className="sch-option-radio" />
+                  <div>
+                    <div className="sch-option-title">{opt.title}</div>
+                    <div className="sch-option-desc">{opt.desc}</div>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
-        </div>
+        </ResponsiveModal>
       )}
 
       {/* Multi Class modal */}
@@ -650,83 +661,80 @@ function CalendarTab({ schools, allClasses, progressCtx, selectedDate }) {
         const resolvedClassId = periodOverrides[period.id]?.class_id ?? null
 
         return (
-          <div className="sch-modal-overlay" onClick={() => setModal(null)}>
-            <div className="sch-modal" onClick={e => e.stopPropagation()}>
-              <div className="sch-modal-header">
-                <span className="sch-modal-title">Multi Class — Period {period.period_number}</span>
-                <button className="sch-modal-close" onClick={() => setModal(null)}><X size={14} /></button>
-              </div>
-              <div className="sch-modal-body">
-                <div className="modal-label modal-label-spaced">
-                  Which class is this on {selectedDate.toLocaleDateString('en-US',{month:'short',day:'numeric'})}?
-                </div>
-                <div className="sch-multi-class-options">
-                  {pool.map(slot => {
-                    const cls = allClasses.find(c => c.id === slot.class_id)
-                    const currLessons = lessons[cls?.curriculum_id] ?? []
-                    const prog = progressCtx?.[slot.class_id]
-                    const idx = prog?.current_lesson_id
-                      ? Math.max(0, currLessons.findIndex(l => l.id === prog.current_lesson_id))
-                      : 0
-                    const lesson = currLessons[idx]
-                    const isResolved = resolvedClassId === slot.class_id
-                    return (
-                      <div key={slot.id} className={`sch-multi-class-option ${isResolved ? 'active' : ''}`}>
-                        <button
-                          className="sch-period-tap-chip class"
-                          onClick={() => handleResolveTodayClass(slot.class_id, false)}
-                        >
-                          {cls?.label ?? '—'}
-                        </button>
-                        {lesson && (
-                          <span className="sch-pool-chip">
-                            {[lesson.tag1, lesson.tag2].filter(Boolean).join(' · ')}
-                          </span>
-                        )}
-                      </div>
-                    )
-                  })}
-                </div>
-
-                {otherClasses.length > 0 && (
-                  <>
-                    <div className="sch-multi-class-other-label">Not in your rotation?</div>
-                    <div className="sch-multi-class-other-options">
-                      {otherClasses.map(cl => (
-                        <button
-                          key={cl.id}
-                          className={`sch-modal-chip class ${modalOtherClassId === cl.id ? 'active' : ''}`}
-                          onClick={() => setModalOtherClassId(cl.id)}
-                        >
-                          {cl.label}
-                        </button>
-                      ))}
-                    </div>
-                  </>
-                )}
-
-                {modalOtherClassId && (
-                  <div className="sch-option-grid sch-option-grid-spaced">
-                    {[{v:'once',title:`Just ${selectedDate.toLocaleDateString('en-US',{month:'short',day:'numeric'})}`,desc:"One-time choice. This class isn't added to the rotation."},{v:'permanent',title:'Add to rotation',desc:'This class becomes a permanent option for this period.'}].map(opt => (
-                      <div key={opt.v} onClick={() => setModalMultiChangeType(opt.v)} className={`sch-option-card ${modalMultiChangeType===opt.v ? 'active' : ''}`}>
-                        <div className="sch-option-radio" />
-                        <div>
-                          <div className="sch-option-title">{opt.title}</div>
-                          <div className="sch-option-desc">{opt.desc}</div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-              {modalOtherClassId && (
-                <div className="sch-modal-footer">
-                  <button className="sch-form-cancel" onClick={() => setModalOtherClassId(null)}>Back</button>
-                  <button className="sch-form-save" onClick={() => handleResolveTodayClass(modalOtherClassId, modalMultiChangeType === 'permanent')}>Save</button>
-                </div>
-              )}
+          <ResponsiveModal
+            isMobile={isMobile}
+            open
+            onClose={() => setModal(null)}
+            title={`Multi Class — Period ${period.period_number}`}
+            footer={modalOtherClassId && (
+              <>
+                <button className="sch-form-cancel" onClick={() => setModalOtherClassId(null)}>Back</button>
+                <button className="sch-form-save" onClick={() => handleResolveTodayClass(modalOtherClassId, modalMultiChangeType === 'permanent')}>Save</button>
+              </>
+            )}
+          >
+            <div className="modal-label modal-label-spaced">
+              Which class is this on {selectedDate.toLocaleDateString('en-US',{month:'short',day:'numeric'})}?
             </div>
-          </div>
+            <div className="sch-multi-class-options">
+              {pool.map(slot => {
+                const cls = allClasses.find(c => c.id === slot.class_id)
+                const currLessons = lessons[cls?.curriculum_id] ?? []
+                const prog = progressCtx?.[slot.class_id]
+                const idx = prog?.current_lesson_id
+                  ? Math.max(0, currLessons.findIndex(l => l.id === prog.current_lesson_id))
+                  : 0
+                const lesson = currLessons[idx]
+                const isResolved = resolvedClassId === slot.class_id
+                return (
+                  <div key={slot.id} className={`sch-multi-class-option ${isResolved ? 'active' : ''}`}>
+                    <button
+                      className="sch-period-tap-chip class"
+                      onClick={() => handleResolveTodayClass(slot.class_id, false)}
+                    >
+                      {cls?.label ?? '—'}
+                    </button>
+                    {lesson && (
+                      <span className="sch-pool-chip">
+                        {[lesson.tag1, lesson.tag2].filter(Boolean).join(' · ')}
+                      </span>
+                    )}
+                  </div>
+                )
+              })}
+            </div>
+
+            {otherClasses.length > 0 && (
+              <>
+                <div className="sch-multi-class-other-label">Not in your rotation?</div>
+                <div className="sch-multi-class-other-options">
+                  {otherClasses.map(cl => (
+                    <button
+                      key={cl.id}
+                      className={`sch-modal-chip class ${modalOtherClassId === cl.id ? 'active' : ''}`}
+                      onClick={() => setModalOtherClassId(cl.id)}
+                    >
+                      {cl.label}
+                    </button>
+                  ))}
+                </div>
+              </>
+            )}
+
+            {modalOtherClassId && (
+              <div className="sch-option-grid sch-option-grid-spaced">
+                {[{v:'once',title:`Just ${selectedDate.toLocaleDateString('en-US',{month:'short',day:'numeric'})}`,desc:"One-time choice. This class isn't added to the rotation."},{v:'permanent',title:'Add to rotation',desc:'This class becomes a permanent option for this period.'}].map(opt => (
+                  <div key={opt.v} onClick={() => setModalMultiChangeType(opt.v)} className={`sch-option-card ${modalMultiChangeType===opt.v ? 'active' : ''}`}>
+                    <div className="sch-option-radio" />
+                    <div>
+                      <div className="sch-option-title">{opt.title}</div>
+                      <div className="sch-option-desc">{opt.desc}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </ResponsiveModal>
         )
       })()}
     </div>
@@ -736,10 +744,14 @@ function CalendarTab({ schools, allClasses, progressCtx, selectedDate }) {
 // ─── Main Schedule page ────────────────────────────────────────────────────
 export default function Schedule() {
   const { schools, classes: allClasses, progress: progressCtx } = useData()
+  const isMobile = useIsMobile()
+  const [screen, setScreen] = useState('list') // mobile only: 'list' | 'detail'
   const [tab, setTab] = useState('regular')
   const [selectedDay, setSelectedDay] = useState(1)
   const [dayCounts, setDayCounts] = useState({})
   const [daySchools, setDaySchools] = useState({})
+  const [periodSchoolMap, setPeriodSchoolMap] = useState({})
+  const [monthSchoolOverrides, setMonthSchoolOverrides] = useState({}) // dateStr -> [{period_id, school_id}]
   const [calDate, setCalDate] = useState(new Date())
   const [calSelectedDate, setCalSelectedDate] = useState(new Date())
 
@@ -748,12 +760,50 @@ export default function Schedule() {
   const cm = calDate.getMonth()
   const firstDow = new Date(cy, cm, 1).getDay()
   const daysInMonth = new Date(cy, cm + 1, 0).getDate()
+  const trailingDow = (7 - ((firstDow + daysInMonth) % 7)) % 7
+
+  async function fetchMonthSchoolOverrides() {
+    const start = `${cy}-${String(cm + 1).padStart(2, '0')}-01`
+    const end = `${cy}-${String(cm + 1).padStart(2, '0')}-${String(daysInMonth).padStart(2, '0')}`
+    const { data } = await supabase
+      .from('period_overrides')
+      .select('date, period_id, school_id')
+      .gte('date', start)
+      .lte('date', end)
+      .not('school_id', 'is', null)
+    const byDate = {}
+    data?.forEach(o => {
+      if (!byDate[o.date]) byDate[o.date] = []
+      byDate[o.date].push(o)
+    })
+    setMonthSchoolOverrides(byDate)
+  }
+
+  useEffect(() => { fetchMonthSchoolOverrides() }, [cy, cm, daysInMonth])
+
+  function schoolsForDate(d) {
+    const dow = d.getDay()
+    const base = new Set(daySchools[dow] ?? [])
+    const dateStr = toLocalDateStr(d)
+    const overrides = monthSchoolOverrides[dateStr]
+    if (overrides) {
+      overrides.forEach(o => {
+        const originalSchoolId = periodSchoolMap[o.period_id]
+        const originalName = schools.find(s => s.id === originalSchoolId)?.name
+        const newName = schools.find(s => s.id === o.school_id)?.name
+        if (originalName) base.delete(originalName)
+        if (newName) base.add(newName)
+      })
+    }
+    return [...base]
+  }
 
   async function fetchSidebar() {
     const { data: dayData } = await supabase
       .from('school_days').select('id, school_id, day_of_week, periods(id)')
     const dc = {}
     const schoolsPerDay = {}
+    const periodSchool = {}
     dayData?.forEach(day => {
       const dow = day.day_of_week
       const periodCount = day.periods?.length ?? 0
@@ -762,8 +812,10 @@ export default function Schedule() {
         schoolsPerDay[dow].add(day.school_id)
         dc[dow] = (dc[dow] ?? 0) + periodCount
       }
+      ;(day.periods ?? []).forEach(p => { periodSchool[p.id] = day.school_id })
     })
     setDayCounts(dc)
+    setPeriodSchoolMap(periodSchool)
     const ds = {}
     Object.entries(schoolsPerDay).forEach(([dow, ids]) => {
       ds[parseInt(dow)] = [...ids].map(id => schools.find(s => s.id === id)?.name).filter(Boolean)
@@ -790,7 +842,7 @@ export default function Schedule() {
       {tab === 'regular' && (
         <div className="sch-list">
           {DAYS.map(d => (
-            <div key={d.value} className={`sch-row ${selectedDay === d.value ? 'selected' : ''}`} onClick={() => setSelectedDay(d.value)}>
+            <div key={d.value} className={`sch-row ${selectedDay === d.value ? 'selected' : ''}`} onClick={() => { setSelectedDay(d.value); if (isMobile) setScreen('detail') }}>
               <div className="sch-row-top">
                 <span className="sch-row-name">{d.label}</span>
                 <span className="sch-row-count" style={{minWidth:24,justifyContent:'center'}}>{dayCounts[d.value] ?? 0}</span>
@@ -816,25 +868,57 @@ export default function Schedule() {
             </div>
           </div>
           <div className="sch-cal-grid">
-            {['Su','Mo','Tu','We','Th','Fr','Sa'].map(d => <div key={d} className="sch-cal-dow">{d}</div>)}
-            {Array.from({length: firstDow}).map((_,i) => <div key={`e${i}`} />)}
+            {['SUN','MON','TUE','WED','THU','FRI','SAT'].map(d => <div key={d} className="sch-cal-dow">{d}</div>)}
+            {Array.from({length: firstDow}).map((_,i) => <div key={`e${i}`} className="sch-cal-day-empty" />)}
             {Array.from({length: daysInMonth}).map((_,i) => {
               const day = i + 1
               const d = new Date(cy, cm, day)
               const isToday = d.toDateString() === today.toDateString()
               const isSelected = d.toDateString() === calSelectedDate.toDateString()
               const isWeekend = d.getDay() === 0 || d.getDay() === 6
+              const dayChips = schoolsForDate(d)
               return (
-                <button key={day} className={`sch-cal-day ${isToday?'today':''} ${isSelected?'selected':''} ${isWeekend?'weekend':''}`} onClick={() => setCalSelectedDate(d)}>
-                  {day}
+                <button key={day} className={`sch-cal-day ${isToday?'today':''} ${isSelected?'selected':''} ${isWeekend?'weekend':''}`} onClick={() => { setCalSelectedDate(d); if (isMobile) setScreen('detail') }}>
+                  <span className="sch-cal-day-num">{day}</span>
+                  {dayChips.length > 0 && (
+                    <div className="sch-cal-day-chips">
+                      {dayChips.slice(0, 3).map(name => (
+                        <span key={name} className="sch-cal-day-chip">{name.split(' ')[0]}</span>
+                      ))}
+                      {dayChips.length > 3 && <span className="sch-cal-day-chip more">+{dayChips.length - 3}</span>}
+                    </div>
+                  )}
                 </button>
               )
             })}
+            {Array.from({length: trailingDow}).map((_,i) => <div key={`t${i}`} className="sch-cal-day-empty" />)}
           </div>
         </div>
       )}
     </div>
   )
+
+  if (isMobile) {
+    return (
+      <div className="sch-mobile">
+        {screen === 'list' && (
+          <div className="hm-screen">
+            {sidebar}
+          </div>
+        )}
+        {screen === 'detail' && (
+          <div className="hm-screen">
+            <div className="sch-mobile-detail-body">
+              {tab === 'regular'
+                ? <RegularWeekTab schools={schools} allClasses={allClasses} selectedDay={selectedDay} refreshSidebar={fetchSidebar} isMobile onBack={() => setScreen('list')} />
+                : <CalendarTab schools={schools} allClasses={allClasses} progressCtx={progressCtx} selectedDate={calSelectedDate} isMobile onBack={() => setScreen('list')} />
+              }
+            </div>
+          </div>
+        )}
+      </div>
+    )
+  }
 
   return (
     <Layout sidebar={sidebar}>

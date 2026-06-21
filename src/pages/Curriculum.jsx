@@ -3,8 +3,10 @@ import { supabase } from '../lib/supabase'
 import { useData } from '../context/DataContext'
 import Layout from '../components/Layout'
 import HintBanner from '../components/HintBanner'
-import { Plus, Trash2, Copy, ChevronDown, X, GripVertical, ArrowLeft, ArrowRight, MoreHorizontal, Pencil } from 'lucide-react'
+import ResponsiveModal from '../components/ResponsiveModal'
+import { Plus, Trash2, X, GripVertical, ArrowLeft, MoreHorizontal, Pencil, Library } from 'lucide-react'
 import { useLocation } from 'react-router-dom'
+import { useIsMobile } from '../hooks/useMediaQuery'
 import './Curriculum.css'
 
 // Seeded default Series group for brand-new users (sidebar) — "New Group" lets
@@ -23,6 +25,8 @@ const ACTIVITY_TYPES = [
 
 export default function Curriculum() {
   const location = useLocation()
+  const isMobile = useIsMobile()
+  const [screen, setScreen] = useState('list') // mobile only: 'list' | 'detail' | 'blocks'
 
   const { curricula, refresh: refreshData } = useData()
   const [selectedCurriculumId, setSelectedCurriculumId] = useState(null)
@@ -30,7 +34,6 @@ export default function Curriculum() {
   const [selectedLessonId, setSelectedLessonId] = useState(null)
   const [blocks, setBlocks] = useState([])
   const [expandedBlocks, setExpandedBlocks] = useState({})
-  const [copiedBlock, setCopiedBlock] = useState(null)
   const [loading, setLoading] = useState(true)
   const [editingBlock, setEditingBlock] = useState(null)
   const [editingLessonId, setEditingLessonId] = useState(null)
@@ -38,7 +41,7 @@ export default function Curriculum() {
   const [view, setView] = useState('lessons')
   const [lessonCounts, setLessonCounts] = useState({})
   const [openBlockMenuId, setOpenBlockMenuId] = useState(null)
-  const [openLessonMenu, setOpenLessonMenu] = useState(false)
+  const [openLessonMenuId, setOpenLessonMenuId] = useState(null)
   const [openCourseMenu, setOpenCourseMenu] = useState(false)
   const [courseModal, setCourseModal] = useState(false)
   const [courseForm, setCourseForm] = useState({ name: '', grade_tag: '' })
@@ -111,12 +114,12 @@ export default function Curriculum() {
   }, [openBlockMenuId])
 
   useEffect(() => {
-    function handleClick() { setOpenLessonMenu(false) }
-    if (openLessonMenu) {
+    function handleClick() { setOpenLessonMenuId(null) }
+    if (openLessonMenuId) {
       setTimeout(() => document.addEventListener('click', handleClick), 0)
     }
     return () => document.removeEventListener('click', handleClick)
-  }, [openLessonMenu])
+  }, [openLessonMenuId])
 
   useEffect(() => {
     function handleClick() { setOpenCourseMenu(false) }
@@ -135,6 +138,7 @@ export default function Curriculum() {
       setSelectedCurriculumId(location.state.curriculumId)
       setSelectedLessonId(location.state.lessonId)
       setView('blocks')
+      if (isMobile) setScreen('blocks')
     } else if (curricula.length > 0 && !selectedCurriculumId) {
       setSelectedCurriculumId(curricula[0].id)
     }
@@ -204,6 +208,7 @@ export default function Curriculum() {
     setBlockGroups(remaining)
     setOpenGroupMenuId(null)
     if (selectedGroupId === id) setSelectedGroupId(remaining[0]?.id ?? null)
+    if (isMobile) setScreen('list')
   }
 
   // ─── Library blocks ───────────────────────────────────────────────────
@@ -378,8 +383,9 @@ export default function Curriculum() {
       const remaining = lessons.filter(l => l.id !== id)
       setSelectedLessonId(remaining[0]?.id ?? null)
     }
-    setOpenLessonMenu(false)
+    setOpenLessonMenuId(null)
     setView('lessons')
+    if (isMobile) setScreen('detail')
     fetchCurricula()
   }
 
@@ -392,6 +398,7 @@ export default function Curriculum() {
       setSelectedCurriculumId(remaining[0]?.id ?? null)
     }
     setOpenCourseMenu(false)
+    if (isMobile) setScreen('list')
     fetchCurricula()
     refreshData()
   }
@@ -408,20 +415,6 @@ export default function Curriculum() {
     setBlocks(prev => [...prev, data])
     setExpandedBlocks(prev => ({ ...prev, [data.id]: true }))
     setEditingBlock(data.id)
-  }
-
-  async function pasteBlock() {
-    if (!copiedBlock || !selectedLessonId) return
-    const maxSort = blocks.reduce((m, b) => Math.max(m, b.sort_order ?? 0), 0)
-    const { data } = await supabase.from('blocks').insert({
-      lesson_id: selectedLessonId,
-      title: copiedBlock.title + ' (copy)',
-      content: copiedBlock.content,
-      sort_order: maxSort + 1
-    }).select().single()
-    setBlocks(prev => [...prev, data])
-    setExpandedBlocks(prev => ({ ...prev, [data.id]: true }))
-    setCopiedBlock(null)
   }
 
   // ─── Insert Blocks (from library, into current lesson) ──────────────────
@@ -595,13 +588,18 @@ export default function Curriculum() {
   function drillIntoLesson(lessonId) {
     setSelectedLessonId(lessonId)
     setView('blocks')
+    if (isMobile) setScreen('blocks')
   }
 
   const selectedLesson = lessons.find(l => l.id === selectedLessonId)
   const selectedCurriculum = curricula.find(c => c.id === selectedCurriculumId)
 
 
-  if (loading) return <Layout sidebar={<div />}><div /></Layout>
+  if (loading) {
+    return isMobile
+      ? <div className="curr-mobile" />
+      : <Layout sidebar={<div />}><div /></Layout>
+  }
 
   const sidebar = (
     <div className="curr-sidebar">
@@ -632,7 +630,7 @@ export default function Curriculum() {
             <div
               key={c.id}
               className={`curr-row ${selectedCurriculumId === c.id ? 'selected' : ''} ${dragOverCourseId === c.id ? 'drag-over' : ''} ${dragCourseId === c.id ? 'dragging' : ''}`}
-              onClick={() => { setSelectedCurriculumId(c.id); setView('lessons') }}
+              onClick={() => { setSelectedCurriculumId(c.id); setView('lessons'); if (isMobile) setScreen('detail') }}
               onDragOver={e => { e.preventDefault(); if (dragCourseId && dragCourseId !== c.id) setDragOverCourseId(c.id) }}
               onDragLeave={() => setDragOverCourseId(prev => prev === c.id ? null : prev)}
               onDrop={e => { e.preventDefault(); e.stopPropagation(); handleCourseDrop(c.id) }}
@@ -667,7 +665,7 @@ export default function Curriculum() {
             <div
               key={g.id}
               className={`curr-row ${selectedGroupId === g.id ? 'selected' : ''} ${dragOverGroupId === g.id ? 'drag-over' : ''} ${dragGroupId === g.id ? 'dragging' : ''}`}
-              onClick={() => editingGroupId !== g.id && setSelectedGroupId(g.id)}
+              onClick={() => { if (editingGroupId !== g.id) { setSelectedGroupId(g.id); if (isMobile) setScreen('detail') } }}
               onDragOver={e => { e.preventDefault(); if (dragGroupId && dragGroupId !== g.id) setDragOverGroupId(g.id) }}
               onDragLeave={() => setDragOverGroupId(prev => prev === g.id ? null : prev)}
               onDrop={e => { e.preventDefault(); e.stopPropagation(); handleGroupDrop(g.id) }}
@@ -730,7 +728,7 @@ export default function Curriculum() {
     </div>
   )
 
-  return (
+  const desktopContent = (
     <Layout sidebar={sidebar}>
       <div className="curr-main">
 
@@ -779,6 +777,7 @@ export default function Curriculum() {
                 <div
                   key={l.id}
                   className={`curr-lesson-row ${dragOverLessonId === l.id ? 'drag-over' : ''} ${dragLessonId === l.id ? 'dragging' : ''}`}
+                  onClick={() => { if (editingLessonId !== l.id) drillIntoLesson(l.id) }}
                   onDragOver={e => { e.preventDefault(); if (dragLessonId && dragLessonId !== l.id) setDragOverLessonId(l.id) }}
                   onDragLeave={() => setDragOverLessonId(prev => prev === l.id ? null : prev)}
                   onDrop={e => { e.preventDefault(); e.stopPropagation(); handleLessonDrop(l.id) }}
@@ -808,22 +807,45 @@ export default function Curriculum() {
                       <span
                         className="curr-grip-handle"
                         draggable
+                        onClick={e => e.stopPropagation()}
                         onDragStart={e => { e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', l.id); setDragLessonId(l.id) }}
                         onDragEnd={() => { setDragLessonId(null); setDragOverLessonId(null) }}
                       >
                         <GripVertical size={14} className="curr-grip" />
                       </span>
-                      <span className="curr-lesson-unit" onClick={() => drillIntoLesson(l.id)}>
+                      <span className="curr-lesson-unit">
                         {l.tag1 ?? '—'}
                       </span>
                       <span className="curr-lesson-sep" />
-                      <span className="curr-lesson-name" onClick={() => drillIntoLesson(l.id)}>
+                      <span className="curr-lesson-name">
                         {l.tag2 ?? 'Untitled'}
                       </span>
                       <div style={{ flex: 1 }} />
-                      <button className="curr-lesson-arrow" onClick={() => drillIntoLesson(l.id)}>
-                        <ArrowRight size={14} />
-                      </button>
+                      <div style={{ position: 'relative' }} onClick={e => e.stopPropagation()}>
+                        <button className="curr-more-btn" onClick={() => setOpenLessonMenuId(openLessonMenuId === l.id ? null : l.id)}>
+                          <MoreHorizontal size={14} />
+                        </button>
+                        {openLessonMenuId === l.id && (
+                          <div className="curr-block-menu">
+                            <button
+                              className="curr-block-menu-item"
+                              onClick={() => {
+                                setEditingLessonId(l.id)
+                                setLessonForm({ tag1: l.tag1 ?? '', tag2: l.tag2 ?? '' })
+                                setOpenLessonMenuId(null)
+                              }}
+                            >
+                              <Pencil size={14} /> Edit lesson title
+                            </button>
+                            <button
+                              className="curr-block-menu-item danger"
+                              onClick={() => deleteLesson(l.id)}
+                            >
+                              <Trash2 size={14} /> Delete lesson
+                            </button>
+                          </div>
+                        )}
+                      </div>
                     </>
                   )}
                 </div>
@@ -836,79 +858,19 @@ export default function Curriculum() {
         {view === 'blocks' && (
           <>
             <div className="curr-main-header curr-main-header-blocks">
-              <button className="curr-back-btn" onClick={() => { setView('lessons'); setEditingLessonId(null) }}>
+              <button className="curr-back-btn" onClick={() => setView('lessons')}>
                 <ArrowLeft size={14} />
               </button>
-
-              {editingLessonId === selectedLessonId ? (
-                <>
-                  <input
-                    className="curr-lesson-edit-input"
-                    placeholder="Tag 1 (e.g. Unit 1)"
-                    value={lessonForm.tag1}
-                    onChange={e => setLessonForm(p => ({ ...p, tag1: e.target.value }))}
-                    autoFocus
-                  />
-                  <input
-                    className="curr-lesson-edit-input wide"
-                    placeholder="Tag 2 (e.g. Lesson 1)"
-                    value={lessonForm.tag2}
-                    onChange={e => setLessonForm(p => ({ ...p, tag2: e.target.value }))}
-                  />
-                  <button className="curr-action-btn" onClick={saveLesson}>Save</button>
-                  <button className="curr-more-btn" onClick={() => setEditingLessonId(null)}>
-                    <X size={14} />
-                  </button>
-                </>
-              ) : (
-                <>
-                  <span className="curr-main-title">{selectedLesson?.tag1 ?? '—'}</span>
-                  <span className="curr-main-dot" />
-                  <span className="curr-main-sub">{selectedLesson?.tag2 ?? 'Untitled'}</span>
-                  <span className="curr-main-dot" />
-                  <span className="curr-main-sub">{blocks.length} Blocks</span>
-                  <div style={{ flex: 1 }} />
-                  <button className="curr-action-btn" onClick={addBlock}>
-                    <Plus size={14} /> New Block
-                  </button>
-                  <button className="curr-action-btn" onClick={openInsertModal}>
-                    <Plus size={14} /> Insert Blocks
-                  </button>
-                  {copiedBlock && (
-                    <button className="curr-action-btn" onClick={pasteBlock}>
-                      <Copy size={14} /> Paste Block
-                    </button>
-                  )}
-                  <div style={{ position: 'relative' }} onClick={e => e.stopPropagation()}>
-                    <button className="curr-more-btn" onClick={() => setOpenLessonMenu(v => !v)}>
-                      <MoreHorizontal size={14} />
-                    </button>
-                    {openLessonMenu && (
-                      <div className="curr-block-menu">
-                        <button
-                          className="curr-block-menu-item"
-                          onClick={() => {
-                            setEditingLessonId(selectedLessonId)
-                            setLessonForm({
-                              tag1: selectedLesson?.tag1 ?? '',
-                              tag2: selectedLesson?.tag2 ?? '',
-                            })
-                            setOpenLessonMenu(false)
-                          }}
-                        >
-                          Edit lesson
-                        </button>
-                        <button
-                          className="curr-block-menu-item danger"
-                          onClick={() => deleteLesson(selectedLessonId)}
-                        >
-                          <Trash2 size={14} /> Delete lesson
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                </>
-              )}
+              <span className="curr-main-title">{selectedLesson?.tag1 ?? '—'}</span>
+              <span className="curr-main-dot" />
+              <span className="curr-main-sub">{selectedLesson?.tag2 ?? 'Untitled'}</span>
+              <div style={{ flex: 1 }} />
+              <button className="curr-action-btn" onClick={addBlock}>
+                <Plus size={14} /> New Block
+              </button>
+              <button className="curr-action-btn" onClick={openInsertModal}>
+                <Plus size={14} /> Insert Blocks
+              </button>
             </div>
 
             <div
@@ -928,7 +890,7 @@ export default function Curriculum() {
                     onDragLeave={() => setDragOverBlockId(prev => prev === block.id ? null : prev)}
                     onDrop={e => { e.preventDefault(); e.stopPropagation(); handleBlockDrop(block.id) }}
                   >
-                    <div className="curr-block-header" onClick={() => toggleBlock(block.id)}>
+                    <div className="curr-block-header" onClick={() => { if (!isEditing) toggleBlock(block.id) }}>
                       <span
                         className="curr-grip-handle"
                         draggable
@@ -955,12 +917,7 @@ export default function Curriculum() {
                           {block.title}
                         </span>
                       )}
-                      <button
-                        className="curr-block-copy-btn"
-                        onClick={e => { e.stopPropagation(); setCopiedBlock(block) }}
-                      >
-                        <Copy size={14} /> Copy Block
-                      </button>
+                      <div style={{ flex: 1 }} />
                       <div style={{ position: 'relative' }} onClick={e => e.stopPropagation()}>
                         <button
                           className="curr-more-btn"
@@ -985,12 +942,6 @@ export default function Curriculum() {
                           </div>
                         )}
                       </div>
-                      <button
-                        className="curr-block-chevron-btn"
-                        onClick={e => { e.stopPropagation(); toggleBlock(block.id) }}
-                      >
-                        <ChevronDown size={14} className={`curr-block-chevron ${isOpen ? 'open' : ''}`} />
-                      </button>
                     </div>
                     {isOpen && (
                       <div className="curr-block-body">
@@ -1063,7 +1014,7 @@ export default function Curriculum() {
                     onDragLeave={() => setDragOverLibraryId(prev => prev === block.id ? null : prev)}
                     onDrop={e => { e.preventDefault(); e.stopPropagation(); handleLibraryDrop(block.id) }}
                   >
-                    <div className="curr-block-header" onClick={() => toggleLibraryBlock(block.id)}>
+                    <div className="curr-block-header" onClick={() => { if (!isEditing) toggleLibraryBlock(block.id) }}>
                       <span
                         className="curr-grip-handle"
                         draggable
@@ -1090,6 +1041,7 @@ export default function Curriculum() {
                           {block.title}
                         </span>
                       )}
+                      <div style={{ flex: 1 }} />
                       <div style={{ position: 'relative' }} onClick={e => e.stopPropagation()}>
                         <button
                           className="curr-more-btn"
@@ -1114,12 +1066,6 @@ export default function Curriculum() {
                           </div>
                         )}
                       </div>
-                      <button
-                        className="curr-block-chevron-btn"
-                        onClick={e => { e.stopPropagation(); toggleLibraryBlock(block.id) }}
-                      >
-                        <ChevronDown size={14} className={`curr-block-chevron ${isOpen ? 'open' : ''}`} />
-                      </button>
                     </div>
                     {isOpen && (
                       <div className="curr-block-body">
@@ -1146,137 +1092,353 @@ export default function Curriculum() {
         )}
 
       </div>
-      {courseModal && (
-        <div className="sc-modal-overlay" onClick={() => { setCourseModal(false); setEditingCourseId(null) }}>
-          <div className="sc-modal" onClick={e => e.stopPropagation()}>
-            <div className="sc-modal-header">
-              <span className="sc-modal-title">{editingCourseId ? 'Edit Course' : 'New Course'}</span>
-              <button className="sc-modal-close" onClick={() => { setCourseModal(false); setEditingCourseId(null) }}><X size={14} /></button>
-            </div>
-            <div className="sc-modal-body" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-              <div className="sc-field">
-                <span className="sc-field-label">COURSE NAME</span>
-                <input
-                  className="sc-input"
-                  placeholder="e.g. Let's Try 1"
-                  value={courseForm.name}
-                  onChange={e => setCourseForm(p => ({ ...p, name: e.target.value }))}
-                  onKeyDown={e => { if (e.key === 'Enter') saveCourse() }}
-                  autoFocus
-                />
-              </div>
-              <div className="sc-field">
-                <span className="sc-field-label">GRADE TAG</span>
-                <input
-                  className="sc-input"
-                  placeholder="e.g. Grade 3"
-                  value={courseForm.grade_tag}
-                  onChange={e => setCourseForm(p => ({ ...p, grade_tag: e.target.value }))}
-                  onKeyDown={e => { if (e.key === 'Enter') saveCourse() }}
-                />
-              </div>
-            </div>
-            <div className="sc-modal-footer">
-              <button className="sc-form-cancel" onClick={() => { setCourseModal(false); setEditingCourseId(null) }}>Cancel</button>
-              <button className="sc-form-save" onClick={saveCourse}>Save</button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {newGroupModal && (
-        <div className="sc-modal-overlay" onClick={() => setNewGroupModal(false)}>
-          <div className="sc-modal" onClick={e => e.stopPropagation()}>
-            <div className="sc-modal-header">
-              <span className="sc-modal-title">New Series</span>
-              <button className="sc-modal-close" onClick={() => setNewGroupModal(false)}><X size={14} /></button>
-            </div>
-            <div className="sc-modal-body" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-              <div className="sc-field">
-                <span className="sc-field-label">SERIES NAME</span>
-                <input
-                  className="sc-input"
-                  placeholder="e.g. Let's Try, New Horizon, Sunshine"
-                  value={newGroupName}
-                  onChange={e => setNewGroupName(e.target.value)}
-                  onKeyDown={e => { if (e.key === 'Enter') addBlockGroup() }}
-                  autoFocus
-                />
-              </div>
-            </div>
-            <div className="sc-modal-footer">
-              <button className="sc-form-cancel" onClick={() => setNewGroupModal(false)}>Cancel</button>
-              <button className="sc-form-save" onClick={addBlockGroup}>Save</button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {insertModal && (
-        <div className="sc-modal-overlay" onClick={() => setInsertModal(false)}>
-          <div className="sc-modal sc-modal-wide" onClick={e => e.stopPropagation()}>
-            <div className="sc-modal-header">
-              <span className="sc-modal-title">Insert Blocks</span>
-              <button className="sc-modal-close" onClick={() => setInsertModal(false)}><X size={14} /></button>
-            </div>
-
-            <div className="curr-insert-body">
-              <div className="curr-insert-groups">
-                {blockGroups.map(g => (
-                  <div
-                    key={g.id}
-                    className={`curr-insert-group-row ${insertGroupId === g.id ? 'selected' : ''}`}
-                    onClick={() => setInsertGroupId(g.id)}
-                  >
-                    {g.label}
-                  </div>
-                ))}
-              </div>
-
-              <div className="curr-insert-content">
-                <div className="curr-insert-tabs">
-                  {ACTIVITY_TYPES.map(a => (
-                    <button
-                      key={a.value}
-                      className={`sch-modal-chip ${insertActivity === a.value ? 'active' : ''}`}
-                      onClick={() => setInsertActivity(a.value)}
-                    >
-                      {a.label}
-                    </button>
-                  ))}
-                </div>
-                <div className="curr-insert-list">
-                  {insertBlocks.length === 0 && (
-                    <div className="curr-empty">No blocks in this group yet.</div>
-                  )}
-                  {insertBlocks
-                    .map(b => {
-                      const checked = insertSelectedIds.includes(b.id)
-                      return (
-                        <div
-                          key={b.id}
-                          className={`curr-insert-row ${checked ? 'checked' : ''}`}
-                          onClick={() => toggleInsertSelected(b.id)}
-                        >
-                          <div className={`curr-insert-checkbox ${checked ? 'checked' : ''}`} />
-                          <span className="curr-insert-title">{b.title}</span>
-                        </div>
-                      )
-                    })}
-                </div>
-              </div>
-            </div>
-
-            <div className="sc-modal-footer">
-              <button className="sc-form-cancel" onClick={() => setInsertModal(false)}>Cancel</button>
-              <button className="sc-form-save" onClick={insertSelectedBlocks} disabled={insertSelectedIds.length === 0}>
-                Insert {insertSelectedIds.length > 0 ? `(${insertSelectedIds.length})` : ''}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
     </Layout>
+  )
+
+  const mobileContent = (
+    <div className="curr-mobile">
+      {screen === 'list' && (
+        <div className="hm-screen">
+          {sidebar}
+        </div>
+      )}
+
+      {screen === 'detail' && pageMode === 'plans' && (
+        <div className="hm-screen">
+          <div className="hm-detail-topbar">
+            <button className="hm-back-btn" onClick={() => setScreen('list')}>
+              <ArrowLeft size={16} />
+            </button>
+            <span className="hm-detail-subtitle">{selectedCurriculum?.name}</span>
+            <button className="hm-edit-btn" onClick={addLesson}>
+              <Plus size={16} />
+            </button>
+            <button
+              className="hm-edit-btn"
+              onClick={() => {
+                setCourseForm({ name: selectedCurriculum?.name ?? '', grade_tag: selectedCurriculum?.grade_tag ?? '' })
+                setEditingCourseId(selectedCurriculumId)
+                setCourseModal(true)
+              }}
+            >
+              <Pencil size={16} />
+            </button>
+          </div>
+          <div className="curr-lesson-list hm-block-list">
+            {lessons.length === 0 && <div className="curr-empty">No lessons yet. Add one above.</div>}
+            {lessons.map(l => (
+              <div key={l.id} className="curr-lesson-row" onClick={() => drillIntoLesson(l.id)}>
+                <span className="curr-lesson-unit">{l.tag1 ?? '—'}</span>
+                <span className="curr-lesson-sep" />
+                <span className="curr-lesson-name">{l.tag2 ?? 'Untitled'}</span>
+                <div style={{ flex: 1 }} />
+                <div style={{ position: 'relative' }} onClick={e => e.stopPropagation()}>
+                  <button className="curr-more-btn" onClick={() => setOpenLessonMenuId(openLessonMenuId === l.id ? null : l.id)}>
+                    <MoreHorizontal size={14} />
+                  </button>
+                  {openLessonMenuId === l.id && (
+                    <div className="curr-block-menu">
+                      <button
+                        className="curr-block-menu-item"
+                        onClick={() => {
+                          setEditingLessonId(l.id)
+                          setLessonForm({ tag1: l.tag1 ?? '', tag2: l.tag2 ?? '' })
+                          setOpenLessonMenuId(null)
+                        }}
+                      >
+                        <Pencil size={14} /> Edit lesson title
+                      </button>
+                      <button
+                        className="curr-block-menu-item danger"
+                        onClick={() => deleteLesson(l.id)}
+                      >
+                        <Trash2 size={14} /> Delete lesson
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {screen === 'blocks' && pageMode === 'plans' && (
+        <div className="hm-screen">
+          <div className="hm-detail-topbar">
+            <button className="hm-back-btn" onClick={() => setScreen('detail')}>
+              <ArrowLeft size={16} />
+            </button>
+            <span className="hm-detail-subtitle">
+              {selectedLesson?.tag1 ?? '—'} · {selectedLesson?.tag2 ?? 'Untitled'}
+            </span>
+            <button className="hm-edit-btn" onClick={addBlock}>
+              <Plus size={16} />
+            </button>
+            <button className="hm-edit-btn" onClick={openInsertModal}>
+              <Library size={16} />
+            </button>
+          </div>
+          <div className="curr-block-list hm-block-list">
+            {blocks.length === 0 && <div className="curr-empty">No blocks yet. Add one above.</div>}
+            {blocks.map(block => {
+              const isOpen = expandedBlocks[block.id]
+              const isEditing = editingBlock === block.id
+              return (
+                <div key={block.id} className={`curr-block-row ${isOpen ? 'open' : ''}`}>
+                  <div className="curr-block-header" onClick={() => { if (!isEditing) toggleBlock(block.id) }}>
+                    {isEditing ? (
+                      <input
+                        className="curr-block-title-input"
+                        value={block.title}
+                        onClick={e => e.stopPropagation()}
+                        onChange={e => updateBlock(block.id, 'title', e.target.value)}
+                        onBlur={() => saveBlock(block.id)}
+                        autoFocus
+                      />
+                    ) : (
+                      <span
+                        className="curr-block-title"
+                        onDoubleClick={e => { e.stopPropagation(); setEditingBlock(block.id) }}
+                      >
+                        {block.title}
+                      </span>
+                    )}
+                    <div style={{ flex: 1 }} />
+                    <div style={{ position: 'relative' }} onClick={e => e.stopPropagation()}>
+                      <button
+                        className="curr-more-btn"
+                        onClick={() => setOpenBlockMenuId(openBlockMenuId === block.id ? null : block.id)}
+                      >
+                        <MoreHorizontal size={14} />
+                      </button>
+                      {openBlockMenuId === block.id && (
+                        <div className="curr-block-menu">
+                          <button
+                            className="curr-block-menu-item"
+                            onClick={() => { setEditingBlock(block.id); setOpenBlockMenuId(null) }}
+                          >
+                            <Pencil size={14} /> Edit title
+                          </button>
+                          <button
+                            className="curr-block-menu-item danger"
+                            onClick={() => deleteBlock(block.id)}
+                          >
+                            <Trash2 size={14} /> Delete block
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  {isOpen && (
+                    <div className="curr-block-body">
+                      <textarea
+                        ref={el => { if (el) { el.style.height = 'auto'; el.style.height = `${el.scrollHeight}px` } }}
+                        className="curr-block-input"
+                        value={block.content ?? ''}
+                        placeholder="Add notes, steps, or instructions…"
+                        onChange={e => {
+                          updateBlock(block.id, 'content', e.target.value)
+                          e.target.style.height = 'auto'
+                          e.target.style.height = `${e.target.scrollHeight}px`
+                        }}
+                        onBlur={() => saveBlock(block.id)}
+                        rows={4}
+                      />
+                    </div>
+                  )}
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      )}
+
+      {screen === 'detail' && pageMode === 'library' && (
+        <div className="hm-screen">
+          <div className="hm-detail-topbar">
+            <button className="hm-back-btn" onClick={() => setScreen('list')}>
+              <ArrowLeft size={16} />
+            </button>
+            <span className="hm-detail-subtitle">{blockGroups.find(g => g.id === selectedGroupId)?.label}</span>
+            <button className="hm-edit-btn" onClick={addLibraryBlock}>
+              <Plus size={16} />
+            </button>
+          </div>
+          <div className="curr-series-tabs">
+            {ACTIVITY_TYPES.map(a => (
+              <button
+                key={a.value}
+                className={`sch-sidebar-tab ${activityFilter === a.value ? 'active' : ''}`}
+                onClick={() => setActivityFilter(a.value)}
+              >
+                {a.label}
+              </button>
+            ))}
+          </div>
+          <div className="curr-block-list hm-block-list">
+            {libraryBlocks.length === 0 && <div className="curr-empty">No blocks yet. Add one above.</div>}
+            {libraryBlocks.map(block => {
+              const isOpen = expandedLibraryBlocks[block.id]
+              return (
+                <div key={block.id} className={`curr-block-row ${isOpen ? 'open' : ''}`}>
+                  <div className="curr-block-header" onClick={() => toggleLibraryBlock(block.id)}>
+                    <span className="curr-block-title">{block.title}</span>
+                  </div>
+                  {isOpen && (
+                    <div className="curr-block-body">
+                      <textarea
+                        ref={el => { if (el) { el.style.height = 'auto'; el.style.height = `${el.scrollHeight}px` } }}
+                        className="curr-block-input"
+                        value={block.content ?? ''}
+                        placeholder="Add notes, steps, or instructions…"
+                        onChange={e => {
+                          updateLibraryBlock(block.id, 'content', e.target.value)
+                          e.target.style.height = 'auto'
+                          e.target.style.height = `${e.target.scrollHeight}px`
+                        }}
+                        onBlur={() => saveLibraryBlock(block.id)}
+                        rows={4}
+                      />
+                    </div>
+                  )}
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      )}
+    </div>
+  )
+
+  return (
+    <>
+      {isMobile ? mobileContent : desktopContent}
+
+      <ResponsiveModal
+        isMobile={isMobile}
+        open={courseModal}
+        onClose={() => { setCourseModal(false); setEditingCourseId(null) }}
+        title={editingCourseId ? 'Edit Course' : 'New Course'}
+        footer={
+          <>
+            <button className="sc-form-cancel" onClick={() => { setCourseModal(false); setEditingCourseId(null) }}>Cancel</button>
+            <button className="sc-form-save" onClick={saveCourse}>Save</button>
+          </>
+        }
+      >
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <div className="sc-field">
+            <span className="sc-field-label">COURSE NAME</span>
+            <input
+              className="sc-input"
+              placeholder="e.g. Let's Try 1"
+              value={courseForm.name}
+              onChange={e => setCourseForm(p => ({ ...p, name: e.target.value }))}
+              onKeyDown={e => { if (e.key === 'Enter') saveCourse() }}
+              autoFocus
+            />
+          </div>
+          <div className="sc-field">
+            <span className="sc-field-label">GRADE TAG</span>
+            <input
+              className="sc-input"
+              placeholder="e.g. Grade 3"
+              value={courseForm.grade_tag}
+              onChange={e => setCourseForm(p => ({ ...p, grade_tag: e.target.value }))}
+              onKeyDown={e => { if (e.key === 'Enter') saveCourse() }}
+            />
+          </div>
+        </div>
+      </ResponsiveModal>
+
+      <ResponsiveModal
+        isMobile={isMobile}
+        open={newGroupModal}
+        onClose={() => setNewGroupModal(false)}
+        title="New Series"
+        footer={
+          <>
+            <button className="sc-form-cancel" onClick={() => setNewGroupModal(false)}>Cancel</button>
+            <button className="sc-form-save" onClick={addBlockGroup}>Save</button>
+          </>
+        }
+      >
+        <div className="sc-field">
+          <span className="sc-field-label">SERIES NAME</span>
+          <input
+            className="sc-input"
+            placeholder="e.g. Let's Try, New Horizon, Sunshine"
+            value={newGroupName}
+            onChange={e => setNewGroupName(e.target.value)}
+            onKeyDown={e => { if (e.key === 'Enter') addBlockGroup() }}
+            autoFocus
+          />
+        </div>
+      </ResponsiveModal>
+
+      <ResponsiveModal
+        isMobile={isMobile}
+        open={insertModal}
+        onClose={() => setInsertModal(false)}
+        title="Insert Blocks"
+        wide
+        footer={
+          <>
+            <button className="sc-form-cancel" onClick={() => setInsertModal(false)}>Cancel</button>
+            <button className="sc-form-save" onClick={insertSelectedBlocks} disabled={insertSelectedIds.length === 0}>
+              Insert {insertSelectedIds.length > 0 ? `(${insertSelectedIds.length})` : ''}
+            </button>
+          </>
+        }
+      >
+        <div className="curr-insert-body">
+          <div className="curr-insert-groups">
+            {blockGroups.map(g => (
+              <div
+                key={g.id}
+                className={`curr-insert-group-row ${insertGroupId === g.id ? 'selected' : ''}`}
+                onClick={() => setInsertGroupId(g.id)}
+              >
+                {g.label}
+              </div>
+            ))}
+          </div>
+
+          <div className="curr-insert-content">
+            <div className="curr-insert-tabs">
+              {ACTIVITY_TYPES.map(a => (
+                <button
+                  key={a.value}
+                  className={`sch-modal-chip ${insertActivity === a.value ? 'active' : ''}`}
+                  onClick={() => setInsertActivity(a.value)}
+                >
+                  {a.label}
+                </button>
+              ))}
+            </div>
+            <div className="curr-insert-list">
+              {insertBlocks.length === 0 && (
+                <div className="curr-empty">No blocks in this group yet.</div>
+              )}
+              {insertBlocks
+                .map(b => {
+                  const checked = insertSelectedIds.includes(b.id)
+                  return (
+                    <div
+                      key={b.id}
+                      className={`curr-insert-row ${checked ? 'checked' : ''}`}
+                      onClick={() => toggleInsertSelected(b.id)}
+                    >
+                      <div className={`curr-insert-checkbox ${checked ? 'checked' : ''}`} />
+                      <span className="curr-insert-title">{b.title}</span>
+                    </div>
+                  )
+                })}
+            </div>
+          </div>
+        </div>
+      </ResponsiveModal>
+    </>
   )
 }

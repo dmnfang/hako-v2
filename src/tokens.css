@@ -1,0 +1,82 @@
+/* ============================================
+   HAKO COLOR TOKENS
+   Sourced from the Cardbox / Hiroba design system.
+   Pure white (#FFFFFF) stays reserved for cards/surfaces.
+   ============================================ */
+
+:root {
+  /* Text */
+  --text-primary:   #2D2A1E;
+  --text-secondary: #4A4636;
+  --text-muted:     #8C8472;
+  --text-subtle:    #B5A898;
+  --text-disabled:  #CEC0AC;
+  --text-inverse:   #FFFFFF;
+
+  /* Surface */
+  --surface-base:  #FEFAF0;
+  --surface-chip:  #F7F1E2;
+  --surface-panel: #F0E8D5;
+  --surface-card:  #FFFFFF;
+  --surface-inset: #E8DCC8;
+
+  /* Stroke */
+  --stroke-default:  #DDD0BA;
+  --stroke-medium:   #C4B49A;
+  --stroke-strong:   #A89880;
+
+  /* Brand — Lilac (Hako's actual accent, not Cardbox sage) */
+  --brand-fill:   #E8E2F8;  /* Lilac 50 — primary button background */
+  --brand-border: #A090E4;  /* Lilac 200 — primary button border */
+  --brand-text:   #3C2880;  /* Lilac 600 — primary button text */
+  --brand-hover:  #C8BAF0;  /* Lilac 100 — primary button hover fill */
+
+  /* Accent — Amber/Butter (informational, e.g. hint banners — kept distinct
+     from brand lilac so the two don't visually collide when shown together) */
+  --accent-fill:   #FAE9CC;  /* Secondary 100 */
+  --accent-border: #EBB96A;  /* Secondary 300 */
+  --accent-text:   #7A4800;  /* Secondary 700 */
+  --accent-hover:  #F3D4A0;  /* Secondary 200 */
+
+  /* Status (kept distinct — semantic meaning, not decorative) */
+  --status-danger:  #C03030;
+  --status-danger-bg: #FDEAEA;
+  --status-danger-border: #F5AAAA;
+
+  /* ============================================
+     HIROBA FAMILY — content-category chips
+     (school/class/origin/grade tags etc. throughout the app).
+     Lilac is reserved for brand/primary actions — these four
+     are free for everyday categorization color.
+     Each has fill/border/text/hover, same pattern as brand/accent.
+     ============================================ */
+
+  --sage-fill:   #EAF2EC;
+  --sage-border: #A8CBAF;
+  --sage-text:   #243D2C;
+  --sage-hover:  #D5E8D9;
+
+  --peach-fill:   #FEF0E6;
+  --peach-border: #F9C9A3;
+  --peach-text:   #8A4A20;
+  --peach-hover:  #FBE0CC;
+
+  --sky-fill:   #E8F4FA;
+  --sky-border: #B3D8EC;
+  --sky-text:   #2C5C78;
+  --sky-hover:  #D2EAF5;
+
+  --butter-fill:   #FEFAE8;
+  --butter-border: #FAE9A3;
+  --butter-text:   #8A7018;
+  --butter-hover:  #FCF2C8;
+}
+
+/* Kill the browser's default mobile tap-highlight (a translucent
+   blue/teal flash) on every element. We handle pressed/active feedback
+   ourselves via :hover-scoped or .active classes — this default browser
+   behavior clashes with the warm palette and looks alarming/inconsistent
+   across the app. */
+* {
+  -webkit-tap-highlight-color: transparent;
+}

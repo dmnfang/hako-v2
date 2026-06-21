@@ -11,8 +11,8 @@
 .sch-sidebar-tabs {
   display: flex;
   gap: 2px;
-  background: #F5F5F5;
-  border: 0.5px solid #E0E0E0;
+  background: var(--surface-panel);
+  border: 0.5px solid var(--stroke-default);
   border-radius: 8px;
   padding: 4px;
   flex-shrink: 0;
@@ -27,7 +27,7 @@
   font-family: 'Figtree', sans-serif;
   font-size: 13px;
   font-weight: 600;
-  color: #787878;
+  color: var(--text-muted);
   cursor: pointer;
   transition: all 0.15s;
   white-space: nowrap;
@@ -35,7 +35,7 @@
 
 .sch-sidebar-tab.active {
   background: #FFFFFF;
-  color: #0A100D;
+  color: var(--text-primary);
   box-shadow: 0 1px 2px rgba(0,0,0,0.06);
 }
 
@@ -43,12 +43,12 @@
   font-family: 'Figtree', sans-serif;
   font-size: 18px;
   font-weight: 600;
-  color: #0A100D;
+  color: var(--text-primary);
 }
 
 .sch-sidebar-header {
   padding: 12px;
-  border-bottom: 0.5px solid #E0E0E0;
+  border-bottom: 0.5px solid var(--stroke-default);
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -58,7 +58,7 @@
 .sch-sidebar-title {
   font-family: 'Figtree', sans-serif;
   font-size: 13px;
-  color: #3D3D3D;
+  color: var(--text-secondary);
 }
 
 /* Primary button */
@@ -66,9 +66,9 @@
   height: 32px;
   padding: 0 12px;
   border-radius: 6px;
-  border: 0.5px solid #2DE6FF;
-  background: #96F4FF;
-  color: #003A40;
+  border: 0.5px solid var(--brand-border);
+  background: var(--brand-fill);
+  color: var(--brand-text);
   font-family: 'Figtree', sans-serif;
   font-size: 13px;
   font-weight: 600;
@@ -80,7 +80,7 @@
   transition: opacity 0.15s;
 }
 
-.sch-new-btn:hover { opacity: 0.85; }
+@media (hover: hover) { .sch-new-btn:hover { background: var(--brand-hover); } }
 
 .sch-list {
   overscroll-behavior: contain;
@@ -93,16 +93,16 @@
 .sch-row {
   position: relative;
   padding: 12px;
-  border-bottom: 0.5px solid #E0E0E0;
+  border-bottom: 0.5px solid var(--stroke-default);
   cursor: pointer;
   transition: all 0.15s;
   flex-shrink: 0;
 }
 
 .sch-row:last-child { border-bottom: none; }
-.sch-row:hover { background: #FAFAFA; }
+@media (hover: hover) { .sch-row:hover { background: var(--surface-panel); } }
 .sch-row.selected { background: #FFFFFF; }
-.sch-row.selected .sch-row-name { color: #0A100D; }
+.sch-row.selected .sch-row-name { color: var(--text-primary); }
 
 .sch-row::before {
   content: '';
@@ -113,7 +113,9 @@
   transition: background 0.15s;
 }
 
-.sch-row.selected::before { background: #00C8E0; }
+@media (min-width: 901px) {
+  .sch-row.selected::before { background: var(--text-primary); }
+}
 
 .sch-row-top {
   display: flex;
@@ -126,7 +128,7 @@
   font-family: 'Figtree', sans-serif;
   font-size: 15px;
   font-weight: 600;
-  color: #0A100D;
+  color: var(--text-primary);
   transition: color 0.15s;
 }
 
@@ -134,8 +136,8 @@
   font-family: 'Figtree', sans-serif;
   font-size: 12px;
   font-weight: 600;
-  color: #787878;
-  background: #F5F5F5;
+  color: var(--text-muted);
+  background: var(--surface-chip);
   border-radius: 999px;
   height: 24px;
   padding: 0 8px;
@@ -145,8 +147,8 @@
 }
 
 .sch-row.selected .sch-row-count {
-  background: #DFFCFF;
-  color: #007080;
+  background: var(--surface-chip);
+  color: var(--text-primary);
 }
 
 .sch-row-days {
@@ -156,14 +158,14 @@
   margin-top: 8px;
 }
 
-/* School name chip — orange tap chip style */
+/* School name chip on sidebar day rows */
 .sch-day-chip {
   display: inline-block;
   font-family: 'Figtree', sans-serif;
   font-size: 12px;
   font-weight: 500;
-  color: #A05000;
-  background: #FFF5D6;
+  color: var(--sage-text);
+  background: var(--sage-fill);
   border-radius: 999px;
   padding: 5px 10px;
 }
@@ -174,7 +176,7 @@
   min-width: 0;
   min-height: 0;
   background: #FFFFFF;
-  border: 0.5px solid #E0E0E0;
+  border: 0.5px solid var(--stroke-default);
   border-radius: 12px;
   display: flex;
   flex-direction: column;
@@ -186,7 +188,7 @@
   align-items: center;
   gap: 12px;
   padding: 12px 12px 12px 16px;
-  border-bottom: 0.5px solid #E0E0E0;
+  border-bottom: 0.5px solid var(--stroke-default);
   flex-shrink: 0;
 }
 
@@ -206,9 +208,6 @@
 
 .sch-change-status-btn {
   margin-left: auto;
-  height: 32px;
-  padding: 0 12px;
-  font-size: 14px;
 }
 
 .sch-cal-status-row {
@@ -220,7 +219,7 @@
 }
 
 .sch-cal-status-label {
-  color: #787878;
+  color: var(--text-muted);
   font-weight: 500;
 }
 
@@ -238,7 +237,7 @@
   gap: 8px;
   font-family: 'Figtree', sans-serif;
   font-size: 15px;
-  color: #787878;
+  color: var(--text-muted);
   text-align: center;
   padding: 32px;
 }
@@ -253,7 +252,7 @@
 
 .sch-cal-empty-title {
   font-weight: 600;
-  color: #0A100D;
+  color: var(--text-primary);
 }
 
 .sch-cal-empty-sub {
@@ -264,14 +263,14 @@
   font-family: 'Figtree', sans-serif;
   font-size: 18px;
   font-weight: 600;
-  color: #0A100D;
+  color: var(--text-primary);
 }
 
 .sch-main-dot {
   width: 5px;
   height: 5px;
   border-radius: 50%;
-  background: #B8B8B8;
+  background: var(--text-subtle);
   flex-shrink: 0;
 }
 
@@ -279,7 +278,7 @@
   font-family: 'Figtree', sans-serif;
   font-size: 18px;
   font-weight: 400;
-  color: #787878;
+  color: var(--text-muted);
 }
 
 /* Tertiary button */
@@ -287,12 +286,12 @@
   height: 32px;
   padding: 0 12px;
   border-radius: 6px;
-  border: 0.5px solid #E0E0E0;
+  border: 0.5px solid var(--stroke-default);
   background: #FFFFFF;
   font-family: 'Figtree', sans-serif;
   font-size: 13px;
   font-weight: 600;
-  color: #606060;
+  color: var(--text-secondary);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
@@ -300,7 +299,7 @@
   transition: all 0.15s;
 }
 
-.sch-add-btn:hover { background: #F5F5F5; }
+@media (hover: hover) { .sch-add-btn:hover { background: var(--surface-panel); } }
 
 /* Body */
 .sch-body {
@@ -313,7 +312,7 @@
 .sch-classes-panel {
   width: 60%;
   flex-shrink: 0;
-  border-right: 0.5px solid #E0E0E0;
+  border-right: 0.5px solid var(--stroke-default);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -328,7 +327,7 @@
 
 .sch-panel-header {
   padding: 12px;
-  border-bottom: 0.5px solid #E0E0E0;
+  border-bottom: 0.5px solid var(--stroke-default);
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
@@ -339,23 +338,23 @@
   font-family: 'Figtree', sans-serif;
   font-size: 15px;
   font-weight: 600;
-  color: #0A100D;
+  color: var(--text-primary);
 }
 
 .sch-panel-sub {
   font-family: 'Figtree', sans-serif;
   font-size: 13px;
-  color: #787878;
+  color: var(--text-muted);
 }
 
 /* Class form */
 .sch-class-form {
   padding: 12px 16px;
-  border-bottom: 0.5px solid #E0E0E0;
+  border-bottom: 0.5px solid var(--stroke-default);
   display: flex;
   flex-direction: column;
   gap: 8px;
-  background: #FAFAFA;
+  background: var(--surface-panel);
   flex-shrink: 0;
 }
 
@@ -364,27 +363,27 @@
   height: 32px;
   padding: 0 10px;
   border-radius: 6px;
-  border: 0.5px solid #E0E0E0;
+  border: 0.5px solid var(--stroke-default);
   background: #FFFFFF;
   font-family: 'Figtree', sans-serif;
   font-size: 12px;
-  color: #0A100D;
+  color: var(--text-primary);
   outline: none;
   transition: border-color 0.15s;
 }
 
-.sch-input:focus { border-color: #2DE6FF; }
+.sch-input:focus { border-color: var(--brand-border); }
 
 .sch-select {
   width: 100%;
   height: 32px;
   padding: 0 10px;
   border-radius: 6px;
-  border: 0.5px solid #E0E0E0;
+  border: 0.5px solid var(--stroke-default);
   background: #FFFFFF;
   font-family: 'Figtree', sans-serif;
   font-size: 12px;
-  color: #0A100D;
+  color: var(--text-primary);
   outline: none;
   cursor: pointer;
   appearance: none;
@@ -401,15 +400,15 @@
   font-family: 'Figtree', sans-serif;
   font-size: 12px;
   font-weight: 600;
-  color: #3D3D3D;
+  color: var(--text-secondary);
 }
 
 .sch-lesson-picker-row {
   display: flex;
   align-items: center;
   gap: 8px;
-  background: #F5F5F5;
-  border: 0.5px solid #E0E0E0;
+  background: var(--surface-panel);
+  border: 0.5px solid var(--stroke-default);
   border-radius: 6px;
   padding: 4px;
 }
@@ -418,9 +417,9 @@
   width: 32px;
   height: 32px;
   border-radius: 6px;
-  border: 0.5px solid #E0E0E0;
+  border: 0.5px solid var(--stroke-default);
   background: #FFFFFF;
-  color: #606060;
+  color: var(--text-secondary);
   font-size: 13px;
   cursor: pointer;
   display: flex;
@@ -431,13 +430,13 @@
 }
 
 .sch-lesson-arrow:disabled { opacity: 0.3; cursor: default; }
-.sch-lesson-arrow:hover:not(:disabled) { background: #F5F5F5; }
+.sch-lesson-arrow:hover:not(:disabled) { background: var(--surface-panel); }
 
 .sch-lesson-picker-val {
   flex: 1;
   font-family: 'Figtree', sans-serif;
   font-size: 12px;
-  color: #0A100D;
+  color: var(--text-primary);
   text-align: center;
 }
 
@@ -452,9 +451,9 @@
   height: 32px;
   padding: 0 12px;
   border-radius: 6px;
-  border: 0.5px solid #2DE6FF;
-  background: #96F4FF;
-  color: #003A40;
+  border: 0.5px solid var(--brand-border);
+  background: var(--brand-fill);
+  color: var(--brand-text);
   font-family: 'Figtree', sans-serif;
   font-size: 13px;
   font-weight: 600;
@@ -462,16 +461,16 @@
   transition: opacity 0.15s;
 }
 
-.sch-form-save:hover { opacity: 0.85; }
+@media (hover: hover) { .sch-form-save:hover { background: var(--brand-hover); } }
 
 /* Tertiary button */
 .sch-form-cancel {
   height: 32px;
   padding: 0 12px;
   border-radius: 6px;
-  border: 0.5px solid #E0E0E0;
+  border: 0.5px solid var(--stroke-default);
   background: #FFFFFF;
-  color: #606060;
+  color: var(--text-secondary);
   font-family: 'Figtree', sans-serif;
   font-size: 13px;
   cursor: pointer;
@@ -489,7 +488,7 @@
   padding: 24px;
   font-family: 'Figtree', sans-serif;
   font-size: 12px;
-  color: #787878;
+  color: var(--text-muted);
   text-align: center;
 }
 
@@ -498,13 +497,13 @@
   align-items: flex-start;
   justify-content: space-between;
   padding: 12px;
-  border-bottom: 0.5px solid #E0E0E0;
+  border-bottom: 0.5px solid var(--stroke-default);
   gap: 8px;
 }
 
 .sch-class-row:last-child { border-bottom: none; }
-.sch-class-row:hover { background: #FAFAFA; }
-.sch-class-row.editing { padding: 0; background: #FAFAFA; }
+@media (hover: hover) { .sch-class-row:hover { background: var(--surface-panel); } }
+.sch-class-row.editing { padding: 0; background: var(--surface-panel); }
 .sch-class-row.editing .sch-class-form { margin: 0; border: none; border-radius: 0; width: 100%; }
 
 .sch-class-body {
@@ -527,7 +526,7 @@
   font-size: 15px;
   line-height: 24px;
   font-weight: 700;
-  color: #0A100D;
+  color: var(--text-primary);
   flex-shrink: 0;
 }
 
@@ -535,14 +534,14 @@
   font-family: 'Figtree', sans-serif;
   font-size: 15px;
   line-height: 24px;
-  color: #787878;
+  color: var(--text-muted);
 }
 
 .sch-class-lesson-dot {
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: #B8B8B8;
+  background: var(--text-subtle);
   flex-shrink: 0;
   display: inline-block;
 }
@@ -551,7 +550,7 @@
   font-family: 'Figtree', sans-serif;
   font-size: 15px;
   line-height: 24px;
-  color: #787878;
+  color: var(--text-muted);
   font-weight: 500;
 }
 
@@ -574,9 +573,9 @@
   flex-shrink: 0;
 }
 
-.sch-chip-grade   { color: #007080; background: #DFFCFF; }
-.sch-chip-teacher { color: #472890; background: #F0EAFA; }
-.sch-chip-students { color: #3A8000; background: #EDFFD4; }
+.sch-chip-grade,
+.sch-chip-teacher,
+.sch-chip-students { color: var(--text-secondary); background: var(--surface-chip); }
 
 .sch-class-actions {
   display: flex;
@@ -589,19 +588,19 @@
   height: 32px;
   padding: 0 12px;
   border-radius: 6px;
-  border: 0.5px solid #E0E0E0;
+  border: 0.5px solid var(--stroke-default);
   background: #FFFFFF;
   font-family: 'Figtree', sans-serif;
   font-size: 13px;
   font-weight: 600;
-  color: #606060;
+  color: var(--text-secondary);
   cursor: pointer;
   transition: all 0.15s;
 }
 
-.sch-class-btn:hover { background: #F5F5F5; }
+@media (hover: hover) { .sch-class-btn:hover { background: var(--surface-panel); } }
 .sch-class-btn.danger { color: #C03030; border-color: #F5AAAA; }
-.sch-class-btn.danger:hover { background: #FDEAEA; }
+@media (hover: hover) { .sch-class-btn.danger:hover { background: #FDEAEA; } }
 
 /* Period rows */
 .sch-period-list {
@@ -617,7 +616,7 @@
   flex-direction: column;
   gap: 8px;
   padding: 12px;
-  border-bottom: 0.5px solid #E0E0E0;
+  border-bottom: 0.5px solid var(--stroke-default);
 }
 
 .sch-period-row:last-child { border-bottom: none; }
@@ -636,7 +635,7 @@
   font-family: 'Figtree', sans-serif;
   font-size: 13px;
   font-weight: 500;
-  color: #787878;
+  color: var(--text-muted);
   margin-right: 2px;
 }
 
@@ -644,16 +643,16 @@
   height: 32px;
   padding: 0 12px;
   border-radius: 6px;
-  border: 0.5px solid #C9AEFF;
-  background: #FFFFFF;
+  border: 0.5px solid var(--stroke-default);
+  background: var(--surface-chip);
   font-family: 'Figtree', sans-serif;
   font-size: 13px;
   font-weight: 600;
-  color: #6B3FD4;
+  color: var(--text-secondary);
   cursor: pointer;
   transition: all 0.15s;
 }
-.sch-period-eyebrow-chip:hover { background: #DCC9FF; }
+@media (hover: hover) { .sch-period-eyebrow-chip:hover { background: var(--surface-panel); } }
 
 /* Period bar — no background, just flex row */
 .sch-period-bar {
@@ -668,12 +667,12 @@
   height: 32px;
   padding: 0 12px;
   border-radius: 6px;
-  border: 0.5px solid #E0E0E0;
+  border: 0.5px solid var(--stroke-default);
   background: #FFFFFF;
   font-family: 'Figtree', sans-serif;
   font-size: 13px;
   font-weight: 600;
-  color: #606060;
+  color: var(--text-secondary);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
@@ -683,41 +682,39 @@
   flex-shrink: 0;
 }
 
-.sch-period-tap-chip:hover { background: #F5F5F5; }
-.sch-period-tap-chip.empty { color: #B8B8B8; }
+@media (hover: hover) { .sch-period-tap-chip:hover { background: var(--surface-panel); } }
+.sch-period-tap-chip.empty { color: var(--text-subtle); }
 
-/* School chip — orange */
-.sch-period-tap-chip.school {
-  border-color: #FFCC55;
-  color: #A05000;
-}
-.sch-period-tap-chip.school:hover { background: #FFF5D6; }
-
-/* Class chip — cyan */
+/* School & Class — light fill, neutral stroke (no per-type colors) */
+.sch-period-tap-chip.school,
 .sch-period-tap-chip.class {
-  border-color: #2DE6FF;
-  color: #007080;
+  background: var(--surface-chip);
+  border-color: var(--stroke-default);
+  color: var(--text-secondary);
 }
-.sch-period-tap-chip.class:hover { background: #DFFCFF; }
+@media (hover: hover) {
+  .sch-period-tap-chip.school:hover,
+  .sch-period-tap-chip.class:hover { background: var(--surface-panel); }
+}
 
 .sch-period-tap-chip.class.empty {
   border-style: dashed;
-  border-color: #B8B8B8;
-  color: #787878;
+  border-color: var(--text-subtle);
+  color: var(--text-muted);
 }
-.sch-period-tap-chip.class.empty:hover { background: #F5F5F5; }
+@media (hover: hover) { .sch-period-tap-chip.class.empty:hover { background: var(--surface-panel); } }
 
 /* Time chip — tappable */
 .sch-period-time-chip {
   height: 32px;
   padding: 0 12px;
   border-radius: 6px;
-  border: 0.5px solid #E0E0E0;
+  border: 0.5px solid var(--stroke-default);
   background: #FFFFFF;
   font-family: 'Figtree', sans-serif;
   font-size: 13px;
   font-weight: 600;
-  color: #606060;
+  color: var(--text-secondary);
   display: inline-flex;
   align-items: center;
   white-space: nowrap;
@@ -726,16 +723,16 @@
   transition: all 0.15s;
 }
 
-.sch-period-time-chip:hover { background: #F5F5F5; }
+@media (hover: hover) { .sch-period-time-chip:hover { background: var(--surface-panel); } }
 
 /* A / B labels */
 .sch-ab-label {
   height: 32px;
   width: 32px;
   border-radius: 6px;
-  background: #E0E0E0;
+  background: var(--stroke-default);
   border: none;
-  color: #3D3D3D;
+  color: var(--text-secondary);
   font-family: 'Figtree', sans-serif;
   font-size: 12px;
   font-weight: 700;
@@ -754,9 +751,9 @@
   height: 32px;
   padding: 0 12px;
   border-radius: 6px;
-  border: 0.5px solid #E0E0E0;
+  border: 0.5px solid var(--stroke-default);
   background: #FFFFFF;
-  color: #606060;
+  color: var(--text-secondary);
   font-family: 'Figtree', sans-serif;
   font-size: 13px;
   font-weight: 600;
@@ -766,16 +763,16 @@
   flex-shrink: 0;
 }
 
-.sch-pool-chip.empty { color: #B8B8B8; }
+.sch-pool-chip.empty { color: var(--text-subtle); }
 
 /* Swap button — secondary */
 .sch-swap-btn {
   height: 32px;
   width: 32px;
   border-radius: 6px;
-  border: 0.5px solid #E0E0E0;
+  border: 0.5px solid var(--stroke-default);
   background: #FFFFFF;
-  color: #606060;
+  color: var(--text-secondary);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
@@ -784,7 +781,7 @@
   transition: all 0.15s;
 }
 
-.sch-swap-btn:hover { background: #F5F5F5; }
+@media (hover: hover) { .sch-swap-btn:hover { background: var(--surface-panel); } }
 
 .sch-ref-times {
   display: flex;
@@ -806,16 +803,16 @@
   height: 32px;
   padding: 0 12px;
   border-radius: 6px;
-  border: 0.5px solid #E0E0E0;
+  border: 0.5px solid var(--stroke-default);
   background: #FFFFFF;
   font-family: 'Figtree', sans-serif;
   font-size: 12px;
-  color: #0A100D;
+  color: var(--text-primary);
   outline: none;
   width: 120px;
 }
 
-.sch-time-input:focus { border-color: #2DE6FF; }
+.sch-time-input:focus { border-color: var(--brand-border); }
 
 /* Modal */
 .sch-modal-overlay {
@@ -834,7 +831,7 @@
   width: 100%;
   max-width: 480px;
   overflow: hidden;
-  border: 0.5px solid #E0E0E0;
+  border: 0.5px solid var(--stroke-default);
 }
 
 .sch-modal-header {
@@ -842,14 +839,14 @@
   align-items: center;
   justify-content: space-between;
   padding: 12px 12px 12px 16px;
-  border-bottom: 0.5px solid #E0E0E0;
+  border-bottom: 0.5px solid var(--stroke-default);
 }
 
 .sch-modal-title {
   font-family: 'Figtree', sans-serif;
   font-size: 18px;
   font-weight: 600;
-  color: #0A100D;
+  color: var(--text-primary);
 }
 
 /* Tertiary button */
@@ -857,9 +854,9 @@
   width: 32px;
   height: 32px;
   border-radius: 6px;
-  border: 0.5px solid #E0E0E0;
+  border: 0.5px solid var(--stroke-default);
   background: #FFFFFF;
-  color: #606060;
+  color: var(--text-secondary);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -867,7 +864,7 @@
   transition: all 0.15s;
 }
 
-.sch-modal-close:hover { background: #F5F5F5; }
+@media (hover: hover) { .sch-modal-close:hover { background: var(--surface-panel); } }
 
 .sch-modal-body { padding: 12px 16px; }
 
@@ -889,7 +886,7 @@
   font-family: 'Figtree', sans-serif;
   font-size: 15px;
   font-weight: 600;
-  color: #0A100D;
+  color: var(--text-primary);
 }
 
 /* Option cards — Single/Multi Class, Just Today/All Future, etc. */
@@ -900,7 +897,7 @@
 }
 
 .sch-option-card {
-  border: 1.5px solid #E0E0E0;
+  border: 1.5px solid var(--stroke-default);
   border-radius: 6px;
   padding: 10px;
   cursor: pointer;
@@ -911,15 +908,15 @@
 }
 
 .sch-option-card.active {
-  border-color: #2DE6FF;
-  background: #DFFCFF;
+  border-color: var(--text-primary);
+  background: var(--surface-chip);
 }
 
 .sch-option-radio {
   width: 14px;
   height: 14px;
   border-radius: 50%;
-  border: 1.5px solid #E0E0E0;
+  border: 1.5px solid var(--stroke-default);
   background: #FFFFFF;
   flex-shrink: 0;
   margin-top: 2px;
@@ -927,21 +924,21 @@
 
 .sch-option-card.active .sch-option-radio {
   border: none;
-  background: #00C8E0;
+  background: var(--text-primary);
 }
 
 .sch-option-title {
   font-family: 'Figtree', sans-serif;
   font-size: 14px;
   font-weight: 600;
-  color: #0A100D;
+  color: var(--text-primary);
   margin-bottom: 4px;
 }
 
 .sch-option-desc {
   font-family: 'Figtree', sans-serif;
   font-size: 13px;
-  color: #3D3D3D;
+  color: var(--text-secondary);
 }
 
 /* Multi Class modal — pool options as class chip + lesson chip */
@@ -961,14 +958,15 @@
 }
 
 .sch-multi-class-option.active .sch-period-tap-chip.class {
-  background: #DFFCFF;
+  background: var(--surface-chip);
+  border-color: var(--text-primary);
 }
 
 .sch-multi-class-other-label {
   font-family: 'Figtree', sans-serif;
   font-size: 12px;
   font-weight: 700;
-  color: #787878;
+  color: var(--text-muted);
   letter-spacing: 0.04em;
   text-transform: uppercase;
   margin-top: 16px;
@@ -987,7 +985,7 @@
   justify-content: flex-end;
   gap: 8px;
   padding: 12px 20px;
-  border-top: 0.5px solid #E0E0E0;
+  border-top: 0.5px solid var(--stroke-default);
 }
 
 /* Modal chips */
@@ -1001,34 +999,34 @@
   height: 32px;
   padding: 0 12px;
   border-radius: 6px;
-  border: 0.5px solid #E0E0E0;
+  border: 0.5px solid var(--stroke-default);
   background: #FFFFFF;
   font-family: 'Figtree', sans-serif;
   font-size: 13px;
   font-weight: 600;
-  color: #606060;
+  color: var(--text-secondary);
   cursor: pointer;
   transition: all 0.15s;
 }
 
-.sch-modal-chip:hover { background: #F5F5F5; }
+@media (hover: hover) { .sch-modal-chip:hover { background: var(--surface-panel); } }
 
 .sch-modal-chip.active {
-  border-color: #E0E0E0;
-  background: #F5F5F5;
-  color: #0A100D;
+  border-color: var(--stroke-default);
+  background: var(--surface-chip);
+  color: var(--text-primary);
 }
 
 .sch-modal-chip.school.active {
-  border-color: #FFCC55;
-  background: #FFFFFF;
-  color: #A05000;
+  border-color: var(--text-primary);
+  background: var(--surface-chip);
+  color: var(--text-primary);
 }
 
 .sch-modal-chip.class.active {
-  border-color: #2DE6FF;
-  background: #FFFFFF;
-  color: #007080;
+  border-color: var(--text-primary);
+  background: var(--surface-chip);
+  color: var(--text-primary);
 }
 
 /* Tab content wrapper */
@@ -1046,7 +1044,7 @@
   width: 200px;
   flex-shrink: 0;
   background: #FFFFFF;
-  border: 0.5px solid #E0E0E0;
+  border: 0.5px solid var(--stroke-default);
   border-radius: 12px;
   display: flex;
   flex-direction: column;
@@ -1058,7 +1056,7 @@
   width: 280px;
   flex-shrink: 0;
   background: #FFFFFF;
-  border: 0.5px solid #E0E0E0;
+  border: 0.5px solid var(--stroke-default);
   border-radius: 12px;
   display: flex;
   flex-direction: column;
@@ -1073,6 +1071,7 @@
   flex-direction: column;
   gap: 12px;
   flex: 1;
+  min-height: 0;
   overflow: hidden;
 }
 
@@ -1092,9 +1091,9 @@
   height: 32px;
   width: 72px;
   border-radius: 6px;
-  border: 0.5px solid #E0E0E0;
+  border: 0.5px solid var(--stroke-default);
   background: #FFFFFF;
-  color: #606060;
+  color: var(--text-secondary);
   font-family: 'Figtree', sans-serif;
   font-size: 12px;
   font-weight: 600;
@@ -1102,72 +1101,314 @@
   transition: all 0.15s;
 }
 
-.sch-cal-today:hover { background: #F5F5F5; }
+@media (hover: hover) { .sch-cal-today:hover { background: var(--surface-panel); } }
 
 .sch-cal-month {
   font-family: 'Figtree', sans-serif;
   font-size: 15px;
   font-weight: 600;
-  color: #0A100D;
+  color: var(--text-primary);
 }
 
 .sch-cal-grid {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 4px;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 0;
+  border: 0.5px solid var(--stroke-default);
+  border-radius: 8px;
+  overflow: hidden;
 }
 
 .sch-cal-dow {
   font-family: 'Figtree', sans-serif;
   font-size: 11px;
   font-weight: 600;
-  color: #787878;
+  letter-spacing: 0.03em;
+  color: var(--text-muted);
   text-align: center;
-  padding: 4px 0 6px 0;
+  padding: 8px 0;
+  border-right: 0.5px solid var(--stroke-default);
+  border-bottom: 0.5px solid var(--stroke-default);
+  background: var(--surface-chip);
 }
 
+.sch-cal-dow:last-child { border-right: none; }
+
 .sch-cal-day {
-  aspect-ratio: 1;
-  border-radius: 6px;
+  min-height: 72px;
+  min-width: 0;
+  height: 100%;
+  width: 100%;
+  align-self: stretch;
+  justify-self: stretch;
+  border-radius: 0;
   border: none;
-  background: transparent;
+  border-right: 0.5px solid var(--stroke-default);
+  border-bottom: 0.5px solid var(--stroke-default);
+  background: #FFFFFF;
   font-family: 'Figtree', sans-serif;
   font-size: 12px;
   font-weight: 500;
-  color: #3D3D3D;
+  color: var(--text-secondary);
   cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding: 6px;
+  gap: 8px;
+  transition: background 0.1s;
+  overflow: hidden;
+}
+
+@media (hover: hover) { .sch-cal-day:hover { background: var(--surface-panel); } }
+.sch-cal-day.selected { background: var(--surface-chip); color: var(--text-primary); }
+
+.sch-cal-day-num {
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.1s;
+  font-size: 13px;
+  font-weight: 600;
+  background: transparent;
+  color: var(--text-secondary);
+  flex-shrink: 0;
 }
 
-.sch-cal-day:hover { background: #F5F5F5; }
-.sch-cal-day.today { border: 1.5px solid #0A100D; }
-.sch-cal-day.selected { background: #DFFCFF; color: #003A40; border: 0.5px solid #2DE6FF; }
-.sch-cal-day.weekend { color: #B8B8B8; }
-.sch-cal-day.weekend:hover { background: transparent; cursor: default; }
+.sch-cal-day.today .sch-cal-day-num {
+  background: var(--text-primary);
+  color: #FFFFFF;
+}
+
+.sch-cal-day.selected .sch-cal-day-num {
+  background: var(--stroke-strong);
+  color: #FFFFFF;
+}
+
+.sch-cal-day-chips {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
+  min-width: 0;
+}
+
+.sch-cal-day-chip {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--sage-text);
+  background: var(--sage-fill);
+  border-radius: 4px;
+  padding: 2px 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: left;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  display: block;
+}
+
+.sch-cal-day-chip.more {
+  color: var(--text-muted);
+  background: var(--surface-panel);
+}
+
+.sch-cal-day.selected .sch-cal-day-chip {
+  background: #FFFFFF;
+}
+.sch-cal-day-empty {
+  min-height: 72px;
+  min-width: 0;
+  border-right: 0.5px solid var(--stroke-default);
+  border-bottom: 0.5px solid var(--stroke-default);
+  background: var(--surface-base);
+}
+
+/* The grid container already draws the outer frame border — strip the
+   redundant edge borders from cells sitting on the last column / last row
+   so they don't double up with it and read as a heavier line / shadow. */
+.sch-cal-grid > *:nth-child(7n) { border-right: none; }
+.sch-cal-grid > *:nth-last-child(-n+7) { border-bottom: none; }
+
+.sch-cal-day.weekend { color: var(--text-subtle); }
 
 /* Status colors (shared with Home) */
 .home-status-working { color: #2A7A52; }
-.home-status-weekend { color: #787878; }
+.home-status-weekend { color: var(--text-muted); }
 .home-status-standby { color: #92620A; }
 .home-status-holiday { color: #005A66; }
 .home-status-personal { color: #C03030; }
 .home-status-school_event { color: #3A6BC7; }
 
-/* Status chips — amber style */
+.home-status-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 0.5px solid currentColor;
+  background: #FFFFFF;
+  font-family: 'Figtree', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.home-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+  flex-shrink: 0;
+}
+
+@media (hover: hover) {
+  .home-status-chip:hover { background: var(--surface-panel); }
+}
+
+/* Status chips */
 .sch-modal-chip.status {
-  border-color: #E0E0E0;
-  color: #606060;
+  border-color: var(--stroke-default);
+  color: var(--text-secondary);
 }
-.sch-modal-chip.status:hover { background: #F5F5F5; }
+@media (hover: hover) { .sch-modal-chip.status:hover { background: var(--surface-panel); } }
 .sch-modal-chip.status.active {
-  background: #FFF5D6;
-  border-color: #FFCC55;
-  color: #A05000;
+  background: var(--surface-chip);
+  border-color: var(--text-primary);
+  color: var(--text-primary);
 }
-.sch-modal-chip.status.active:hover { background: #FFE599; }
+@media (hover: hover) { .sch-modal-chip.status.active:hover { background: var(--surface-panel); } }
 
 /* Cancel button hover */
-.sch-form-cancel:hover { background: #F5F5F5; }
+@media (hover: hover) { .sch-form-cancel:hover { background: var(--surface-panel); } }
+
+/* ───────────────────────────────────────────────────────────────────────
+   Schedule Mobile — two-screen layout. Level 1 reuses the exact sidebar
+   JSX (tab toggle + day list / calendar grid). Level 2 reuses
+   RegularWeekTab / CalendarTab content directly, with their internal
+   sch-modal-overlay swapped for ResponsiveModal (bottom drawer) via the
+   isMobile prop threaded through both components.
+   ─────────────────────────────────────────────────────────────────────── */
+
+.sch-mobile {
+  position: fixed;
+  inset: 0;
+  bottom: var(--mobile-tab-bar-height);
+  background: #FFFFFF;
+  display: flex;
+  flex-direction: column;
+}
+
+.hm-screen {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.sch-mobile-detail-body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.sch-mobile-detail-body .sch-main {
+  border: none;
+  border-radius: 0;
+}
+
+.sch-mobile .sch-cal-grid {
+  grid-template-rows: auto;
+  grid-auto-rows: 1fr;
+  flex: 1;
+  min-height: 0;
+}
+
+.sch-mobile-detail-body .sch-main-header {
+  padding: 12px;
+}
+
+/* On mobile the sidebar (Level 1 content) is rendered full-width, not in
+   a fixed-width rail-adjacent column, so let it fill naturally */
+.sch-mobile .sch-sidebar {
+  width: 100%;
+  height: 100%;
+}
+
+.hm-detail-topbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  border-bottom: 0.5px solid var(--stroke-default);
+  background: #FFFFFF;
+  flex-shrink: 0;
+}
+
+.hm-back-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  border: 0.5px solid var(--stroke-default);
+  background: #FFFFFF;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.hm-detail-subtitle {
+  flex: 1;
+  min-width: 0;
+  font-family: 'Figtree', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (hover: hover) {
+  .hm-back-btn:hover { background: var(--surface-panel); }
+}
+
+/* Bump form controls to 36px when rendered inside the mobile bottom drawer */
+.drawer-body .sch-time-input,
+.drawer-body .sch-modal-chip,
+.drawer-body .sch-pool-chip,
+.drawer-footer .sch-form-save,
+.drawer-footer .sch-form-cancel {
+  height: 36px;
+}
+
+/* Bump key tap targets to 36px specifically in the mobile detail screen */
+.sch-mobile-detail-body .sch-period-eyebrow-chip,
+.sch-mobile-detail-body .sch-period-tap-chip,
+.sch-mobile-detail-body .sch-period-time-chip,
+.sch-mobile-detail-body .sch-pool-chip,
+.sch-mobile-detail-body .home-status-chip {
+  height: 36px;
+}
+
+/* Desktop has surplus vertical room — cap calendar day cell height so
+   rows don't stretch awkwardly tall. Mobile keeps the full-stretch fill
+   since there's no surplus space to begin with. */
+@media (min-width: 901px) {
+  .sch-cal-day,
+  .sch-cal-day-empty {
+    max-height: 120px;
+  }
+}

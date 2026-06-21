@@ -3,90 +3,14 @@ import { supabase } from '../lib/supabase'
 import { useData } from '../context/DataContext'
 import Layout from '../components/Layout'
 import HintBanner from '../components/HintBanner'
-import { Plus, ChevronLeft, ChevronRight, X, Trash2 } from 'lucide-react'
+import ResponsiveModal from '../components/ResponsiveModal'
+import { Plus, ChevronLeft, ChevronRight, Trash2, ArrowLeft } from 'lucide-react'
+import { useIsMobile } from '../hooks/useMediaQuery'
 import './Schools.css'
 
-function ClassModal({ classForm, setClassForm, formLessonIdx, setFormLessonIdx, editingClass, curricula, lessonsByCurriculum, onSave, onCancel, onDelete }) {
-  const formLessons = lessonsByCurriculum[classForm.curriculum_id] ?? []
-  const formCurrentLesson = formLessons[formLessonIdx]
-  const isNew = editingClass === 'new'
-
-  return (
-    <div className="sc-modal-overlay" onClick={onCancel}>
-      <div className="sc-modal" onClick={e => e.stopPropagation()}>
-        <div className="sc-modal-header">
-          <span className="sc-modal-title">{isNew ? 'New Class' : 'Edit Class'}</span>
-          <button className="sc-modal-close" onClick={onCancel}><X size={14} /></button>
-        </div>
-        <div className="sc-modal-body" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-          <div className="sc-field">
-            <span className="sc-field-label">CLASS LABEL</span>
-            <input
-              className="sc-input"
-              placeholder="e.g. 3-1"
-              value={classForm.label}
-              onChange={e => setClassForm(p => ({ ...p, label: e.target.value }))}
-              autoFocus
-            />
-          </div>
-          <div className="sc-field">
-            <span className="sc-field-label">COURSE</span>
-            <select
-              className="sc-select"
-              value={classForm.curriculum_id}
-              onChange={e => { setClassForm(p => ({ ...p, curriculum_id: e.target.value })); setFormLessonIdx(0) }}
-            >
-              <option value="">No course</option>
-              {curricula.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-            </select>
-          </div>
-          {classForm.curriculum_id && (
-            <div className="sc-field">
-              <span className="sc-field-label">CURRENT LESSON</span>
-              <div className="sc-lesson-picker-row">
-                <button className="sc-lesson-arrow" onClick={() => setFormLessonIdx(i => Math.max(0, i - 1))} disabled={formLessonIdx === 0}><ChevronLeft size={14} /></button>
-                <span className="sc-lesson-picker-val">{formCurrentLesson ? [formCurrentLesson.tag1, formCurrentLesson.tag2].filter(Boolean).join(' · ') : 'No lessons'}</span>
-                <button className="sc-lesson-arrow" onClick={() => setFormLessonIdx(i => Math.min(formLessons.length - 1, i + 1))} disabled={formLessonIdx >= formLessons.length - 1}><ChevronRight size={14} /></button>
-              </div>
-            </div>
-          )}
-          <div className="sc-field">
-            <span className="sc-field-label">HRT NAME</span>
-            <input
-              className="sc-input"
-              placeholder="e.g. Ms. Tanaka"
-              value={classForm.hrt_name}
-              onChange={e => setClassForm(p => ({ ...p, hrt_name: e.target.value }))}
-            />
-          </div>
-          <div className="sc-field">
-            <span className="sc-field-label">STUDENTS</span>
-            <input
-              className="sc-input"
-              placeholder="e.g. 28"
-              type="number"
-              value={classForm.student_count}
-              onChange={e => setClassForm(p => ({ ...p, student_count: e.target.value }))}
-            />
-          </div>
-        </div>
-        <div className="sc-modal-footer" style={{ justifyContent: 'space-between' }}>
-          <div>
-            {!isNew && (
-              <button className="sc-form-delete" onClick={onDelete}>Delete</button>
-            )}
-          </div>
-          <div style={{ display: 'flex', gap: 8 }}>
-            <button className="sc-form-cancel" onClick={onCancel}>Cancel</button>
-            <button className="sc-form-save" onClick={onSave}>Save</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-}
-
 export default function Schools() {
+  const isMobile = useIsMobile()
+  const [screen, setScreen] = useState('list') // mobile only: 'list' | 'classes'
   const { schools, curricula, lessonsByCurriculum, progress: classProgressCtx, refresh: refreshData } = useData()
   const [selectedSchoolId, setSelectedSchoolId] = useState(null)
   const [classes, setClasses] = useState([])
@@ -235,13 +159,17 @@ export default function Schools() {
 
   const selectedSchool = schools.find(s => s.id === selectedSchoolId)
 
-  if (loading) return <Layout sidebar={<div />}><div /></Layout>
+  if (loading) {
+    return isMobile
+      ? <div className="sc-mobile" />
+      : <Layout sidebar={<div />}><div /></Layout>
+  }
 
-  const sidebar = (
-    <div className="sc-sidebar">
+  const sidebarContent = (
+    <>
       <div className="sc-sidebar-header">
         <h1 className="sc-sidebar-title">Schools</h1>
-          <HintBanner id="schools" message="Manage your schools and classes here. Classes you add to a school will appear as options when setting up your schedule." />
+        <HintBanner id="schools" message="Manage your schools and classes here. Classes you add to a school will appear as options when setting up your schedule." />
         <button className="sc-new-btn" onClick={() => { setNewSchoolName(''); setNewSchoolModal(true) }}>
           <Plus size={14} /> New School
         </button>
@@ -251,7 +179,7 @@ export default function Schools() {
           <div
             key={s.id}
             className={`sc-row ${selectedSchoolId === s.id ? 'selected' : ''}`}
-            onClick={() => setSelectedSchoolId(s.id)}
+            onClick={() => { setSelectedSchoolId(s.id); if (isMobile) setScreen('classes') }}
           >
             <div className="sc-row-top">
               <span className="sc-row-name">{s.name}</span>
@@ -260,14 +188,192 @@ export default function Schools() {
           </div>
         ))}
       </div>
+    </>
+  )
+
+  const classList = (
+    <div className="sc-class-list">
+      {classes.length === 0 && (
+        <div className="sc-empty">No classes yet.</div>
+      )}
+      {classes.map(cls => {
+        const currentLesson = classProgressCtx[cls.id]?.current_lesson
+        const currName = getCurriculumName(cls.curriculum_id)
+        return (
+          <div key={cls.id} className="sc-class-row" onClick={() => openEditClass(cls)}>
+            <div className="sc-class-body">
+              <div className="sc-class-title-row">
+                <span className="sc-class-label">{cls.label}</span>
+                {cls.curriculum && <span className="sc-class-dot" />}
+                {cls.curriculum && <span className="sc-class-curr">{currName}</span>}
+                {currentLesson?.tag1 && <span className="sc-class-dot" />}
+                {currentLesson?.tag1 && <span className="sc-class-lesson">{currentLesson.tag1}</span>}
+                {currentLesson?.tag1 && currentLesson?.tag2 && <span className="sc-class-dot" />}
+                {currentLesson?.tag2 && <span className="sc-class-lesson">{currentLesson.tag2}</span>}
+              </div>
+              <div className="sc-class-chips">
+                {cls.curriculum && <span className="sc-chip sc-chip-grade">{cls.curriculum.grade_tag ?? cls.curriculum.name}</span>}
+                {cls.hrt_name && <span className="sc-chip sc-chip-teacher">{cls.hrt_name}</span>}
+                {cls.student_count && <span className="sc-chip sc-chip-students">{cls.student_count} students</span>}
+              </div>
+            </div>
+          </div>
+        )
+      })}
     </div>
   )
 
-  return (
-    <Layout sidebar={sidebar}>
-      <div className="sc-main">
+  const isNewClass = editingClass === 'new'
+  const formLessons = lessonsByCurriculum[classForm.curriculum_id] ?? []
+  const formCurrentLesson = formLessons[formLessonIdx]
 
-        {/* ── CLASSES PANEL ── */}
+  const modals = (
+    <>
+      {/* Class modal — new or edit */}
+      <ResponsiveModal
+        isMobile={isMobile}
+        open={!!editingClass}
+        onClose={closeModal}
+        title={isNewClass ? 'New Class' : 'Edit Class'}
+        footer={
+          <>
+            {!isNewClass && (
+              <button className="sc-form-delete" onClick={() => deleteClass(editingClass)}>Delete</button>
+            )}
+            <button className="sc-form-cancel" onClick={closeModal}>Cancel</button>
+            <button className="sc-form-save" onClick={saveClass}>Save</button>
+          </>
+        }
+      >
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <div className="sc-field">
+            <span className="sc-field-label">CLASS LABEL</span>
+            <input
+              className="sc-input"
+              placeholder="e.g. 3-1"
+              value={classForm.label}
+              onChange={e => setClassForm(p => ({ ...p, label: e.target.value }))}
+              autoFocus
+            />
+          </div>
+          <div className="sc-field">
+            <span className="sc-field-label">COURSE</span>
+            <select
+              className="sc-select"
+              value={classForm.curriculum_id}
+              onChange={e => { setClassForm(p => ({ ...p, curriculum_id: e.target.value })); setFormLessonIdx(0) }}
+            >
+              <option value="">No course</option>
+              {curricula.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+            </select>
+          </div>
+          {classForm.curriculum_id && (
+            <div className="sc-field">
+              <span className="sc-field-label">CURRENT LESSON</span>
+              <div className="sc-lesson-picker-row">
+                <button className="sc-lesson-arrow" onClick={() => setFormLessonIdx(i => Math.max(0, i - 1))} disabled={formLessonIdx === 0}><ChevronLeft size={14} /></button>
+                <span className="sc-lesson-picker-val">{formCurrentLesson ? [formCurrentLesson.tag1, formCurrentLesson.tag2].filter(Boolean).join(' · ') : 'No lessons'}</span>
+                <button className="sc-lesson-arrow" onClick={() => setFormLessonIdx(i => Math.min(formLessons.length - 1, i + 1))} disabled={formLessonIdx >= formLessons.length - 1}><ChevronRight size={14} /></button>
+              </div>
+            </div>
+          )}
+          <div className="sc-field">
+            <span className="sc-field-label">HRT NAME</span>
+            <input
+              className="sc-input"
+              placeholder="e.g. Ms. Tanaka"
+              value={classForm.hrt_name}
+              onChange={e => setClassForm(p => ({ ...p, hrt_name: e.target.value }))}
+            />
+          </div>
+          <div className="sc-field">
+            <span className="sc-field-label">STUDENTS</span>
+            <input
+              className="sc-input"
+              placeholder="e.g. 28"
+              type="number"
+              value={classForm.student_count}
+              onChange={e => setClassForm(p => ({ ...p, student_count: e.target.value }))}
+            />
+          </div>
+        </div>
+      </ResponsiveModal>
+
+      {/* Delete School modal */}
+      <ResponsiveModal
+        isMobile={isMobile}
+        open={deleteSchoolModal && !!deletingSchool}
+        onClose={() => setDeleteSchoolModal(false)}
+        title={`Delete ${deletingSchool?.name ?? ''}?`}
+        footer={
+          <>
+            <button className="sc-form-cancel" onClick={() => setDeleteSchoolModal(false)}>Cancel</button>
+            <button className="sc-form-danger" onClick={deleteSchool}><Trash2 size={14} /> Delete School</button>
+          </>
+        }
+      >
+        <div style={{padding:'12px 16px',background:'#FDEAEA',border:'0.5px solid #F5AAAA',borderRadius:10,fontFamily:"'Figtree',sans-serif",fontSize:14,color:'#C03030',lineHeight:1.6}}>
+          By deleting <strong>{deletingSchool?.name}</strong> you will also delete <strong>{classCounts[deletingSchool?.id] ?? 0} {(classCounts[deletingSchool?.id] ?? 0) === 1 ? 'class' : 'classes'}</strong> and all associated schedule data. This action cannot be undone.
+        </div>
+      </ResponsiveModal>
+
+      {/* New School modal */}
+      <ResponsiveModal
+        isMobile={isMobile}
+        open={newSchoolModal}
+        onClose={() => setNewSchoolModal(false)}
+        title="New School"
+        footer={
+          <>
+            <button className="sc-form-cancel" onClick={() => setNewSchoolModal(false)}>Cancel</button>
+            <button className="sc-form-save" onClick={saveNewSchool}>Save</button>
+          </>
+        }
+      >
+        <div className="sc-panel-sub" style={{ marginBottom: 8 }}>School name</div>
+        <input className="sc-input" placeholder="e.g. Yanai ES" value={newSchoolName} onChange={e => setNewSchoolName(e.target.value)} onKeyDown={e => { if (e.key === 'Enter') saveNewSchool() }} autoFocus />
+      </ResponsiveModal>
+    </>
+  )
+
+  if (isMobile) {
+    return (
+      <div className="sc-mobile">
+        {screen === 'list' && (
+          <div className="hm-screen">
+            {sidebarContent}
+          </div>
+        )}
+        {screen === 'classes' && (
+          <div className="hm-screen">
+            <div className="hm-detail-topbar">
+              <button className="hm-back-btn" onClick={() => setScreen('list')}>
+                <ArrowLeft size={16} />
+              </button>
+              <span className="hm-detail-subtitle">{selectedSchool?.name} Classes</span>
+              <button className="hm-edit-btn" onClick={openNewClass}>
+                <Plus size={16} />
+              </button>
+              <button
+                className="hm-edit-btn"
+                onClick={() => { setDeletingSchool(selectedSchool); setDeleteSchoolModal(true) }}
+              >
+                <Trash2 size={16} />
+              </button>
+            </div>
+            <div className="sc-mobile-detail-body">
+              {classList}
+            </div>
+          </div>
+        )}
+        {modals}
+      </div>
+    )
+  }
+
+  return (
+    <Layout sidebar={<div className="sc-sidebar">{sidebarContent}</div>}>
+      <div className="sc-main">
         <div className="sc-classes-panel">
           <div className="sc-panel-header">
             <span className="sc-panel-title">{selectedSchool?.name} Classes</span>
@@ -280,97 +386,10 @@ export default function Schools() {
               </button>
             </div>
           </div>
-
-          <div className="sc-class-list">
-            {classes.length === 0 && (
-              <div className="sc-empty">No classes yet.</div>
-            )}
-
-            {classes.map(cls => {
-              const currentLesson = classProgressCtx[cls.id]?.current_lesson
-              const currName = getCurriculumName(cls.curriculum_id)
-              return (
-                <div key={cls.id} className="sc-class-row" onClick={() => openEditClass(cls)}>
-                  <div className="sc-class-body">
-                    <div className="sc-class-title-row">
-                      <span className="sc-class-label">{cls.label}</span>
-                      {cls.curriculum && <span className="sc-class-dot" />}
-                      {cls.curriculum && <span className="sc-class-curr">{currName}</span>}
-                      {currentLesson?.tag1 && <span className="sc-class-dot" />}
-                      {currentLesson?.tag1 && <span className="sc-class-lesson">{currentLesson.tag1}</span>}
-                      {currentLesson?.tag1 && currentLesson?.tag2 && <span className="sc-class-dot" />}
-                      {currentLesson?.tag2 && <span className="sc-class-lesson">{currentLesson.tag2}</span>}
-                    </div>
-                    <div className="sc-class-chips">
-                      {cls.curriculum && <span className="sc-chip sc-chip-grade">{cls.curriculum.grade_tag ?? cls.curriculum.name}</span>}
-                      {cls.hrt_name && <span className="sc-chip sc-chip-teacher">{cls.hrt_name}</span>}
-                      {cls.student_count && <span className="sc-chip sc-chip-students">{cls.student_count} students</span>}
-                    </div>
-                  </div>
-                </div>
-              )
-            })}
-          </div>
+          {classList}
         </div>
-
       </div>
-
-      {/* Class modal — new or edit */}
-      {editingClass && (
-        <ClassModal
-          classForm={classForm}
-          setClassForm={setClassForm}
-          formLessonIdx={formLessonIdx}
-          setFormLessonIdx={setFormLessonIdx}
-          editingClass={editingClass}
-          curricula={curricula}
-          lessonsByCurriculum={lessonsByCurriculum}
-          onSave={saveClass}
-          onCancel={closeModal}
-          onDelete={() => deleteClass(editingClass)}
-        />
-      )}
-
-      {/* Delete School modal */}
-      {deleteSchoolModal && deletingSchool && (
-        <div className="sc-modal-overlay" onClick={() => setDeleteSchoolModal(false)}>
-          <div className="sc-modal" onClick={e => e.stopPropagation()}>
-            <div className="sc-modal-header">
-              <span className="sc-modal-title">Delete {deletingSchool.name}?</span>
-              <button className="sc-modal-close" onClick={() => setDeleteSchoolModal(false)}><X size={14} /></button>
-            </div>
-            <div className="sc-modal-body" style={{display:'flex',flexDirection:'column',gap:12}}>
-              <div style={{padding:'12px 16px',background:'#FDEAEA',border:'0.5px solid #F5AAAA',borderRadius:10,fontFamily:"'Figtree',sans-serif",fontSize:14,color:'#C03030',lineHeight:1.6}}>
-                By deleting <strong>{deletingSchool.name}</strong> you will also delete <strong>{classCounts[deletingSchool.id] ?? 0} {(classCounts[deletingSchool.id] ?? 0) === 1 ? 'class' : 'classes'}</strong> and all associated schedule data. This action cannot be undone.
-              </div>
-            </div>
-            <div className="sc-modal-footer">
-              <button className="sc-form-cancel" onClick={() => setDeleteSchoolModal(false)}>Cancel</button>
-              <button className="sc-form-danger" onClick={deleteSchool}><Trash2 size={14} /> Delete School</button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* New School modal */}
-      {newSchoolModal && (
-        <div className="sc-modal-overlay" onClick={() => setNewSchoolModal(false)}>
-          <div className="sc-modal" onClick={e => e.stopPropagation()}>
-            <div className="sc-modal-header">
-              <span className="sc-modal-title">New School</span>
-              <button className="sc-modal-close" onClick={() => setNewSchoolModal(false)}><X size={14} /></button>
-            </div>
-            <div className="sc-modal-body">
-              <div className="sc-panel-sub" style={{ marginBottom: 8 }}>School name</div>
-              <input className="sc-input" placeholder="e.g. Yanai ES" value={newSchoolName} onChange={e => setNewSchoolName(e.target.value)} onKeyDown={e => { if (e.key === 'Enter') saveNewSchool() }} autoFocus />
-            </div>
-            <div className="sc-modal-footer">
-              <button className="sc-form-cancel" onClick={() => setNewSchoolModal(false)}>Cancel</button>
-              <button className="sc-form-save" onClick={saveNewSchool}>Save</button>
-            </div>
-          </div>
-        </div>
-      )}
+      {modals}
     </Layout>
   )
 }

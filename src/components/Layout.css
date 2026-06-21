@@ -12,7 +12,7 @@ html, body, #root {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  background: #F5F5F5;
+  background: var(--surface-chip);
   touch-action: none;
 }
 
@@ -25,7 +25,7 @@ html, body, #root {
   height: 100%;
   min-height: 0;
   background: #FFFFFF;
-  border-right: 0.5px solid #E0E0E0;
+  border-right: 0.5px solid var(--stroke-default);
 }
 
 /* Rail — no fixed width, relies on padding around icons */
@@ -36,7 +36,7 @@ html, body, #root {
   align-items: center;
   padding: 12px;
   gap: 8px;
-  border-right: 0.5px solid #E0E0E0;
+  border-right: 0.5px solid var(--stroke-default);
   background: #FFFFFF;
   height: 100%;
 }
@@ -50,9 +50,9 @@ html, body, #root {
   width: 32px;
   height: 32px;
   border-radius: 6px;
-  border: 0.5px solid #E0E0E0;
-  background: #FFFFFF;
-  color: #787878;
+  border: 0.5px solid transparent;
+  background: transparent;
+  color: var(--text-muted);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -61,15 +61,15 @@ html, body, #root {
   flex-shrink: 0;
 }
 
-.nav-btn:hover { background: #F5F5F5; color: #0A100D; }
-.nav-btn.active { background: #96F4FF; border-color: #2DE6FF; color: #003A40; }
+.nav-btn:hover { background: var(--surface-chip); color: var(--text-primary); }
+.nav-btn.active { background: var(--text-primary); border-color: var(--text-primary); color: #FFFFFF; }
 
 .nav-tooltip {
   position: absolute;
   left: calc(100% + 8px);
   top: 50%;
   transform: translateY(-50%);
-  background: #0A100D;
+  background: var(--text-primary);
   color: #FFFFFF;
   font-family: 'Figtree', sans-serif;
   font-size: 12px;

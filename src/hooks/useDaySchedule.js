@@ -7,16 +7,17 @@ export function toLocalDateStr(date) {
 
 export function getDayStatus(date, override) {
   const dow = date.getDay()
-  if (dow === 0 || dow === 6) return { status: 'weekend', label: 'Weekend' }
   if (override) {
     const labels = {
       standby: 'Standby Day',
       holiday: override.label ?? 'Public Holiday',
       personal: 'Personal Day',
       school_event: 'School Event',
+      working: 'Working Day',
     }
     return { status: override.status, label: labels[override.status] ?? override.status }
   }
+  if (dow === 0 || dow === 6) return { status: 'weekend', label: 'Weekend' }
   return { status: 'working', label: 'Working Day' }
 }
 

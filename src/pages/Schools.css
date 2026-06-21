@@ -10,7 +10,7 @@
 
 .sc-sidebar-header {
   padding: 12px;
-  border-bottom: 0.5px solid #E0E0E0;
+  border-bottom: 0.5px solid var(--stroke-default);
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -21,13 +21,13 @@
   font-family: 'Figtree', sans-serif;
   font-size: 18px;
   font-weight: 600;
-  color: #0A100D;
+  color: var(--text-primary);
 }
 
 .sc-sidebar-sub {
   font-family: 'Figtree', sans-serif;
   font-size: 13px;
-  color: #3D3D3D;
+  color: var(--text-secondary);
 }
 
 /* Primary button */
@@ -35,9 +35,9 @@
   height: 32px;
   padding: 0 12px;
   border-radius: 6px;
-  border: 0.5px solid #2DE6FF;
-  background: #96F4FF;
-  color: #003A40;
+  border: 0.5px solid var(--brand-border);
+  background: var(--brand-fill);
+  color: var(--brand-text);
   font-family: 'Figtree', sans-serif;
   font-size: 13px;
   font-weight: 600;
@@ -49,7 +49,7 @@
   transition: opacity 0.15s;
 }
 
-.sc-new-btn:hover { opacity: 0.85; }
+@media (hover: hover) { .sc-new-btn:hover { opacity: 0.85; } }
 
 .sc-list {
   overscroll-behavior: contain;
@@ -62,16 +62,16 @@
 .sc-row {
   position: relative;
   padding: 12px;
-  border-bottom: 0.5px solid #E0E0E0;
+  border-bottom: 0.5px solid var(--stroke-default);
   cursor: pointer;
   transition: all 0.15s;
   flex-shrink: 0;
 }
 
 .sc-row:last-child { border-bottom: none; }
-.sc-row:hover { background: #FAFAFA; }
+@media (hover: hover) { .sc-row:hover { background: var(--surface-panel); } }
 .sc-row.selected { background: #FFFFFF; }
-.sc-row.selected .sc-row-name { color: #0A100D; }
+.sc-row.selected .sc-row-name { color: var(--text-primary); }
 
 .sc-row::before {
   content: '';
@@ -82,7 +82,7 @@
   transition: background 0.15s;
 }
 
-.sc-row.selected::before { background: #00C8E0; }
+.sc-row.selected::before { background: var(--text-primary); }
 
 .sc-row-top {
   display: flex;
@@ -95,7 +95,7 @@
   font-family: 'Figtree', sans-serif;
   font-size: 15px;
   font-weight: 600;
-  color: #0A100D;
+  color: var(--text-primary);
   transition: color 0.15s;
 }
 
@@ -103,8 +103,8 @@
   font-family: 'Figtree', sans-serif;
   font-size: 12px;
   font-weight: 600;
-  color: #787878;
-  background: #F5F5F5;
+  color: var(--text-muted);
+  background: var(--surface-chip);
   border-radius: 999px;
   height: 24px;
   min-width: 24px;
@@ -116,8 +116,8 @@
 }
 
 .sc-row.selected .sc-row-count {
-  background: #DFFCFF;
-  color: #007080;
+  background: var(--surface-chip);
+  color: var(--text-primary);
 }
 
 /* ── Main ── */
@@ -132,7 +132,7 @@
 .sc-classes-panel {
   flex: 1;
   min-width: 0;
-  border: 0.5px solid #E0E0E0;
+  border: 0.5px solid var(--stroke-default);
   border-radius: 12px;
   background: #FFFFFF;
   display: flex;
@@ -143,7 +143,7 @@
 /* ── Shared Panel Header ── */
 .sc-panel-header {
   padding: 12px;
-  border-bottom: 0.5px solid #E0E0E0;
+  border-bottom: 0.5px solid var(--stroke-default);
   flex-shrink: 0;
   display: flex;
   flex-direction: row;
@@ -163,14 +163,14 @@
   font-size: 18px;
   line-height: 24px;
   font-weight: 600;
-  color: #0A100D;
+  color: var(--text-primary);
 }
 
 .sc-panel-sub {
   font-family: 'Figtree', sans-serif;
   font-size: 13px;
   line-height: 16px;
-  color: #787878;
+  color: var(--text-muted);
 }
 
 /* Tertiary button */
@@ -178,12 +178,12 @@
   height: 32px;
   padding: 0 12px;
   border-radius: 6px;
-  border: 0.5px solid #E0E0E0;
+  border: 0.5px solid var(--stroke-default);
   background: #FFFFFF;
   font-family: 'Figtree', sans-serif;
   font-size: 13px;
   font-weight: 600;
-  color: #606060;
+  color: var(--text-secondary);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
@@ -192,16 +192,16 @@
   transition: all 0.15s;
 }
 
-.sc-add-btn:hover { background: #F5F5F5; }
+@media (hover: hover) { .sc-add-btn:hover { background: var(--surface-panel); } }
 
 /* ── Class Form ── */
 .sc-class-form {
   padding: 12px 16px;
-  border-bottom: 0.5px solid #E0E0E0;
+  border-bottom: 0.5px solid var(--stroke-default);
   display: flex;
   flex-direction: column;
   gap: 8px;
-  background: #FAFAFA;
+  background: var(--surface-panel);
   flex-shrink: 0;
 }
 
@@ -210,28 +210,28 @@
   height: 32px;
   padding: 0 10px;
   border-radius: 6px;
-  border: 0.5px solid #E0E0E0;
+  border: 0.5px solid var(--stroke-default);
   background: #FFFFFF;
   font-family: 'Figtree', sans-serif;
   font-size: 12px;
-  color: #0A100D;
+  color: var(--text-primary);
   outline: none;
   transition: border-color 0.15s;
   box-sizing: border-box;
 }
 
-.sc-input:focus { border-color: #2DE6FF; }
+.sc-input:focus { border-color: var(--brand-border); }
 
 .sc-select {
   width: 100%;
   height: 32px;
   padding: 0 10px;
   border-radius: 6px;
-  border: 0.5px solid #E0E0E0;
+  border: 0.5px solid var(--stroke-default);
   background: #FFFFFF;
   font-family: 'Figtree', sans-serif;
   font-size: 12px;
-  color: #0A100D;
+  color: var(--text-primary);
   outline: none;
   cursor: pointer;
   appearance: none;
@@ -248,15 +248,15 @@
   font-family: 'Figtree', sans-serif;
   font-size: 12px;
   font-weight: 600;
-  color: #3D3D3D;
+  color: var(--text-secondary);
 }
 
 .sc-lesson-picker-row {
   display: flex;
   align-items: center;
   gap: 8px;
-  background: #F5F5F5;
-  border: 0.5px solid #E0E0E0;
+  background: var(--surface-chip);
+  border: 0.5px solid var(--stroke-default);
   border-radius: 6px;
   padding: 4px;
 }
@@ -265,11 +265,17 @@
 .sc-lesson-arrow {
   width: 32px;
   height: 32px;
+  min-width: 32px;
+  min-height: 32px;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
   border-radius: 6px;
-  border: 0.5px solid #E0E0E0;
+  border: 0.5px solid var(--stroke-default);
   background: #FFFFFF;
-  color: #606060;
+  color: var(--text-secondary);
   font-size: 13px;
+  line-height: 1;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -279,13 +285,13 @@
 }
 
 .sc-lesson-arrow:disabled { opacity: 0.3; cursor: default; }
-.sc-lesson-arrow:hover:not(:disabled) { background: #F5F5F5; }
+.sc-lesson-arrow:hover:not(:disabled) { background: var(--surface-panel); }
 
 .sc-lesson-picker-val {
   flex: 1;
   font-family: 'Figtree', sans-serif;
   font-size: 12px;
-  color: #0A100D;
+  color: var(--text-primary);
   text-align: center;
 }
 
@@ -317,16 +323,16 @@
   transition: all 0.15s;
 }
 
-.sc-form-delete:hover { background: #FDEAEA; }
+@media (hover: hover) { .sc-form-delete:hover { background: #FDEAEA; } }
 
 /* Primary button */
 .sc-form-save {
   height: 32px;
   padding: 0 12px;
   border-radius: 6px;
-  border: 0.5px solid #2DE6FF;
-  background: #96F4FF;
-  color: #003A40;
+  border: 0.5px solid var(--brand-border);
+  background: var(--brand-fill);
+  color: var(--brand-text);
   font-family: 'Figtree', sans-serif;
   font-size: 13px;
   font-weight: 600;
@@ -334,23 +340,23 @@
   transition: opacity 0.15s;
 }
 
-.sc-form-save:hover { opacity: 0.85; }
+@media (hover: hover) { .sc-form-save:hover { opacity: 0.85; } }
 
 /* Tertiary button */
 .sc-form-cancel {
   height: 32px;
   padding: 0 12px;
   border-radius: 6px;
-  border: 0.5px solid #E0E0E0;
+  border: 0.5px solid var(--stroke-default);
   background: #FFFFFF;
-  color: #606060;
+  color: var(--text-secondary);
   font-family: 'Figtree', sans-serif;
   font-size: 13px;
   cursor: pointer;
   transition: background 0.15s;
 }
 
-.sc-form-cancel:hover { background: #F5F5F5; }
+@media (hover: hover) { .sc-form-cancel:hover { background: var(--surface-panel); } }
 
 /* ── Class List ── */
 .sc-class-list {
@@ -365,7 +371,7 @@
   padding: 24px;
   font-family: 'Figtree', sans-serif;
   font-size: 12px;
-  color: #787878;
+  color: var(--text-muted);
   text-align: center;
 }
 
@@ -374,14 +380,14 @@
   align-items: flex-start;
   justify-content: space-between;
   padding: 12px;
-  border-bottom: 0.5px solid #E0E0E0;
+  border-bottom: 0.5px solid var(--stroke-default);
   gap: 8px;
   transition: background 0.1s;
   cursor: pointer;
 }
 
 .sc-class-row:last-child { border-bottom: none; }
-.sc-class-row:hover { background: #FAFAFA; }
+@media (hover: hover) { .sc-class-row:hover { background: var(--surface-panel); } }
 .sc-class-body {
   display: flex;
   flex-direction: column;
@@ -402,7 +408,7 @@
   font-size: 15px;
   line-height: 24px;
   font-weight: 700;
-  color: #0A100D;
+  color: var(--text-primary);
   flex-shrink: 0;
 }
 
@@ -410,20 +416,20 @@
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: #B8B8B8;
+  background: var(--text-subtle);
   flex-shrink: 0;
 }
 
 .sc-class-curr {
   font-family: 'Figtree', sans-serif;
   font-size: 13px;
-  color: #787878;
+  color: var(--text-muted);
 }
 
 .sc-class-lesson {
   font-family: 'Figtree', sans-serif;
   font-size: 13px;
-  color: #787878;
+  color: var(--text-muted);
   font-weight: 500;
 }
 
@@ -446,9 +452,9 @@
   flex-shrink: 0;
 }
 
-.sc-chip-grade   { color: #007080; background: #DFFCFF; }
-.sc-chip-teacher { color: #472890; background: #F0EAFA; }
-.sc-chip-students { color: #3A8000; background: #EDFFD4; }
+.sc-chip-grade,
+.sc-chip-teacher,
+.sc-chip-students { color: var(--text-secondary); background: var(--surface-chip); }
 
 .sc-class-actions {
   display: flex;
@@ -461,19 +467,19 @@
   height: 32px;
   padding: 0 12px;
   border-radius: 6px;
-  border: 0.5px solid #E0E0E0;
+  border: 0.5px solid var(--stroke-default);
   background: #FFFFFF;
   font-family: 'Figtree', sans-serif;
   font-size: 13px;
   font-weight: 600;
-  color: #606060;
+  color: var(--text-secondary);
   cursor: pointer;
   transition: all 0.15s;
 }
 
-.sc-class-btn:hover { background: #F5F5F5; }
+@media (hover: hover) { .sc-class-btn:hover { background: var(--surface-panel); } }
 .sc-class-btn.danger { color: #C03030; border-color: #F5AAAA; }
-.sc-class-btn.danger:hover { background: #FDEAEA; }
+@media (hover: hover) { .sc-class-btn.danger:hover { background: #FDEAEA; } }
 
 /* ── Modal ── */
 .sc-modal-overlay {
@@ -492,7 +498,7 @@
   width: 100%;
   max-width: 400px;
   overflow: hidden;
-  border: 0.5px solid #E0E0E0;
+  border: 0.5px solid var(--stroke-default);
 }
 
 .sc-modal-header {
@@ -500,14 +506,14 @@
   align-items: center;
   justify-content: space-between;
   padding: 12px 12px 12px 16px;
-  border-bottom: 0.5px solid #E0E0E0;
+  border-bottom: 0.5px solid var(--stroke-default);
 }
 
 .sc-modal-title {
   font-family: 'Figtree', sans-serif;
   font-size: 18px;
   font-weight: 600;
-  color: #0A100D;
+  color: var(--text-primary);
 }
 
 /* Tertiary button */
@@ -515,9 +521,9 @@
   width: 32px;
   height: 32px;
   border-radius: 6px;
-  border: 0.5px solid #E0E0E0;
+  border: 0.5px solid var(--stroke-default);
   background: #FFFFFF;
-  color: #606060;
+  color: var(--text-secondary);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -525,7 +531,7 @@
   transition: all 0.15s;
 }
 
-.sc-modal-close:hover { background: #F5F5F5; }
+@media (hover: hover) { .sc-modal-close:hover { background: var(--surface-panel); } }
 
 .sc-modal-body { padding: 12px 12px; }
 
@@ -535,7 +541,7 @@
   justify-content: flex-end;
   gap: 8px;
   padding: 12px 12px;
-  border-top: 0.5px solid #E0E0E0;
+  border-top: 0.5px solid var(--stroke-default);
 }
 
 /* Form field with eyebrow label */
@@ -549,7 +555,7 @@
   font-family: 'Figtree', sans-serif;
   font-size: 11px;
   font-weight: 600;
-  color: #787878;
+  color: var(--text-muted);
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }
@@ -559,9 +565,9 @@
   width: 32px;
   height: 32px;
   border-radius: 6px;
-  border: 0.5px solid #E0E0E0;
+  border: 0.5px solid var(--stroke-default);
   background: #FFFFFF;
-  color: #787878;
+  color: var(--text-muted);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -570,7 +576,7 @@
   flex-shrink: 0;
 }
 
-.sc-more-btn:hover { background: #FDEAEA; color: #C03030; border-color: #F5AAAA; }
+@media (hover: hover) { .sc-more-btn:hover { background: #FDEAEA; color: #C03030; border-color: #F5AAAA; } }
 
 /* Danger button */
 .sc-form-danger {
@@ -590,4 +596,108 @@
   transition: all 0.15s;
 }
 
-.sc-form-danger:hover { background: #FDEAEA; }
+@media (hover: hover) { .sc-form-danger:hover { background: #FDEAEA; } }
+
+/* ───────────────────────────────────────────────────────────────────────
+   Schools Mobile — two-screen drill-down layout (school list / class list)
+   Reuses .sc-row, .sc-class-row etc. for visual parity with desktop.
+   Reuses .hm-* structural classes from Home.css (duplicated here since
+   pages don't cross-import each other's CSS).
+   ─────────────────────────────────────────────────────────────────────── */
+
+.sc-mobile {
+  position: fixed;
+  inset: 0;
+  bottom: var(--mobile-tab-bar-height);
+  background: #FFFFFF;
+  display: flex;
+  flex-direction: column;
+}
+
+.hm-screen {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.hm-period-list {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.hm-block-list {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.hm-detail-topbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  border-bottom: 0.5px solid var(--stroke-default);
+  background: #FFFFFF;
+  flex-shrink: 0;
+}
+
+.hm-back-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  border: 0.5px solid var(--stroke-default);
+  background: #FFFFFF;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.hm-detail-subtitle {
+  flex: 1;
+  min-width: 0;
+  font-family: 'Figtree', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.hm-edit-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  border: 0.5px solid var(--stroke-default);
+  background: #FFFFFF;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+@media (hover: hover) {
+  .hm-back-btn:hover, .hm-edit-btn:hover { background: var(--surface-panel); }
+}
+
+/* Bump form controls to 36px when rendered inside the mobile bottom drawer */
+.drawer-body .sc-input,
+.drawer-body .sc-select,
+.drawer-footer .sc-form-save,
+.drawer-footer .sc-form-cancel,
+.drawer-footer .sc-form-delete,
+.drawer-footer .sc-form-danger {
+  height: 36px;
+}
+
+.drawer-body .sc-lesson-arrow {
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  min-height: 36px;
+}
