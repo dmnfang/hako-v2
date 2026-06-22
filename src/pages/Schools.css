@@ -82,7 +82,7 @@
   transition: background 0.15s;
 }
 
-.sc-row.selected::before { background: var(--text-primary); }
+.sc-row.selected::before { background: var(--brand-border); }
 
 .sc-row-top {
   display: flex;
@@ -452,9 +452,9 @@
   flex-shrink: 0;
 }
 
-.sc-chip-grade,
-.sc-chip-teacher,
-.sc-chip-students { color: var(--text-secondary); background: var(--surface-chip); }
+.sc-chip-grade    { color: var(--sky-text);    background: var(--sky-fill);    border: 0.5px solid var(--sky-border); }
+.sc-chip-teacher  { color: var(--sage-text);   background: var(--sage-fill);   border: 0.5px solid var(--sage-border); }
+.sc-chip-students { color: var(--butter-text); background: var(--butter-fill); border: 0.5px solid var(--butter-border); }
 
 .sc-class-actions {
   display: flex;

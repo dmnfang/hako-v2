@@ -1,16 +1,14 @@
 .login-shell {
-  height: 100%;
-  min-height: 100%;
+  min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #F5F5F5;
-  padding: 24px;
+  background: var(--surface-chip);
 }
 
 .login-card {
   background: #FFFFFF;
-  border: 0.5px solid #E0E0E0;
+  border: 0.5px solid var(--stroke-default);
   border-radius: 16px;
   padding: 40px 36px;
   width: 100%;
@@ -21,18 +19,18 @@
 }
 
 .login-logo {
-  font-family: 'Figtree', sans-serif;
+  font-family: 'Fredoka', sans-serif;
   font-size: 32px;
-  font-weight: 700;
-  color: #0A100D;
+  font-weight: 600;
+  color: var(--text-primary);
   text-align: center;
   margin-bottom: 4px;
 }
 
 .login-subtitle {
-  font-family: 'Figtree', sans-serif;
+  font-family: 'Noto Sans', sans-serif;
   font-size: 13px;
-  color: #787878;
+  color: var(--text-muted);
   text-align: center;
   margin-bottom: 24px;
 }
@@ -40,8 +38,8 @@
 .login-tabs {
   display: flex;
   gap: 0;
-  background: #F5F5F5;
-  border-radius: 10px;
+  background: var(--surface-chip);
+  border-radius: 8px;
   padding: 3px;
   margin-bottom: 20px;
 }
@@ -52,18 +50,18 @@
   border: none;
   border-radius: 6px;
   background: transparent;
-  font-family: 'Figtree', sans-serif;
-  font-size: 13px;
+  font-family: 'Fredoka', sans-serif;
+  font-size: 14px;
   font-weight: 600;
-  color: #787878;
+  color: var(--text-muted);
   cursor: pointer;
   transition: all 0.15s;
 }
 
 .login-tab.active {
   background: #FFFFFF;
-  color: #0A100D;
-  border: 0.5px solid #E0E0E0;
+  color: var(--text-primary);
+  border: 0.5px solid var(--stroke-default);
 }
 
 .login-form {
@@ -75,24 +73,22 @@
 
 .login-form input {
   height: 40px;
-  border-radius: 6px;
-  border: 0.5px solid #E0E0E0;
-  background: #F5F5F5;
+  border-radius: 8px;
+  border: 0.5px solid var(--stroke-default);
+  background: #FFFFFF;
   padding: 0 14px;
-  font-family: 'Figtree', sans-serif;
-  font-size: 13px;
-  color: #0A100D;
+  font-family: 'Noto Sans', sans-serif;
+  font-size: 14px;
+  color: var(--text-primary);
   outline: none;
-  transition: border-color 0.15s, background 0.15s;
+  transition: border-color 0.15s;
 }
 
 .login-form input:focus {
-  border-color: #2DE6FF;
-  background: #FFFFFF;
+  border-color: var(--brand-border);
 }
 
 .login-error {
-  font-family: 'Figtree', sans-serif;
   font-size: 12px;
   color: #C03030;
   padding: 8px 12px;
@@ -102,29 +98,30 @@
 }
 
 .login-btn-primary {
-  height: 40px;
-  border-radius: 6px;
-  border: 0.5px solid #2DE6FF;
-  background: #96F4FF;
-  color: #003A40;
-  font-family: 'Figtree', sans-serif;
-  font-size: 13px;
+  height: 32px;
+  border-radius: 8px;
+  border: none;
+  background: var(--text-primary);
+  color: #FFFFFF;
+  font-family: 'Fredoka', sans-serif;
+  font-size: 15px;
   font-weight: 600;
   cursor: pointer;
   transition: opacity 0.15s;
   margin-top: 4px;
 }
 
-.login-btn-primary:hover { opacity: 0.85; }
-.login-btn-primary:disabled { opacity: 0.5; cursor: default; }
+.login-btn-primary:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
 
 .login-divider {
   display: flex;
   align-items: center;
   gap: 12px;
   margin: 16px 0;
-  color: #B8B8B8;
-  font-family: 'Figtree', sans-serif;
+  color: var(--text-subtle);
   font-size: 12px;
 }
 
@@ -133,17 +130,17 @@
   content: '';
   flex: 1;
   height: 0.5px;
-  background: #E0E0E0;
+  background: var(--stroke-default);
 }
 
 .login-btn-google {
-  height: 40px;
-  border-radius: 6px;
-  border: 0.5px solid #E0E0E0;
+  height: 32px;
+  border-radius: 8px;
+  border: 0.5px solid var(--stroke-default);
   background: #FFFFFF;
-  color: #606060;
-  font-family: 'Figtree', sans-serif;
-  font-size: 13px;
+  color: var(--text-primary);
+  font-family: 'Fredoka', sans-serif;
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
   display: flex;
@@ -153,16 +150,17 @@
   transition: background 0.15s;
 }
 
-.login-btn-google:hover { background: #F5F5F5; }
+.login-btn-google:hover {
+  background: var(--surface-chip);
+}
 
 .login-success {
-  font-family: 'Figtree', sans-serif;
-  font-size: 13px;
-  color: #2A7A52;
-  background: #D6F2E5;
-  border: 0.5px solid #6FCF97;
-  border-radius: 6px;
-  padding: 12px;
+  font-size: 14px;
+  color: var(--brand-text);
+  background: var(--brand-fill);
+  border: 0.5px solid var(--brand-border);
+  border-radius: 8px;
+  padding: 16px;
   text-align: center;
   line-height: 1.6;
 }

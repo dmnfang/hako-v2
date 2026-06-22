@@ -114,7 +114,7 @@
 }
 
 @media (min-width: 901px) {
-  .sch-row.selected::before { background: var(--text-primary); }
+  .sch-row.selected::before { background: var(--brand-border); }
 }
 
 .sch-row-top {
@@ -969,8 +969,8 @@
   color: var(--text-muted);
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  margin-top: 16px;
-  margin-bottom: 8px;
+  margin-top: 0;
+  margin-bottom: 0;
 }
 
 .sch-multi-class-other-options {

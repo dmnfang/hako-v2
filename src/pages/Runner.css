@@ -149,7 +149,7 @@
   transition: border-color 0.15s;
 }
 
-.curr-block-input:focus { border-color: #2DE6FF; }
+.curr-block-input:focus { border-color: var(--stroke-strong); }
 
 .memo-save-btn {
   height: 32px;

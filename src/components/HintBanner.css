@@ -2,8 +2,8 @@
   display: flex;
   align-items: flex-start;
   gap: 12px;
-  background: var(--accent-fill);
-  border: 0.5px solid var(--accent-border);
+  background: var(--butter-fill);
+  border: 0.5px solid var(--butter-border);
   border-radius: 6px;
   padding: 10px 14px;
   flex-shrink: 0;
@@ -14,7 +14,7 @@
   font-family: 'Figtree', sans-serif;
   font-size: 13px;
   line-height: 1.6;
-  color: var(--accent-text);
+  color: var(--butter-text);
 }
 
 .hint-banner-close {
@@ -22,7 +22,7 @@
   height: 20px;
   border: none;
   background: transparent;
-  color: var(--accent-text);
+  color: var(--butter-text);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -33,4 +33,4 @@
   padding: 0;
 }
 
-.hint-banner-close:hover { background: var(--accent-hover); }
+.hint-banner-close:hover { background: var(--butter-hover); }
