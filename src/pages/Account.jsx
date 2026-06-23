@@ -103,51 +103,145 @@ export default function Account() {
   const progressPct = trial.status === 'grace'
     ? 100 : Math.min(100, (trial.daysUsed / 30) * 100)
 
-  // ── Shared section content ──────────────────────────────────────────
+  // ── Section inner content (shared between desktop card body and mobile accordion) ──
+  const profileContent = (
+    <div className="acc-card-body">
+      <div className="acc-field">
+        <span className="acc-field-label">Display name</span>
+        <div className="acc-field-row">
+          <input
+            ref={nameInputRef}
+            className="acc-input"
+            value={nameInput}
+            placeholder="Your name"
+            onFocus={() => setEditingName(true)}
+            onChange={e => setNameInput(e.target.value)}
+            onKeyDown={e => {
+              if (e.key === 'Enter') saveName()
+              if (e.key === 'Escape') { setEditingName(false); setNameInput(displayName) }
+            }}
+          />
+          {editingName ? (
+            <div className="acc-btn-group">
+              <button className="acc-btn-save" onClick={saveName}>Save</button>
+              <button className="acc-btn-cancel" onClick={() => { setEditingName(false); setNameInput(displayName) }}>Cancel</button>
+            </div>
+          ) : (
+            <button className="acc-btn-edit" onClick={() => {
+              setEditingName(true)
+              setTimeout(() => {
+                const el = nameInputRef.current
+                if (el) { el.focus(); const len = el.value.length; el.setSelectionRange(len, len) }
+              }, 0)
+            }}>Edit</button>
+          )}
+        </div>
+      </div>
+      <div className="acc-field">
+        <span className="acc-field-label">Email</span>
+        <div className="acc-field-row">
+          <span className="acc-field-value">{user.email}</span>
+        </div>
+      </div>
+    </div>
+  )
+
+  const planContent = (
+    <div className="acc-card-body">
+      <div className="acc-trial-bar-wrap">
+        <div
+          className={`acc-trial-bar-fill ${trial.status}`}
+          style={{ width: `${progressPct}%` }}
+        />
+      </div>
+      <div className="acc-trial-meta">
+        <span className={`acc-trial-badge ${trial.status}`}>
+          {trial.status === 'active' ? 'Active' : trial.status === 'grace' ? 'Grace Period' : 'Expired'}
+        </span>
+        <span className="acc-trial-label">
+          {trial.status === 'active' && `${trial.daysLeft} day${trial.daysLeft === 1 ? '' : 's'} remaining`}
+          {trial.status === 'grace' && `${trial.graceDaysLeft} grace day${trial.graceDaysLeft === 1 ? '' : 's'} left`}
+          {trial.status === 'expired' && 'Trial ended'}
+        </span>
+      </div>
+      {trial.status === 'active' && (
+        <p className="acc-plan-desc">You're on a free 30-day trial with full access to everything. Upgrade before your trial ends to keep access.</p>
+      )}
+      {trial.status === 'grace' && (
+        <p className="acc-plan-desc">Your trial has ended but you have <strong>{trial.graceDaysLeft} grace days</strong> remaining. Upgrade now to avoid losing access.</p>
+      )}
+      {trial.status === 'expired' && (
+        <p className="acc-plan-desc">Your trial and grace period have both ended. Upgrade to restore full access.</p>
+      )}
+      {trial.status === 'expired' && !settings?.grace_until && (
+        <button className="acc-btn-grace" onClick={claimGrace} disabled={claimingGrace}>
+          {claimingGrace ? 'Claiming…' : 'Give me 3 more days'}
+        </button>
+      )}
+      {usage && (
+        <div className="acc-usage-wrap">
+          <span className="acc-usage-title">Your saved data</span>
+          <div className="acc-usage-grid">
+            <div className="acc-usage-item">
+              <span className="acc-usage-num">{usage.schools}</span>
+              <span className="acc-usage-label">Schools</span>
+            </div>
+            <div className="acc-usage-item">
+              <span className="acc-usage-num">{usage.classes}</span>
+              <span className="acc-usage-label">Classes</span>
+            </div>
+            <div className="acc-usage-item">
+              <span className="acc-usage-num">{usage.courses}</span>
+              <span className="acc-usage-label">Courses</span>
+            </div>
+            <div className="acc-usage-item">
+              <span className="acc-usage-num">{usage.lessons}</span>
+              <span className="acc-usage-label">Lessons</span>
+            </div>
+          </div>
+        </div>
+      )}
+      <button className="acc-btn-upgrade">Upgrade to Pro</button>
+    </div>
+  )
+
+  const appContent = (
+    <div className="acc-card-body">
+      <div className="acc-setting-row">
+        <div className="acc-setting-text">
+          <span className="acc-setting-label">Dark mode</span>
+          <span className="acc-setting-sub">Coming soon</span>
+        </div>
+        <div className="acc-toggle disabled" />
+      </div>
+      <div className="acc-setting-divider" />
+      <div className="acc-setting-row">
+        <div className="acc-setting-text">
+          <span className="acc-setting-label">Sign out</span>
+          <span className="acc-setting-sub">Sign out of your account on this device</span>
+        </div>
+        <button className="acc-btn-edit" onClick={signOut}>
+          <LogOut size={14} /> Sign out
+        </button>
+      </div>
+      <div className="acc-setting-divider" />
+      <div className="acc-setting-row">
+        <div className="acc-setting-text">
+          <span className="acc-setting-label acc-danger-label">Delete account</span>
+          <span className="acc-setting-sub">Permanently delete your account and all data</span>
+        </div>
+        <button className="acc-btn-danger">Delete</button>
+      </div>
+    </div>
+  )
+
+  // ── Desktop card wrappers ───────────────────────────────────────────
   const profileSection = (
     <div className="acc-card">
       <div className="acc-card-header">
         <span className="acc-card-title">Personal Details</span>
       </div>
-      <div className="acc-card-body">
-        <div className="acc-field">
-          <span className="acc-field-label">Display name</span>
-          <div className="acc-field-row">
-            <input
-              ref={nameInputRef}
-              className="acc-input"
-              value={nameInput}
-              placeholder="Your name"
-              onFocus={() => setEditingName(true)}
-              onChange={e => setNameInput(e.target.value)}
-              onKeyDown={e => {
-                if (e.key === 'Enter') saveName()
-                if (e.key === 'Escape') { setEditingName(false); setNameInput(displayName) }
-              }}
-            />
-            {editingName ? (
-              <div className="acc-btn-group">
-                <button className="acc-btn-save" onClick={saveName}>Save</button>
-                <button className="acc-btn-cancel" onClick={() => { setEditingName(false); setNameInput(displayName) }}>Cancel</button>
-              </div>
-            ) : (
-              <button className="acc-btn-edit" onClick={() => {
-                setEditingName(true)
-                setTimeout(() => {
-                  const el = nameInputRef.current
-                  if (el) { el.focus(); const len = el.value.length; el.setSelectionRange(len, len) }
-                }, 0)
-              }}>Edit</button>
-            )}
-          </div>
-        </div>
-        <div className="acc-field">
-          <span className="acc-field-label">Email</span>
-          <div className="acc-field-row">
-            <span className="acc-field-value">{user.email}</span>
-          </div>
-        </div>
-      </div>
+      {profileContent}
     </div>
   )
 
@@ -157,62 +251,7 @@ export default function Account() {
         <span className="acc-card-title">Plan</span>
         <span className="acc-free-badge">Free Trial</span>
       </div>
-      <div className="acc-card-body">
-        <div className="acc-trial-bar-wrap">
-          <div
-            className={`acc-trial-bar-fill ${trial.status}`}
-            style={{ width: `${progressPct}%` }}
-          />
-        </div>
-        <div className="acc-trial-meta">
-          <span className={`acc-trial-badge ${trial.status}`}>
-            {trial.status === 'active' ? 'Active' : trial.status === 'grace' ? 'Grace Period' : 'Expired'}
-          </span>
-          <span className="acc-trial-label">
-            {trial.status === 'active' && `${trial.daysLeft} day${trial.daysLeft === 1 ? '' : 's'} remaining`}
-            {trial.status === 'grace' && `${trial.graceDaysLeft} grace day${trial.graceDaysLeft === 1 ? '' : 's'} left`}
-            {trial.status === 'expired' && 'Trial ended'}
-          </span>
-        </div>
-        {trial.status === 'active' && (
-          <p className="acc-plan-desc">You're on a free 30-day trial with full access to everything. Upgrade before your trial ends to keep access.</p>
-        )}
-        {trial.status === 'grace' && (
-          <p className="acc-plan-desc">Your trial has ended but you have <strong>{trial.graceDaysLeft} grace days</strong> remaining. Upgrade now to avoid losing access.</p>
-        )}
-        {trial.status === 'expired' && (
-          <p className="acc-plan-desc">Your trial and grace period have both ended. Upgrade to restore full access.</p>
-        )}
-        {trial.status === 'expired' && !settings?.grace_until && (
-          <button className="acc-btn-grace" onClick={claimGrace} disabled={claimingGrace}>
-            {claimingGrace ? 'Claiming…' : 'Give me 3 more days'}
-          </button>
-        )}
-        {usage && (
-          <div className="acc-usage-wrap">
-            <span className="acc-usage-title">Your saved data</span>
-            <div className="acc-usage-grid">
-              <div className="acc-usage-item">
-                <span className="acc-usage-num">{usage.schools}</span>
-                <span className="acc-usage-label">Schools</span>
-              </div>
-              <div className="acc-usage-item">
-                <span className="acc-usage-num">{usage.classes}</span>
-                <span className="acc-usage-label">Classes</span>
-              </div>
-              <div className="acc-usage-item">
-                <span className="acc-usage-num">{usage.courses}</span>
-                <span className="acc-usage-label">Courses</span>
-              </div>
-              <div className="acc-usage-item">
-                <span className="acc-usage-num">{usage.lessons}</span>
-                <span className="acc-usage-label">Lessons</span>
-              </div>
-            </div>
-          </div>
-        )}
-        <button className="acc-btn-upgrade">Upgrade to Pro</button>
-      </div>
+      {planContent}
     </div>
   )
 
@@ -221,33 +260,7 @@ export default function Account() {
       <div className="acc-card-header">
         <span className="acc-card-title">App Settings</span>
       </div>
-      <div className="acc-card-body">
-        <div className="acc-setting-row">
-          <div className="acc-setting-text">
-            <span className="acc-setting-label">Dark mode</span>
-            <span className="acc-setting-sub">Coming soon</span>
-          </div>
-          <div className="acc-toggle disabled" />
-        </div>
-        <div className="acc-setting-divider" />
-        <div className="acc-setting-row">
-          <div className="acc-setting-text">
-            <span className="acc-setting-label">Sign out</span>
-            <span className="acc-setting-sub">Sign out of your account on this device</span>
-          </div>
-          <button className="acc-btn-edit" onClick={signOut}>
-            <LogOut size={14} /> Sign out
-          </button>
-        </div>
-        <div className="acc-setting-divider" />
-        <div className="acc-setting-row">
-          <div className="acc-setting-text">
-            <span className="acc-setting-label acc-danger-label">Delete account</span>
-            <span className="acc-setting-sub">Permanently delete your account and all data</span>
-          </div>
-          <button className="acc-btn-danger">Delete</button>
-        </div>
-      </div>
+      {appContent}
     </div>
   )
 
@@ -257,39 +270,45 @@ export default function Account() {
     app: appSection,
   }
 
-  // ── Mobile layout ──────────────────────────────────────────────────
+  const accordionContent = {
+    profile: profileContent,
+    plan: planContent,
+    app: appContent,
+  }
+
+  // ── Mobile layout — accordion ──────────────────────────────────────
   if (isMobile) {
     return (
       <div className="acc-mobile">
-        {/* Level 1 — nav list */}
-        {section === 'profile' || section === 'plan' || section === 'app' ? (
-          <>
-            {/* If we want a top-level list then drill into section,
-                simpler here: just show the section picker as tabs at top */}
-            <div className="acc-mobile-profile">
-              <div className="acc-avatar">{initials}</div>
-              <div className="acc-profile-text">
-                <span className="acc-name">{displayName || 'No name set'}</span>
-                <span className="acc-email">{user.email}</span>
-              </div>
-            </div>
-            <div className="acc-mobile-tabs">
-              {NAV.map(({ key, label, icon: Icon }) => (
+        <div className="acc-mobile-profile">
+          <div className="acc-avatar">{initials}</div>
+          <div className="acc-profile-text">
+            <span className="acc-name">{displayName || 'No name set'}</span>
+            <span className="acc-email">{user.email}</span>
+          </div>
+        </div>
+        <div className="acc-mobile-accordion">
+          {NAV.map(({ key, label, icon: Icon }) => {
+            const isOpen = section === key
+            return (
+              <div key={key} className={`acc-accordion-item ${isOpen ? 'open' : ''}`}>
                 <button
-                  key={key}
-                  className={`acc-mobile-tab ${section === key ? 'active' : ''}`}
-                  onClick={() => setSection(key)}
+                  className="acc-accordion-header"
+                  onClick={() => setSection(isOpen ? null : key)}
                 >
-                  <Icon size={14} />
-                  {label}
+                  <Icon size={16} className="acc-accordion-icon" />
+                  <span className="acc-accordion-label">{label}</span>
+                  <span className="acc-accordion-chevron">{isOpen ? '−' : '+'}</span>
                 </button>
-              ))}
-            </div>
-            <div className="acc-mobile-body">
-              {sectionContent[section]}
-            </div>
-          </>
-        ) : null}
+                {isOpen && (
+                  <div className="acc-accordion-body">
+                    {accordionContent[key]}
+                  </div>
+                )}
+              </div>
+            )
+          })}
+        </div>
       </div>
     )
   }

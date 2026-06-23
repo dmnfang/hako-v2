@@ -72,7 +72,7 @@
 }
 
 .login-form input {
-  height: 40px;
+  height: 32px;
   border-radius: 8px;
   border: 0.5px solid var(--stroke-default);
   background: #FFFFFF;
@@ -163,4 +163,22 @@
   padding: 16px;
   text-align: center;
   line-height: 1.6;
+}
+/* ── Mobile sizing — bump all controls to 40px tap targets ── */
+@media (max-width: 900px) {
+  .login-tab,
+  .login-form input,
+  .login-btn-primary,
+  .login-btn-google {
+    height: 40px;
+  }
+
+  .login-card {
+    border: none;
+    border-radius: 0;
+    padding: 40px 24px;
+    min-height: 100vh;
+    max-width: 100%;
+    justify-content: center;
+  }
 }

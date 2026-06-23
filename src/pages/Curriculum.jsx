@@ -820,8 +820,7 @@ export default function Curriculum() {
                       <span className="curr-lesson-name">
                         {l.tag2 ?? 'Untitled'}
                       </span>
-                      <div style={{ flex: 1 }} />
-                      <div style={{ position: 'relative' }} onClick={e => e.stopPropagation()}>
+                      <div style={{ position: 'relative', flexShrink: 0 }} onClick={e => e.stopPropagation()}>
                         <button className="curr-more-btn" onClick={() => setOpenLessonMenuId(openLessonMenuId === l.id ? null : l.id)}>
                           <MoreHorizontal size={14} />
                         </button>
@@ -917,8 +916,7 @@ export default function Curriculum() {
                           {block.title}
                         </span>
                       )}
-                      <div style={{ flex: 1 }} />
-                      <div style={{ position: 'relative' }} onClick={e => e.stopPropagation()}>
+                      <div style={{ position: 'relative', flexShrink: 0 }} onClick={e => e.stopPropagation()}>
                         <button
                           className="curr-more-btn"
                           onClick={() => setOpenBlockMenuId(openBlockMenuId === block.id ? null : block.id)}
@@ -1041,8 +1039,7 @@ export default function Curriculum() {
                           {block.title}
                         </span>
                       )}
-                      <div style={{ flex: 1 }} />
-                      <div style={{ position: 'relative' }} onClick={e => e.stopPropagation()}>
+                      <div style={{ position: 'relative', flexShrink: 0 }} onClick={e => e.stopPropagation()}>
                         <button
                           className="curr-more-btn"
                           onClick={() => setOpenLibraryMenuId(openLibraryMenuId === block.id ? null : block.id)}
@@ -1131,8 +1128,7 @@ export default function Curriculum() {
                 <span className="curr-lesson-unit">{l.tag1 ?? '—'}</span>
                 <span className="curr-lesson-sep" />
                 <span className="curr-lesson-name">{l.tag2 ?? 'Untitled'}</span>
-                <div style={{ flex: 1 }} />
-                <div style={{ position: 'relative' }} onClick={e => e.stopPropagation()}>
+                <div style={{ position: 'relative', flexShrink: 0 }} onClick={e => e.stopPropagation()}>
                   <button className="curr-more-btn" onClick={() => setOpenLessonMenuId(openLessonMenuId === l.id ? null : l.id)}>
                     <MoreHorizontal size={14} />
                   </button>
@@ -1204,8 +1200,7 @@ export default function Curriculum() {
                         {block.title}
                       </span>
                     )}
-                    <div style={{ flex: 1 }} />
-                    <div style={{ position: 'relative' }} onClick={e => e.stopPropagation()}>
+                    <div style={{ position: 'relative', flexShrink: 0 }} onClick={e => e.stopPropagation()}>
                       <button
                         className="curr-more-btn"
                         onClick={() => setOpenBlockMenuId(openBlockMenuId === block.id ? null : block.id)}
@@ -1280,10 +1275,46 @@ export default function Curriculum() {
             {libraryBlocks.length === 0 && <div className="curr-empty">No blocks yet. Add one above.</div>}
             {libraryBlocks.map(block => {
               const isOpen = expandedLibraryBlocks[block.id]
+              const isEditing = editingLibraryBlock === block.id
               return (
                 <div key={block.id} className={`curr-block-row ${isOpen ? 'open' : ''}`}>
-                  <div className="curr-block-header" onClick={() => toggleLibraryBlock(block.id)}>
-                    <span className="curr-block-title">{block.title}</span>
+                  <div className="curr-block-header" onClick={() => { if (!isEditing) toggleLibraryBlock(block.id) }}>
+                    {isEditing ? (
+                      <input
+                        className="curr-block-title-input"
+                        value={block.title}
+                        onClick={e => e.stopPropagation()}
+                        onChange={e => updateLibraryBlock(block.id, 'title', e.target.value)}
+                        onBlur={() => saveLibraryBlock(block.id)}
+                        autoFocus
+                      />
+                    ) : (
+                      <span className="curr-block-title">{block.title}</span>
+                    )}
+                    <div style={{ position: 'relative', flexShrink: 0 }} onClick={e => e.stopPropagation()}>
+                      <button
+                        className="curr-more-btn"
+                        onClick={() => setOpenLibraryMenuId(openLibraryMenuId === block.id ? null : block.id)}
+                      >
+                        <MoreHorizontal size={14} />
+                      </button>
+                      {openLibraryMenuId === block.id && (
+                        <div className="curr-block-menu">
+                          <button
+                            className="curr-block-menu-item"
+                            onClick={() => { setEditingLibraryBlock(block.id); setOpenLibraryMenuId(null) }}
+                          >
+                            <Pencil size={14} /> Edit title
+                          </button>
+                          <button
+                            className="curr-block-menu-item danger"
+                            onClick={() => deleteLibraryBlock(block.id)}
+                          >
+                            <Trash2 size={14} /> Delete block
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   </div>
                   {isOpen && (
                     <div className="curr-block-body">

@@ -10,7 +10,7 @@
 .curr-count-box {
   background: #FFFFFF;
   border-radius: 0;
-  padding: 12px 12px;
+  padding: 16px 16px;
   font-family: 'Figtree', sans-serif;
   font-size: 13px;
   color: var(--text-secondary);
@@ -64,7 +64,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 12px;
+  padding: 16px;
   border-bottom: 0.5px solid var(--stroke-default);
   background: transparent;
   cursor: pointer;
@@ -204,7 +204,7 @@
   flex-shrink: 0;
 }
 
-.curr-main-header-lessons { padding: 12px 12px 12px 16px; }
+.curr-main-header-lessons { padding: 16px 16px 16px 20px; }
 .curr-main-header-blocks { padding: 12px; }
 
 /* Tertiary button */
@@ -290,6 +290,7 @@
 .curr-lesson-list {
   overscroll-behavior: contain;
   flex: 1;
+  min-width: 0;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -313,7 +314,8 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 12px;
+  padding: 16px;
+  min-width: 0;
   border-bottom: 0.5px solid var(--stroke-default);
   cursor: pointer;
   transition: background 0.1s;
@@ -367,6 +369,11 @@
   font-size: 15px;
   font-weight: 400;
   color: var(--text-secondary);
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .curr-lesson-blocks {
@@ -452,19 +459,21 @@
 
 .curr-block-list {
   flex: 1;
+  min-width: 0;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
 }
 
-.curr-block-row { border-bottom: 0.5px solid var(--stroke-default); }
+.curr-block-row { border-bottom: 0.5px solid var(--stroke-default); min-width: 0; }
 .curr-block-row:last-child { border-bottom: none; }
 
 .curr-block-header {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 12px;
+  padding: 16px;
+  min-width: 0;
   cursor: pointer;
   transition: background 0.1s;
 }
@@ -480,6 +489,10 @@
   font-weight: 600;
   color: var(--text-primary);
   flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .curr-block-title-col {
@@ -504,6 +517,7 @@
 
 .curr-block-title-input {
   flex: 1;
+  min-width: 0;
   font-family: 'Figtree', sans-serif;
   font-size: 15px;
   font-weight: 600;
@@ -517,7 +531,7 @@
 
 /* Tertiary button */
 .curr-block-body {
-  padding: 0 12px 12px 12px;
+  padding: 0 16px 16px 16px;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -657,7 +671,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 12px 12px 16px;
+  padding: 16px 16px 16px 20px;
   border-bottom: 0.5px solid var(--stroke-default);
 }
 
@@ -691,7 +705,7 @@
   align-items: center;
   justify-content: flex-end;
   gap: 8px;
-  padding: 12px 12px;
+  padding: 16px 16px;
   border-top: 0.5px solid var(--stroke-default);
 }
 
@@ -772,71 +786,94 @@
 
 .curr-insert-body {
   display: flex;
+  flex-direction: column;
   max-height: 420px;
+  margin: -16px; /* cancel modal-body/drawer-body padding so rows touch the walls */
 }
 
+/* ── Series group picker — segmented control style ── */
 .curr-insert-groups {
-  width: 160px;
-  flex-shrink: 0;
-  border-right: 0.5px solid var(--stroke-default);
-  overflow-y: auto;
   display: flex;
-  flex-direction: column;
-  padding: 12px;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  overflow-x: auto;
   gap: 4px;
+  padding: 8px;
+  background: var(--surface-chip);
+  border-bottom: 0.5px solid var(--stroke-default);
+  flex-shrink: 0;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
 }
+
+.curr-insert-groups::-webkit-scrollbar { display: none; }
 
 .curr-insert-group-row {
-  padding: 0px 12px;
+  flex-shrink: 0;
+  white-space: nowrap;
+  padding: 0 14px;
   height: 32px;
   border-radius: 6px;
+  border: none;
+  background: transparent;
   font-family: 'Figtree', sans-serif;
   font-size: 13px;
   font-weight: 600;
-  color: var(--text-secondary);
+  color: var(--text-muted);
   cursor: pointer;
-  transition: background 0.1s;
+  transition: all 0.1s;
   display: flex;
   align-items: center;
 }
 
-@media (hover: hover) { .curr-insert-group-row:hover { background: var(--surface-panel); } }
+@media (hover: hover) { .curr-insert-group-row:hover { background: rgba(255,255,255,0.6); } }
 
 .curr-insert-group-row.selected {
-  background: var(--surface-chip);
+  background: #FFFFFF;
   color: var(--text-primary);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
 }
 
 .curr-insert-content {
   flex: 1;
-  min-width: 0;
+  min-height: 0;
   display: flex;
   flex-direction: column;
 }
 
+/* ── Activity type picker — plain individual chip style ── */
 .curr-insert-tabs {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  overflow-x: auto;
   gap: 6px;
-  padding: 12px 12px;
+  padding: 8px;
   border-bottom: 0.5px solid var(--stroke-default);
+  flex-shrink: 0;
+  scrollbar-width: none;
+}
+
+.curr-insert-tabs::-webkit-scrollbar { display: none; }
+
+.curr-insert-tabs .sch-modal-chip {
+  white-space: nowrap;
   flex-shrink: 0;
 }
 
 .curr-insert-list {
   overflow-y: auto;
+  flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  padding: 12px 12px;
+  gap: 0;
+  padding: 0;
 }
 
 .curr-insert-row {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 12px 12px;
-  border-radius: 6px;
+  padding: 16px;
   cursor: pointer;
   transition: background 0.1s;
 }
@@ -865,6 +902,10 @@
   font-weight: 600;
   color: var(--text-primary);
   flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* ───────────────────────────────────────────────────────────────────────
@@ -894,6 +935,7 @@
 
 .hm-block-list {
   flex: 1;
+  min-width: 0;
   overflow-y: auto;
 }
 
@@ -901,15 +943,15 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 12px;
+  padding: 16px;
   border-bottom: 0.5px solid var(--stroke-default);
   background: #FFFFFF;
   flex-shrink: 0;
 }
 
 .hm-back-btn {
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   border-radius: 6px;
   border: 0.5px solid var(--stroke-default);
   background: #FFFFFF;
@@ -934,8 +976,8 @@
 }
 
 .hm-edit-btn {
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   border-radius: 6px;
   border: 0.5px solid var(--stroke-default);
   background: #FFFFFF;
@@ -958,5 +1000,41 @@
 .drawer-body .sch-modal-chip,
 .drawer-footer .sch-form-save,
 .drawer-footer .sch-form-cancel {
+  height: 40px;
+}
+
+/* ── Mobile-specific overrides ───────────────────────────────────────── */
+
+/* Hide drag handles on mobile — touch drag-reorder isn't supported */
+.curr-mobile .curr-grip-handle { display: none; }
+
+/* Bump more-menu buttons to 40px tap targets on mobile */
+.curr-mobile .curr-more-btn {
+  width: 40px;
+  height: 40px;
+}
+
+.drawer-body .curr-insert-group-row {
+  height: 40px;
+}
+
+/* Series tab group — scrollable pill row instead of wrapping */
+.curr-mobile .curr-series-tabs {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  gap: 6px;
+  padding: 8px 12px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.curr-mobile .curr-series-tabs::-webkit-scrollbar { display: none; }
+
+.curr-mobile .curr-series-tabs .sch-sidebar-tab {
+  flex-shrink: 0;
+  white-space: nowrap;
+  width: auto;
+  padding: 0 14px;
   height: 36px;
 }

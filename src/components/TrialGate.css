@@ -44,7 +44,7 @@
 
 .tg-btn-upgrade {
   width: 100%;
-  height: 40px;
+  height: 32px;
   border-radius: 6px;
   border: 0.5px solid var(--brand-border);
   background: var(--brand-fill);
@@ -61,7 +61,7 @@
 
 .tg-btn-grace {
   width: 100%;
-  height: 36px;
+  height: 32px;
   border-radius: 6px;
   border: 0.5px solid var(--stroke-default);
   background: var(--surface-chip);
@@ -101,3 +101,24 @@
 }
 
 @media (hover: hover) { .tg-btn-signout:hover { color: var(--text-secondary); } }
+
+/* ── Mobile — full-screen card, 40px tap targets ── */
+@media (max-width: 900px) {
+  .tg-shell {
+    align-items: flex-start;
+    padding: 0;
+  }
+
+  .tg-card {
+    border: none;
+    border-radius: 0;
+    padding: 60px 24px 40px;
+    min-height: 100vh;
+    max-width: 100%;
+  }
+
+  .tg-btn-upgrade,
+  .tg-btn-grace {
+    height: 40px;
+  }
+}

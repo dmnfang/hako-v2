@@ -283,7 +283,7 @@
 }
 
 .no-blocks {
-  padding: 24px;
+  padding: 16px;
   font-family: 'Figtree', sans-serif;
   font-size: 13px;
   color: var(--text-muted);
@@ -312,6 +312,10 @@
   font-weight: 600;
   color: var(--text-primary);
   flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* Tertiary button */
@@ -1202,7 +1206,7 @@
   display: flex;
   gap: 8px;
   padding: 16px;
-  padding-bottom: max(12px, env(safe-area-inset-bottom));
+  padding-bottom: max(16px, env(safe-area-inset-bottom));
   background: #FFFFFF;
   border-top: 0.5px solid var(--stroke-default);
   flex-shrink: 0;
@@ -1226,9 +1230,9 @@
   flex: 1;
   height: 40px;
   border-radius: 6px;
-  border: none;
-  background: var(--text-primary);
-  color: #FFFFFF;
+  border: 0.5px solid var(--brand-border);
+  background: var(--brand-fill);
+  color: var(--brand-text);
   font-family: 'Figtree', sans-serif;
   font-size: 15px;
   font-weight: 700;

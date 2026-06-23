@@ -97,6 +97,11 @@
   font-weight: 600;
   color: var(--text-primary);
   transition: color 0.15s;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .sc-row-count {
@@ -409,7 +414,6 @@
   line-height: 24px;
   font-weight: 700;
   color: var(--text-primary);
-  flex-shrink: 0;
 }
 
 .sc-class-dot {
@@ -635,15 +639,15 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 12px;
+  padding: 16px;
   border-bottom: 0.5px solid var(--stroke-default);
   background: #FFFFFF;
   flex-shrink: 0;
 }
 
 .hm-back-btn {
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   border-radius: 6px;
   border: 0.5px solid var(--stroke-default);
   background: #FFFFFF;
@@ -668,8 +672,8 @@
 }
 
 .hm-edit-btn {
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   border-radius: 6px;
   border: 0.5px solid var(--stroke-default);
   background: #FFFFFF;

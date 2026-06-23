@@ -81,7 +81,7 @@
 }
 
 .level-chip {
-  height: 36px;
+  height: 32px;
   padding: 0 18px;
   border-radius: 999px;
   border: 0.5px solid var(--stroke-default);
@@ -158,7 +158,7 @@
 
 .curriculum-form-row input,
 .curriculum-form-row select {
-  height: 36px;
+  height: 32px;
   border-radius: 8px;
   border: 0.5px solid var(--stroke-default);
   background: #FFFFFF;
@@ -350,7 +350,7 @@
 .class-add-row select { flex: 1; min-width: 100px; }
 
 .wz-btn-add {
-  height: 36px;
+  height: 32px;
   padding: 0 14px;
   border-radius: 8px;
   border: 0.5px solid var(--stroke-default);
@@ -373,7 +373,7 @@
 }
 
 .wz-btn-back {
-  height: 36px;
+  height: 32px;
   padding: 0 16px;
   border-radius: 8px;
   border: 0.5px solid var(--stroke-default);
@@ -385,7 +385,7 @@
 }
 
 .wz-btn-next {
-  height: 36px;
+  height: 32px;
   padding: 0 20px;
   border-radius: 8px;
   border: 0.5px solid var(--brand-border);
@@ -400,7 +400,7 @@
 .wz-btn-next:disabled { opacity: 0.4; cursor: default; }
 
 .wz-btn-finish {
-  height: 36px;
+  height: 32px;
   padding: 0 20px;
   border-radius: 8px;
   border: none;
@@ -460,6 +460,40 @@
 
 .curriculum-form-row input,
 .curriculum-form-row select {
-  height: 36px;
+  height: 32px;
   box-sizing: border-box;
+}
+/* ── Mobile — bump all controls to 40px, full-screen card ── */
+@media (max-width: 900px) {
+  .wizard-shell {
+    align-items: flex-start;
+    padding: 0;
+  }
+
+  .wizard-card {
+    border: none;
+    border-radius: 0;
+    padding: 32px 24px;
+    min-height: 100vh;
+    max-width: 100%;
+  }
+
+  .level-chip,
+  .school-tab,
+  .day-chip,
+  .curriculum-form-row input,
+  .curriculum-form-row select,
+  .class-add-row input,
+  .class-add-row select,
+  .wz-btn-back,
+  .wz-btn-next,
+  .wz-btn-finish,
+  .wz-btn-add {
+    height: 40px;
+  }
+
+  .confirm-btn {
+    width: 40px;
+    height: 40px;
+  }
 }

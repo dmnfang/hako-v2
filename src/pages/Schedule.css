@@ -166,6 +166,7 @@
   font-weight: 500;
   color: var(--sage-text);
   background: var(--sage-fill);
+  border: 0.5px solid var(--sage-border);
   border-radius: 999px;
   padding: 5px 10px;
 }
@@ -1201,6 +1202,7 @@
   font-weight: 600;
   color: var(--sage-text);
   background: var(--sage-fill);
+  border: 0.5px solid var(--sage-border);
   border-radius: 4px;
   padding: 2px 4px;
   white-space: nowrap;
