@@ -4,11 +4,10 @@ import { supabase } from '../lib/supabase'
 import { useData } from '../context/DataContext'
 import Layout from '../components/Layout'
 import HintBanner from '../components/HintBanner'
-import BottomDrawer from '../components/BottomDrawer'
+import ResponsiveModal from '../components/ResponsiveModal'
 import { useDaySchedule, toLocalDateStr, getDayStatus } from '../hooks/useDaySchedule'
 import { GripVertical, ChevronLeft, ChevronRight, X, Play, ArrowLeft, Pencil, StickyNote } from 'lucide-react'
 import { useIsMobile } from '../hooks/useMediaQuery'
-import ResponsiveModal from '../components/ResponsiveModal'
 import ErrorBoundary from '../components/ErrorBoundary'
 import './Home.css'
 
@@ -507,34 +506,6 @@ export default function Home() {
           </div>
         )}
 
-        <BottomDrawer
-          open={memoExpanded}
-          onClose={() => setMemoExpanded(false)}
-          title="Memo"
-          footer={
-            <button className="hm-drawer-save-btn" onClick={() => { saveMemo(); setMemoExpanded(false) }} disabled={!memoDraft.trim()}>
-              Save Memo
-            </button>
-          }
-        >
-          {previousMemo && (
-            <div className="memo-previous">
-              <span className="memo-previous-label">Previous Lesson Memo</span>
-              <span className="memo-previous-text">{previousMemo.note}</span>
-            </div>
-          )}
-          <textarea
-            className="curr-block-input"
-            value={memoDraft}
-            placeholder="e.g. Didn't finish Let's Chant — vocab was too hard, slow down next time."
-            onChange={e => {
-              setMemoDraft(e.target.value)
-              e.target.style.height = 'auto'
-              e.target.style.height = `${e.target.scrollHeight}px`
-            }}
-            rows={3}
-          />
-        </BottomDrawer>
       </div>
   )
 

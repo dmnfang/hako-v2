@@ -114,7 +114,9 @@
 }
 
 @media (min-width: 901px) {
+  @media (min-width: 901px) {
   .sch-row.selected::before { background: var(--brand-border); }
+}
 }
 
 .sch-row-top {
@@ -1423,4 +1425,24 @@
   .sch-cal-day-empty {
     max-height: 120px;
   }
+}
+
+@media (max-width: 900px) {
+  .sch-new-btn { height: 40px; }
+}
+
+/* ── Mobile calendar — full bleed to left/right/bottom edges ── */
+.sch-mobile .sch-cal-container {
+  padding: 12px 0 0 0;
+}
+
+.sch-mobile .sch-cal-nav {
+  padding: 0 12px;
+}
+
+.sch-mobile .sch-cal-grid {
+  border-radius: 0;
+  border-left: none;
+  border-right: none;
+  border-bottom: none;
 }

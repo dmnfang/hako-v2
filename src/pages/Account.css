@@ -558,3 +558,16 @@
   display: flex;
   flex-direction: column;
 }
+
+/* ── Mobile — bump form buttons to 40px ── */
+@media (max-width: 900px) {
+  .acc-btn-edit,
+  .acc-btn-save,
+  .acc-btn-cancel,
+  .acc-btn-grace,
+  .acc-btn-upgrade,
+  .acc-btn-danger,
+  .acc-input {
+    height: 40px;
+  }
+}

@@ -3,7 +3,7 @@
 }
 
 body.has-mobile-tab-bar {
-  --mobile-tab-bar-height: 58px;
+  --mobile-tab-bar-height: 64px;
 }
 
 .mobile-tab-bar {
@@ -13,7 +13,7 @@ body.has-mobile-tab-bar {
   right: 0;
   z-index: 150;
   display: flex;
-  height: 58px;
+  height: 64px;
   background: #FFFFFF;
   border-top: 0.5px solid var(--stroke-default);
   padding-bottom: env(safe-area-inset-bottom);

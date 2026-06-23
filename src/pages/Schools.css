@@ -82,7 +82,9 @@
   transition: background 0.15s;
 }
 
-.sc-row.selected::before { background: var(--brand-border); }
+@media (min-width: 901px) {
+  .sc-row.selected::before { background: var(--brand-border); }
+}
 
 .sc-row-top {
   display: flex;
@@ -704,4 +706,35 @@
   height: 36px;
   min-width: 36px;
   min-height: 36px;
+}
+
+/* ── Mobile sizing pass — 16px container padding, 40px tap targets ── */
+@media (max-width: 900px) {
+  .sc-sidebar-header,
+  .sc-row,
+  .sc-panel-header,
+  .sc-class-row {
+    padding: 16px;
+  }
+
+  .sc-class-form { padding: 16px 20px; }
+
+  .sc-new-btn,
+  .sc-add-btn,
+  .sc-input,
+  .sc-select,
+  .sc-form-save,
+  .sc-form-cancel,
+  .sc-form-delete,
+  .sc-form-danger,
+  .sc-class-btn,
+  .sc-modal-close {
+    height: 40px;
+  }
+
+  .sc-lesson-arrow,
+  .sc-more-btn {
+    width: 40px;
+    height: 40px;
+  }
 }

@@ -82,7 +82,9 @@
   transition: background 0.15s;
 }
 
-.curr-row.selected::before { background: var(--brand-border); }
+@media (min-width: 901px) {
+  .curr-row.selected::before { background: var(--brand-border); }
+}
 @media (hover: hover) { .curr-row:hover { background: var(--surface-panel); } }
 .curr-row.selected { background: #FFFFFF; }
 .curr-row.selected .curr-row-name { color: var(--text-primary); }
@@ -1037,4 +1039,9 @@
   width: auto;
   padding: 0 14px;
   height: 36px;
+}
+
+@media (max-width: 900px) {
+  .curr-new-btn { height: 40px; }
+  .grip-offset { margin-left: 0; }
 }
