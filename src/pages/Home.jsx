@@ -394,28 +394,71 @@ export default function Home() {
               <span className="hm-detail-subtitle">
                 {selectedPeriodSchool?.name ?? '—'} · {selectedClass?.label ?? 'No class'}
               </span>
-              <button className="hm-memo-icon-btn" onClick={() => setMemoExpanded(true)}>
-                <StickyNote size={16} className={previousMemo ? 'has-memo' : ''} />
-              </button>
             </div>
 
             {selectedLesson ? (
               <>
-                <div className="lesson-header hm-lesson-header">
-                  <button className="lesson-nav-btn" onClick={() => navigateLesson(selectedPeriodIdx, -1)} disabled={selectedLessonIdx === 0}>
-                    <ChevronLeft size={14} />
-                  </button>
-                  <div className="lesson-title-group hm-lesson-title-group">
-                    <span className="lesson-main-title">{selectedLesson.tag1 ?? '—'}</span>
+                <div className="hm-lesson-bar">
+                  <div className="hm-lesson-title-row">
+                    <span className="hm-lesson-tag1">{selectedLesson.tag1 ?? '—'}</span>
                     <span className="lesson-title-dot" />
-                    <span className="lesson-sub-title">{selectedLesson.tag2 ?? selectedLesson.title}</span>
+                    <span className="hm-lesson-tag2">{selectedLesson.tag2 ?? selectedLesson.title}</span>
                   </div>
-                  <button className="lesson-nav-btn" onClick={() => navigateLesson(selectedPeriodIdx, 1)} disabled={selectedLessonIdx === selectedLessons.length - 1}>
-                    <ChevronRight size={14} />
-                  </button>
+                  <div className="hm-lesson-actions">
+                    <button
+                      className="hm-edit-btn"
+                      onClick={() => navigate('/curriculum', {
+                        state: { lessonId: selectedLesson.id, curriculumId: selectedClass.curriculum_id }
+                      })}
+                    >
+                      <Pencil size={16} />
+                    </button>
+                    <button
+                      className="hm-start-btn"
+                      onClick={() => navigate(`/runner/${selectedClass.id}/${selectedLesson.id}`)}
+                    >
+                      <Play size={16} /> Start Lesson
+                    </button>
+                    <button className="hm-nav-btn" onClick={() => navigateLesson(selectedPeriodIdx, -1)} disabled={selectedLessonIdx === 0}>
+                      <ChevronLeft size={16} />
+                    </button>
+                    <button className="hm-nav-btn" onClick={() => navigateLesson(selectedPeriodIdx, 1)} disabled={selectedLessonIdx === selectedLessons.length - 1}>
+                      <ChevronRight size={16} />
+                    </button>
+                  </div>
                 </div>
 
                 <div className="block-list hm-block-list">
+                  <div className={`block-row memo-row ${memoExpanded ? 'open' : ''}`}>
+                    <div className="memo-row-header" onClick={() => setMemoExpanded(prev => !prev)}>
+                      <StickyNote size={14} className="memo-icon" />
+                      <span className="block-title">Memo</span>
+                    </div>
+                    {memoExpanded && (
+                      <div className="memo-content-body">
+                        {previousMemo && (
+                          <div className="memo-previous">
+                            <span className="memo-previous-label">Previous Lesson Memo</span>
+                            <span className="memo-previous-text">{previousMemo.note}</span>
+                          </div>
+                        )}
+                        <textarea
+                          className="curr-block-input"
+                          value={memoDraft}
+                          placeholder="e.g. Didn't finish Let's Chant — vocab was too hard, slow down next time."
+                          onChange={e => {
+                            setMemoDraft(e.target.value)
+                            e.target.style.height = 'auto'
+                            e.target.style.height = `${e.target.scrollHeight}px`
+                          }}
+                          rows={3}
+                        />
+                        <button className="edit-lesson-btn memo-save-btn" onClick={saveMemo} disabled={!memoDraft.trim()}>
+                          Save Memo
+                        </button>
+                      </div>
+                    )}
+                  </div>
                   {selectedBlocks.length === 0 && <div className="no-blocks">No blocks in this lesson yet.</div>}
                   {selectedBlocks.map((block, i) => {
                     const key = `${selectedLesson.id}_${i}`
@@ -438,23 +481,6 @@ export default function Home() {
                       </div>
                     )
                   })}
-                </div>
-
-                <div className="hm-bottom-bar">
-                  <button
-                    className="hm-edit-btn"
-                    onClick={() => navigate('/curriculum', {
-                      state: { lessonId: selectedLesson.id, curriculumId: selectedClass.curriculum_id }
-                    })}
-                  >
-                    <Pencil size={16} />
-                  </button>
-                  <button
-                    className="hm-start-btn"
-                    onClick={() => navigate(`/runner/${selectedClass.id}/${selectedLesson.id}`)}
-                  >
-                    <Play size={16} /> Start Lesson
-                  </button>
                 </div>
               </>
             ) : isMultiClass && !resolvedClassId ? (
