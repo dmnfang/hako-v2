@@ -879,10 +879,11 @@
 
 .modal-label-spaced {
   margin-bottom: 0;
+  margin-top: 8px;
 }
 
 .sch-option-grid-spaced {
-  margin-top: 0;
+  margin-top: 8px;
 }
 
 .modal-label {
