@@ -46,7 +46,10 @@
   width: 100%;
   height: 32px;
   border-radius: 6px;
-  border: 0.5px solid var(--brand-border);
+  border-top: 1px solid var(--brand-border);
+  border-left: 1px solid var(--brand-border);
+  border-right: 1px solid var(--brand-border);
+  border-bottom: 2px solid var(--brand-text);
   background: var(--brand-fill);
   color: var(--brand-text);
   font-family: 'Figtree', sans-serif;
@@ -56,6 +59,7 @@
   transition: background 0.15s;
   margin-top: 4px;
 }
+.tg-btn-upgrade:active { border-bottom-width: 1px; transform: translateY(1px); }
 
 @media (hover: hover) { .tg-btn-upgrade:hover { background: var(--brand-hover); } }
 
@@ -63,7 +67,10 @@
   width: 100%;
   height: 32px;
   border-radius: 6px;
-  border: 0.5px solid var(--stroke-default);
+  border-top: 1px solid var(--stroke-default);
+  border-left: 1px solid var(--stroke-default);
+  border-right: 1px solid var(--stroke-default);
+  border-bottom: 2px solid var(--stroke-medium);
   background: var(--surface-chip);
   font-family: 'Figtree', sans-serif;
   font-size: 14px;
@@ -72,6 +79,7 @@
   cursor: pointer;
   transition: background 0.15s;
 }
+.tg-btn-grace:active { border-bottom-width: 1px; transform: translateY(1px); }
 
 @media (hover: hover) { .tg-btn-grace:hover { background: var(--surface-panel); } }
 .tg-btn-grace:disabled { opacity: 0.5; cursor: default; }

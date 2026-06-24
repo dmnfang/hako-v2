@@ -5,7 +5,7 @@ import Layout from '../components/Layout'
 import HintBanner from '../components/HintBanner'
 import { useDaySchedule, toLocalDateStr, getDayStatus } from '../hooks/useDaySchedule'
 import { useIsMobile } from '../hooks/useMediaQuery'
-import { X, ChevronLeft, ChevronRight, ArrowLeft } from 'lucide-react'
+import { X, ChevronLeft, ChevronRight, ArrowLeft, School, Clock, Users, BookOpen } from 'lucide-react'
 import ResponsiveModal from '../components/ResponsiveModal'
 import './Schedule.css'
 
@@ -32,82 +32,61 @@ function RegularPeriodCard({ num, period, onPeriodClick }) {
 
   return (
     <div className={`sch-period-row ${isEmpty ? 'empty' : ''}`}>
-      <div className="sch-period-header-row">
+      <div className="sch-period-bar">
         <button className="sch-period-eyebrow-chip" onClick={() => onPeriodClick(num)}>Period {num}</button>
-      </div>
-      <div className="sch-period-bar sch-class-pool">
-        <span className="sch-pool-chip">{schoolName}</span>
-        {classChips.length > 0 ? (
-          classChips.map((label, i) => <span key={i} className="sch-pool-chip">{label}</span>)
-        ) : (
-          <span className="sch-pool-chip empty">No class</span>
-        )}
-        <span className="sch-pool-chip">{timeLabel}</span>
+        <div className="sch-period-info-col">
+          <div className="sch-period-info-row">
+            <span className="sch-period-tap-chip"><School size={13} />{schoolName}</span>
+            <span className="sch-period-tap-chip"><Clock size={13} />{timeLabel}</span>
+          </div>
+          <div className="sch-period-info-row">
+            {classChips.length > 0 ? (
+              classChips.map((label, i) => <span key={i} className="sch-period-tap-chip"><Users size={13} />{label}</span>)
+            ) : (
+              <span className="sch-period-tap-chip empty"><Users size={13} />No class</span>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   )
 }
 
 // ─── Calendar period card ──────────────────────────────────────────────────
-// Matches Home's layout exactly:
-// [School] [Time]
-// [Class]  [Lesson]      — Single Class
-// [Select Class]         — Multi Class, unresolved
-// [Class]  [Lesson]       — Multi Class, resolved
-function PeriodCard({ num, period, isMultiClass, resolvedClassLabel, lessonLabel, onSchoolClick, onClassClick, onTimeClick, onMultiClassClick }) {
+function PeriodCard({ num, period, isMultiClass, resolvedClassLabel, lessonLabel, onPeriodClick }) {
   const slots = period?.slots ?? []
   const isEmpty = !period || !slots[0]?.school_id || (!isMultiClass && !resolvedClassLabel)
-
-  if (!period) {
-    return (
-      <div className={`sch-period-row ${isEmpty ? 'empty' : ''}`}>
-        <div className="sch-period-header-row">
-          <span className="sch-period-eyebrow">Period {num}</span>
-        </div>
-        <div className="sch-period-bar">
-          <button className="sch-period-tap-chip school empty" onClick={() => onSchoolClick(num)}>
-            No school
-          </button>
-        </div>
-      </div>
-    )
-  }
-
   const timeLabel = slots[0]?.start_time ? `${slots[0].start_time.slice(0,5)} – ${slots[0].end_time?.slice(0,5)}` : 'Set time'
 
   return (
     <div className={`sch-period-row ${isEmpty ? 'empty' : ''}`}>
-      <div className="sch-period-header-row">
-        <span className="sch-period-eyebrow">Period {num}</span>
-      </div>
-
-      {/* School + Time */}
       <div className="sch-period-bar">
-        <button className="sch-period-tap-chip school" onClick={() => onSchoolClick(num)}>
-          {slots[0]?.school?.name ?? 'No school'}
-        </button>
-        <button className="sch-period-time-chip" onClick={() => onTimeClick(num)}>
-          {timeLabel}
-        </button>
-      </div>
-
-      {/* Class + Lesson */}
-      <div className="sch-period-bar">
-        {isMultiClass ? (
-          resolvedClassLabel ? (
-            <>
-              <button className="sch-period-tap-chip class" onClick={() => onMultiClassClick(num)}>{resolvedClassLabel}</button>
-              {lessonLabel && <span className="sch-pool-chip" style={{cursor:'default'}}>{lessonLabel}</span>}
-            </>
-          ) : (
-            <button className="sch-period-tap-chip class empty" onClick={() => onMultiClassClick(num)}>Select Class</button>
-          )
-        ) : (
-          <>
-            <button className="sch-period-tap-chip class" onClick={() => onClassClick(num)}>{resolvedClassLabel ?? 'No class'}</button>
-            {lessonLabel && <span className="sch-pool-chip" style={{cursor:'default'}}>{lessonLabel}</span>}
-          </>
-        )}
+        <button className="sch-period-eyebrow-chip" onClick={() => onPeriodClick(num)}>Period {num}</button>
+        <div className="sch-period-info-col">
+          <div className="sch-period-info-row">
+            <span className="sch-period-tap-chip"><School size={13} />{slots[0]?.school?.name ?? 'No school'}</span>
+            <span className="sch-period-tap-chip"><Clock size={13} />{period ? timeLabel : '—'}</span>
+          </div>
+          <div className="sch-period-info-row">
+            {isMultiClass ? (
+              resolvedClassLabel ? (
+                <>
+                  <span className="sch-period-tap-chip"><Users size={13} />{resolvedClassLabel}</span>
+                  {lessonLabel && <span className="sch-period-tap-chip"><BookOpen size={13} />{lessonLabel}</span>}
+                </>
+              ) : (
+                <span className="sch-period-tap-chip empty"><Users size={13} />Select Class</span>
+              )
+            ) : (
+              <>
+                <span className={`sch-period-tap-chip ${!resolvedClassLabel ? 'empty' : ''}`}>
+                  <Users size={13} />{resolvedClassLabel ?? 'No class'}
+                </span>
+                {lessonLabel && <span className="sch-period-tap-chip"><BookOpen size={13} />{lessonLabel}</span>}
+              </>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   )
@@ -493,36 +472,16 @@ function CalendarTab({ schools, allClasses, progressCtx, selectedDate, isMobile,
                   isMultiClass={isMultiClass}
                   resolvedClassLabel={resolvedCls?.label ?? null}
                   lessonLabel={lessonLabel}
-                  onMultiClassClick={n => {
-                    setModalPeriodIdx(periods.findIndex(p => p.period_number === n))
-                    setModalOtherClassId(null)
-                    setModalMultiChangeType('once')
-                    setModal('multi_class')
-                  }}
-                  onSchoolClick={n => {
-                    const idx = periods.findIndex(p => p.period_number === n)
-                    setModalPeriodIdx(idx)
-                    setModalSlotIdx(0)
-                    setModalSchoolId(periods[idx]?.slots?.[0]?.school_id ?? null)
-                    setModalChangeType('once')
-                    setModal('school')
-                  }}
-                  onClassClick={n => {
-                    const idx = periods.findIndex(p => p.period_number === n)
-                    setModalPeriodIdx(idx)
-                    setModalSlotIdx(0)
-                    setModalClassId(periods[idx]?.slots?.[0]?.class_id ?? null)
-                    setModalChangeType('once')
-                    setModal('class')
-                  }}
-                  onTimeClick={n => {
+                  onPeriodClick={n => {
                     const idx = periods.findIndex(p => p.period_number === n)
                     const slot = periods[idx]?.slots?.[0]
                     setModalPeriodIdx(idx)
                     setModalSlotIdx(0)
+                    setModalSchoolId(slot?.school_id ?? null)
+                    setModalClassId(slot?.class_id ?? null)
                     setModalTimeForm({ start_time: slot?.start_time?.slice(0,5) ?? '', end_time: slot?.end_time?.slice(0,5) ?? '' })
                     setModalChangeType('once')
-                    setModal('time')
+                    setModal('period_config')
                   }}
                 />
               )

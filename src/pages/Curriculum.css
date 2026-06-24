@@ -35,7 +35,10 @@
   height: 32px;
   padding: 0 12px;
   border-radius: 6px;
-  border: 0.5px solid var(--brand-border);
+  border-top: 1px solid var(--brand-border);
+  border-left: 1px solid var(--brand-border);
+  border-right: 1px solid var(--brand-border);
+  border-bottom: 2px solid var(--brand-text);
   background: var(--brand-fill);
   color: var(--brand-text);
   font-family: 'Figtree', sans-serif;
@@ -48,6 +51,7 @@
   align-self: flex-start;
   transition: opacity 0.15s;
 }
+.curr-new-btn:active { border-bottom-width: 1px; transform: translateY(1px); }
 
 @media (hover: hover) { .curr-new-btn:hover { opacity: 0.85; } }
 
@@ -85,7 +89,7 @@
 @media (min-width: 901px) {
   .curr-row.selected::before { background: var(--brand-border); }
 }
-@media (hover: hover) { .curr-row:hover { background: var(--surface-panel); } }
+@media (hover: hover) { .curr-row:hover { background: var(--surface-chip); } }
 .curr-row.selected { background: #FFFFFF; }
 .curr-row.selected .curr-row-name { color: var(--text-primary); }
 .curr-row.selected .curr-row-count { color: var(--text-primary); }
@@ -214,7 +218,10 @@
   width: 32px;
   height: 32px;
   border-radius: 6px;
-  border: 0.5px solid var(--stroke-default);
+  border-top: 1px solid var(--stroke-default);
+  border-left: 1px solid var(--stroke-default);
+  border-right: 1px solid var(--stroke-default);
+  border-bottom: 2px solid var(--stroke-medium);
   background: #FFFFFF;
   color: var(--text-secondary);
   cursor: pointer;
@@ -224,8 +231,9 @@
   transition: all 0.15s;
   flex-shrink: 0;
 }
+.curr-back-btn:active { border-bottom-width: 1px; transform: translateY(1px); }
 
-@media (hover: hover) { .curr-back-btn:hover { background: var(--surface-panel); } }
+@media (hover: hover) { .curr-back-btn:hover { background: var(--surface-chip); } }
 
 .curr-main-title {
   font-family: 'Figtree', sans-serif;
@@ -255,7 +263,10 @@
   height: 32px;
   padding: 0 12px;
   border-radius: 6px;
-  border: 0.5px solid var(--stroke-default);
+  border-top: 1px solid var(--stroke-default);
+  border-left: 1px solid var(--stroke-default);
+  border-right: 1px solid var(--stroke-default);
+  border-bottom: 2px solid var(--stroke-medium);
   background: #FFFFFF;
   font-family: 'Figtree', sans-serif;
   font-size: 13px;
@@ -268,15 +279,19 @@
   transition: all 0.15s;
   white-space: nowrap;
 }
+.curr-action-btn:active { border-bottom-width: 1px; transform: translateY(1px); }
 
-@media (hover: hover) { .curr-action-btn:hover { background: var(--surface-panel); } }
+@media (hover: hover) { .curr-action-btn:hover { background: var(--surface-chip); } }
 
 /* Tertiary button */
 .curr-more-btn {
   width: 32px;
   height: 32px;
   border-radius: 6px;
-  border: 0.5px solid var(--stroke-default);
+  border-top: 1px solid var(--stroke-default);
+  border-left: 1px solid var(--stroke-default);
+  border-right: 1px solid var(--stroke-default);
+  border-bottom: 2px solid var(--stroke-medium);
   background: #FFFFFF;
   color: var(--text-secondary);
   cursor: pointer;
@@ -286,8 +301,9 @@
   flex-shrink: 0;
   transition: all 0.15s;
 }
+.curr-more-btn:active { border-bottom-width: 1px; transform: translateY(1px); }
 
-@media (hover: hover) { .curr-more-btn:hover { background: var(--surface-panel); } }
+@media (hover: hover) { .curr-more-btn:hover { background: var(--surface-chip); } }
 
 .curr-lesson-list {
   overscroll-behavior: contain;
@@ -324,7 +340,7 @@
 }
 
 @media (hover: hover) {
-  .curr-lesson-row:hover:not(:has(.curr-more-btn:hover)) { background: var(--surface-panel); }
+  .curr-lesson-row:hover:not(:has(.curr-more-btn:hover)) { background: var(--surface-chip); }
 }
 
 .curr-lesson-row:last-child { border-bottom: none; }
@@ -451,7 +467,7 @@
   transition: all 0.15s;
 }
 
-@media (hover: hover) { .sch-modal-chip:hover { background: var(--surface-panel); } }
+@media (hover: hover) { .sch-modal-chip:hover { background: var(--surface-chip); } }
 
 .sch-modal-chip.active {
   border-color: var(--text-primary);
@@ -481,7 +497,7 @@
 }
 
 @media (hover: hover) {
-  .curr-block-header:hover:not(:has(.curr-more-btn:hover)) { background: var(--surface-panel); }
+  .curr-block-header:hover:not(:has(.curr-more-btn:hover)) { background: var(--surface-chip); }
 }
 
 
@@ -582,7 +598,7 @@
   transition: all 0.15s;
 }
 
-@media (hover: hover) { .curr-block-action:hover { background: var(--surface-panel); } }
+@media (hover: hover) { .curr-block-action:hover { background: var(--surface-chip); } }
 .curr-block-action.danger { color: #C03030; border-color: #F5AAAA; }
 @media (hover: hover) { .curr-block-action.danger:hover { background: #FDEAEA; } }
 
@@ -615,7 +631,7 @@
   transition: background 0.1s;
 }
 
-@media (hover: hover) { .curr-block-menu-item:hover { background: var(--surface-panel); } }
+@media (hover: hover) { .curr-block-menu-item:hover { background: var(--surface-chip); } }
 .curr-block-menu-item.danger { color: #C03030; }
 @media (hover: hover) { .curr-block-menu-item.danger:hover { background: #FDEAEA; } }
 
@@ -698,7 +714,7 @@
   transition: all 0.15s;
 }
 
-@media (hover: hover) { .sc-modal-close:hover { background: var(--surface-panel); } }
+@media (hover: hover) { .sc-modal-close:hover { background: var(--surface-chip); } }
 
 .sc-modal-body { padding: 12px 12px; }
 
@@ -748,7 +764,10 @@
   height: 32px;
   padding: 0 12px;
   border-radius: 6px;
-  border: 0.5px solid var(--stroke-default);
+  border-top: 1px solid var(--stroke-default);
+  border-left: 1px solid var(--stroke-default);
+  border-right: 1px solid var(--stroke-default);
+  border-bottom: 2px solid var(--stroke-medium);
   background: #FFFFFF;
   color: var(--text-secondary);
   font-family: 'Figtree', sans-serif;
@@ -756,14 +775,18 @@
   cursor: pointer;
   transition: background 0.15s;
 }
+.sc-form-cancel:active { border-bottom-width: 1px; transform: translateY(1px); }
 
-@media (hover: hover) { .sc-form-cancel:hover { background: var(--surface-panel); } }
+@media (hover: hover) { .sc-form-cancel:hover { background: var(--surface-chip); } }
 
 .sc-form-save {
   height: 32px;
   padding: 0 12px;
   border-radius: 6px;
-  border: 0.5px solid var(--brand-border);
+  border-top: 1px solid var(--brand-border);
+  border-left: 1px solid var(--brand-border);
+  border-right: 1px solid var(--brand-border);
+  border-bottom: 2px solid var(--brand-text);
   background: var(--brand-fill);
   color: var(--brand-text);
   font-family: 'Figtree', sans-serif;
@@ -772,6 +795,7 @@
   cursor: pointer;
   transition: opacity 0.15s;
 }
+.sc-form-save:active { border-bottom-width: 1px; transform: translateY(1px); }
 
 @media (hover: hover) { .sc-form-save:hover { opacity: 0.85; } }
 
@@ -880,7 +904,7 @@
   transition: background 0.1s;
 }
 
-@media (hover: hover) { .curr-insert-row:hover { background: var(--surface-panel); } }
+@media (hover: hover) { .curr-insert-row:hover { background: var(--surface-chip); } }
 .curr-insert-row.checked { background: var(--surface-chip); }
 
 .curr-insert-checkbox {
@@ -952,17 +976,17 @@
 }
 
 .hm-back-btn {
-  width: 40px;
-  height: 40px;
-  border-radius: 6px;
-  border: 0.5px solid var(--stroke-default);
-  background: #FFFFFF;
-  color: var(--text-secondary);
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   flex-shrink: 0;
+  padding: 0;
 }
 
 .hm-detail-subtitle {
@@ -981,7 +1005,10 @@
   width: 40px;
   height: 40px;
   border-radius: 6px;
-  border: 0.5px solid var(--stroke-default);
+  border-top: 1px solid var(--stroke-default);
+  border-left: 1px solid var(--stroke-default);
+  border-right: 1px solid var(--stroke-default);
+  border-bottom: 2px solid var(--stroke-medium);
   background: #FFFFFF;
   color: var(--text-secondary);
   display: flex;
@@ -991,8 +1018,10 @@
   flex-shrink: 0;
 }
 
+.hm-edit-btn:active { border-bottom-width: 1px; transform: translateY(1px); }
+@media (hover: hover) { .hm-edit-btn:hover { background: var(--surface-chip); } }
+
 @media (hover: hover) {
-  .hm-back-btn:hover, .hm-edit-btn:hover { background: var(--surface-panel); }
 }
 
 /* Mobile drawer chip/control bumps — 36px, matching the rest of the app */

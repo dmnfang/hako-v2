@@ -155,7 +155,6 @@ export default function Account() {
         />
       </div>
       <div className="acc-trial-meta">
-        <span className="acc-free-badge">Free Trial</span>
         <span className={`acc-trial-badge ${trial.status}`}>
           {trial.status === 'active' ? 'Active' : trial.status === 'grace' ? 'Grace Period' : 'Expired'}
         </span>
@@ -299,6 +298,7 @@ export default function Account() {
                 >
                   <Icon size={16} className="acc-accordion-icon" />
                   <span className="acc-accordion-label">{label}</span>
+                  {key === 'plan' && <span className="acc-free-badge" style={{fontSize:10,height:20,padding:'0 7px'}}>Free Trial</span>}
                   <span className="acc-accordion-chevron">{isOpen ? '−' : '+'}</span>
                 </button>
                 {isOpen && (

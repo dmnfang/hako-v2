@@ -66,7 +66,10 @@
   height: 32px;
   padding: 0 12px;
   border-radius: 6px;
-  border: 0.5px solid var(--brand-border);
+  border-top: 1px solid var(--brand-border);
+  border-left: 1px solid var(--brand-border);
+  border-right: 1px solid var(--brand-border);
+  border-bottom: 2px solid var(--brand-text);
   background: var(--brand-fill);
   color: var(--brand-text);
   font-family: 'Figtree', sans-serif;
@@ -79,6 +82,7 @@
   align-self: flex-start;
   transition: opacity 0.15s;
 }
+.sch-new-btn:active { border-bottom-width: 1px; transform: translateY(1px); }
 
 @media (hover: hover) { .sch-new-btn:hover { background: var(--brand-hover); } }
 
@@ -100,7 +104,7 @@
 }
 
 .sch-row:last-child { border-bottom: none; }
-@media (hover: hover) { .sch-row:hover { background: var(--surface-panel); } }
+@media (hover: hover) { .sch-row:hover { background: var(--surface-chip); } }
 .sch-row.selected { background: #FFFFFF; }
 .sch-row.selected .sch-row-name { color: var(--text-primary); }
 
@@ -212,6 +216,7 @@
 .sch-change-status-btn {
   margin-left: auto;
 }
+.sch-change-status-btn:active { border-bottom-width: 1px; transform: translateY(1px); }
 
 .sch-cal-status-row {
   display: flex;
@@ -289,7 +294,10 @@
   height: 32px;
   padding: 0 12px;
   border-radius: 6px;
-  border: 0.5px solid var(--stroke-default);
+  border-top: 1px solid var(--stroke-default);
+  border-left: 1px solid var(--stroke-default);
+  border-right: 1px solid var(--stroke-default);
+  border-bottom: 2px solid var(--stroke-medium);
   background: #FFFFFF;
   font-family: 'Figtree', sans-serif;
   font-size: 13px;
@@ -301,8 +309,9 @@
   gap: 4px;
   transition: all 0.15s;
 }
+.sch-add-btn:active { border-bottom-width: 1px; transform: translateY(1px); }
 
-@media (hover: hover) { .sch-add-btn:hover { background: var(--surface-panel); } }
+@media (hover: hover) { .sch-add-btn:hover { background: var(--surface-chip); } }
 
 /* Body */
 .sch-body {
@@ -433,7 +442,7 @@
 }
 
 .sch-lesson-arrow:disabled { opacity: 0.3; cursor: default; }
-.sch-lesson-arrow:hover:not(:disabled) { background: var(--surface-panel); }
+.sch-lesson-arrow:hover:not(:disabled) { background: var(--surface-chip); }
 
 .sch-lesson-picker-val {
   flex: 1;
@@ -454,7 +463,10 @@
   height: 32px;
   padding: 0 12px;
   border-radius: 6px;
-  border: 0.5px solid var(--brand-border);
+  border-top: 1px solid var(--brand-border);
+  border-left: 1px solid var(--brand-border);
+  border-right: 1px solid var(--brand-border);
+  border-bottom: 2px solid var(--brand-text);
   background: var(--brand-fill);
   color: var(--brand-text);
   font-family: 'Figtree', sans-serif;
@@ -463,6 +475,7 @@
   cursor: pointer;
   transition: opacity 0.15s;
 }
+.sch-form-save:active { border-bottom-width: 1px; transform: translateY(1px); }
 
 @media (hover: hover) { .sch-form-save:hover { background: var(--brand-hover); } }
 
@@ -471,13 +484,17 @@
   height: 32px;
   padding: 0 12px;
   border-radius: 6px;
-  border: 0.5px solid var(--stroke-default);
+  border-top: 1px solid var(--stroke-default);
+  border-left: 1px solid var(--stroke-default);
+  border-right: 1px solid var(--stroke-default);
+  border-bottom: 2px solid var(--stroke-medium);
   background: #FFFFFF;
   color: var(--text-secondary);
   font-family: 'Figtree', sans-serif;
   font-size: 13px;
   cursor: pointer;
 }
+.sch-form-cancel:active { border-bottom-width: 1px; transform: translateY(1px); }
 
 /* Class list */
 .sch-class-list {
@@ -505,8 +522,8 @@
 }
 
 .sch-class-row:last-child { border-bottom: none; }
-@media (hover: hover) { .sch-class-row:hover { background: var(--surface-panel); } }
-.sch-class-row.editing { padding: 0; background: var(--surface-panel); }
+@media (hover: hover) { .sch-class-row:hover { background: var(--surface-chip); } }
+.sch-class-row.editing { padding: 0; background: var(--surface-chip); }
 .sch-class-row.editing .sch-class-form { margin: 0; border: none; border-radius: 0; width: 100%; }
 
 .sch-class-body {
@@ -591,7 +608,10 @@
   height: 32px;
   padding: 0 12px;
   border-radius: 6px;
-  border: 0.5px solid var(--stroke-default);
+  border-top: 1px solid var(--stroke-default);
+  border-left: 1px solid var(--stroke-default);
+  border-right: 1px solid var(--stroke-default);
+  border-bottom: 2px solid var(--stroke-medium);
   background: #FFFFFF;
   font-family: 'Figtree', sans-serif;
   font-size: 13px;
@@ -600,8 +620,9 @@
   cursor: pointer;
   transition: all 0.15s;
 }
+.sch-class-btn:active { border-bottom-width: 1px; transform: translateY(1px); }
 
-@media (hover: hover) { .sch-class-btn:hover { background: var(--surface-panel); } }
+@media (hover: hover) { .sch-class-btn:hover { background: var(--surface-chip); } }
 .sch-class-btn.danger { color: #C03030; border-color: #F5AAAA; }
 @media (hover: hover) { .sch-class-btn.danger:hover { background: #FDEAEA; } }
 
@@ -617,116 +638,107 @@
 .sch-period-row {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 16px;
   border-bottom: 0.5px solid var(--stroke-default);
 }
 
 .sch-period-row:last-child { border-bottom: none; }
 .sch-period-row.empty { opacity: 0.4; }
 
-.sch-period-header-row {
+/* Period bar — mirrors Home period-bar layout */
+.sch-period-bar {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 12px 16px;
+}
+
+.sch-period-info-col {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-width: 0;
+}
+
+.sch-period-info-row {
   display: flex;
   align-items: center;
-  gap: 6px;
-  margin-bottom: 2px;
+  gap: 4px;
+  flex-wrap: wrap;
 }
 
-.sch-period-dot { display: none; }
-
-.sch-period-eyebrow {
-  font-family: 'Figtree', sans-serif;
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--text-muted);
-  margin-right: 2px;
-}
-
+/* Period N chip — Duolingo raised, matches period-num-chip */
 .sch-period-eyebrow-chip {
   height: 32px;
   padding: 0 12px;
   border-radius: 6px;
-  border: 0.5px solid var(--stroke-default);
+  border-top: 1px solid var(--stroke-medium);
+  border-left: 1px solid var(--stroke-medium);
+  border-right: 1px solid var(--stroke-medium);
+  border-bottom: 2px solid var(--stroke-strong);
   background: var(--surface-chip);
   font-family: 'Figtree', sans-serif;
   font-size: 13px;
-  font-weight: 600;
-  color: var(--text-secondary);
+  font-weight: 700;
+  color: var(--text-primary);
   cursor: pointer;
-  transition: all 0.15s;
-}
-@media (hover: hover) { .sch-period-eyebrow-chip:hover { background: var(--surface-panel); } }
-
-/* Period bar — no background, just flex row */
-.sch-period-bar {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  align-self: flex-start;
-}
-
-/* All tap chips — white bg, colored stroke+text */
-.sch-period-tap-chip {
-  height: 32px;
-  padding: 0 12px;
-  border-radius: 6px;
-  border: 0.5px solid var(--stroke-default);
-  background: #FFFFFF;
-  font-family: 'Figtree', sans-serif;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text-secondary);
-  cursor: pointer;
+  white-space: nowrap;
   display: inline-flex;
   align-items: center;
-  white-space: nowrap;
-  appearance: none;
-  transition: all 0.15s;
   flex-shrink: 0;
+  transition: all 0.1s;
 }
 
-@media (hover: hover) { .sch-period-tap-chip:hover { background: var(--surface-panel); } }
-.sch-period-tap-chip.empty { color: var(--text-subtle); }
+@media (hover: hover) { .sch-period-eyebrow-chip:hover { background: var(--surface-panel); } }
+.sch-period-eyebrow-chip:active { border-bottom-width: 1px; transform: translateY(1px); }
 
-/* School & Class — light fill, neutral stroke (no per-type colors) */
-.sch-period-tap-chip.school,
-.sch-period-tap-chip.class {
-  background: var(--surface-chip);
-  border-color: var(--stroke-default);
-  color: var(--text-secondary);
-}
-@media (hover: hover) {
-  .sch-period-tap-chip.school:hover,
-  .sch-period-tap-chip.class:hover { background: var(--surface-panel); }
-}
-
-.sch-period-tap-chip.class.empty {
-  border-style: dashed;
-  border-color: var(--text-subtle);
-  color: var(--text-muted);
-}
-@media (hover: hover) { .sch-period-tap-chip.class.empty:hover { background: var(--surface-panel); } }
-
-/* Time chip — tappable */
+/* Static info chips — mirrors period-info-chip */
+.sch-period-tap-chip,
 .sch-period-time-chip {
   height: 32px;
-  padding: 0 12px;
+  padding: 0 10px;
   border-radius: 6px;
   border: 0.5px solid var(--stroke-default);
   background: #FFFFFF;
   font-family: 'Figtree', sans-serif;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--text-secondary);
+  white-space: nowrap;
   display: inline-flex;
   align-items: center;
-  white-space: nowrap;
+  gap: 6px;
   flex-shrink: 0;
-  cursor: pointer;
-  transition: all 0.15s;
+  cursor: default;
+  user-select: none;
 }
 
-@media (hover: hover) { .sch-period-time-chip:hover { background: var(--surface-panel); } }
+.sch-period-tap-chip.empty {
+  color: var(--text-subtle);
+  border-style: dashed;
+}
+
+.sch-period-tap-chip svg { color: var(--text-muted); }
+
+/* Pool chip */
+.sch-pool-chip {
+  height: 32px;
+  padding: 0 10px;
+  border-radius: 6px;
+  border: 0.5px solid var(--stroke-default);
+  background: #FFFFFF;
+  font-family: 'Figtree', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  cursor: default;
+  user-select: none;
+}
 
 /* A / B labels */
 .sch-ab-label {
@@ -773,7 +785,10 @@
   height: 32px;
   width: 32px;
   border-radius: 6px;
-  border: 0.5px solid var(--stroke-default);
+  border-top: 1px solid var(--stroke-default);
+  border-left: 1px solid var(--stroke-default);
+  border-right: 1px solid var(--stroke-default);
+  border-bottom: 2px solid var(--stroke-medium);
   background: #FFFFFF;
   color: var(--text-secondary);
   cursor: pointer;
@@ -783,8 +798,9 @@
   flex-shrink: 0;
   transition: all 0.15s;
 }
+.sch-swap-btn:active { border-bottom-width: 1px; transform: translateY(1px); }
 
-@media (hover: hover) { .sch-swap-btn:hover { background: var(--surface-panel); } }
+@media (hover: hover) { .sch-swap-btn:hover { background: var(--surface-chip); } }
 
 .sch-ref-times {
   display: flex;
@@ -867,7 +883,7 @@
   transition: all 0.15s;
 }
 
-@media (hover: hover) { .sch-modal-close:hover { background: var(--surface-panel); } }
+@media (hover: hover) { .sch-modal-close:hover { background: var(--surface-chip); } }
 
 .sch-modal-body { padding: 16px 20px; }
 
@@ -1013,7 +1029,7 @@
   transition: all 0.15s;
 }
 
-@media (hover: hover) { .sch-modal-chip:hover { background: var(--surface-panel); } }
+@media (hover: hover) { .sch-modal-chip:hover { background: var(--surface-chip); } }
 
 .sch-modal-chip.active {
   border-color: var(--stroke-default);
@@ -1105,7 +1121,7 @@
   transition: all 0.15s;
 }
 
-@media (hover: hover) { .sch-cal-today:hover { background: var(--surface-panel); } }
+@media (hover: hover) { .sch-cal-today:hover { background: var(--surface-chip); } }
 
 .sch-cal-month {
   font-family: 'Figtree', sans-serif;
@@ -1165,7 +1181,7 @@
   overflow: hidden;
 }
 
-@media (hover: hover) { .sch-cal-day:hover { background: var(--surface-panel); } }
+@media (hover: hover) { .sch-cal-day:hover { background: var(--surface-chip); } }
 .sch-cal-day.selected { background: var(--surface-chip); color: var(--text-primary); }
 
 .sch-cal-day-num {
@@ -1245,9 +1261,15 @@
 
 /* Status colors (shared with Home) */
 .home-status-working { color: #2A7A52; }
+.home-status-working.home-status-chip  { background: var(--sage-fill); }
 .home-status-weekend { color: var(--text-muted); }
 .home-status-standby { color: #92620A; }
+.home-status-standby.home-status-chip  { background: #FEF3D0; }
 .home-status-holiday { color: #005A66; }
+.home-status-holiday.home-status-chip  { background: var(--sky-fill); }
+.home-status-personal.home-status-chip { background: #FDEAEA; }
+.home-status-school_event.home-status-chip { background: #EEF2FC; }
+.home-status-weekend.home-status-chip  { background: var(--surface-chip); }
 .home-status-personal { color: #C03030; }
 .home-status-school_event { color: #3A6BC7; }
 
@@ -1257,9 +1279,12 @@
   gap: 8px;
   height: 32px;
   padding: 0 12px;
-  border-radius: 999px;
-  border: 0.5px solid currentColor;
-  background: #FFFFFF;
+  border-radius: 6px;
+  border-top: 1px solid currentColor;
+  border-left: 1px solid currentColor;
+  border-right: 1px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  background: transparent;
   font-family: 'Figtree', sans-serif;
   font-size: 13px;
   font-weight: 600;
@@ -1267,6 +1292,7 @@
   transition: all 0.15s;
 }
 
+.home-status-chip:active { border-bottom-width: 1px; transform: translateY(1px); }
 .home-status-dot {
   width: 8px;
   height: 8px;
@@ -1276,7 +1302,7 @@
 }
 
 @media (hover: hover) {
-  .home-status-chip:hover { background: var(--surface-panel); }
+  .home-status-chip:hover { background: var(--surface-chip); }
 }
 
 /* Status chips */
@@ -1284,16 +1310,16 @@
   border-color: var(--stroke-default);
   color: var(--text-secondary);
 }
-@media (hover: hover) { .sch-modal-chip.status:hover { background: var(--surface-panel); } }
+@media (hover: hover) { .sch-modal-chip.status:hover { background: var(--surface-chip); } }
 .sch-modal-chip.status.active {
   background: var(--surface-chip);
   border-color: var(--text-primary);
   color: var(--text-primary);
 }
-@media (hover: hover) { .sch-modal-chip.status.active:hover { background: var(--surface-panel); } }
+@media (hover: hover) { .sch-modal-chip.status.active:hover { background: var(--surface-chip); } }
 
 /* Cancel button hover */
-@media (hover: hover) { .sch-form-cancel:hover { background: var(--surface-panel); } }
+@media (hover: hover) { .sch-form-cancel:hover { background: var(--surface-chip); } }
 
 /* ───────────────────────────────────────────────────────────────────────
    Schedule Mobile — two-screen layout. Level 1 reuses the exact sidebar
@@ -1371,17 +1397,17 @@
 }
 
 .hm-back-btn {
-  width: 40px;
-  height: 40px;
-  border-radius: 6px;
-  border: 0.5px solid var(--stroke-default);
-  background: #FFFFFF;
-  color: var(--text-secondary);
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   flex-shrink: 0;
+  padding: 0;
 }
 
 .hm-detail-subtitle {
@@ -1397,7 +1423,6 @@
 }
 
 @media (hover: hover) {
-  .hm-back-btn:hover { background: var(--surface-panel); }
 }
 
 /* Bump form controls to 40px when rendered inside the mobile bottom drawer */

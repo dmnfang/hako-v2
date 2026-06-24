@@ -100,9 +100,12 @@
 .login-btn-primary {
   height: 32px;
   border-radius: 8px;
-  border: none;
-  background: var(--text-primary);
-  color: #FFFFFF;
+  border-top: 1px solid var(--brand-border);
+  border-left: 1px solid var(--brand-border);
+  border-right: 1px solid var(--brand-border);
+  border-bottom: 2px solid var(--brand-text);
+  background: var(--brand-fill);
+  color: var(--brand-text);
   font-family: 'Fredoka', sans-serif;
   font-size: 15px;
   font-weight: 600;
@@ -110,6 +113,7 @@
   transition: opacity 0.15s;
   margin-top: 4px;
 }
+.login-btn-primary:active { border-bottom-width: 1px; transform: translateY(1px); }
 
 .login-btn-primary:disabled {
   opacity: 0.5;
@@ -136,7 +140,10 @@
 .login-btn-google {
   height: 32px;
   border-radius: 8px;
-  border: 0.5px solid var(--stroke-default);
+  border-top: 1px solid var(--stroke-default);
+  border-left: 1px solid var(--stroke-default);
+  border-right: 1px solid var(--stroke-default);
+  border-bottom: 2px solid var(--stroke-medium);
   background: #FFFFFF;
   color: var(--text-primary);
   font-family: 'Fredoka', sans-serif;
@@ -149,6 +156,7 @@
   gap: 10px;
   transition: background 0.15s;
 }
+.login-btn-google:active { border-bottom-width: 1px; transform: translateY(1px); }
 
 .login-btn-google:hover {
   background: var(--surface-chip);
