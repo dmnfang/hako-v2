@@ -263,7 +263,7 @@ export default function Wizard({ onComplete }) {
               <div className="curriculum-form-row">
                 <input placeholder="e.g. Let's Try 1" value={newCurriculum.name} onChange={e => setNewCurriculum(prev => ({ ...prev, name: e.target.value }))} onKeyDown={e => e.key === 'Enter' && addCurriculum()} />
                 <input placeholder="e.g. Grade 3" value={newCurriculum.gradeTag} onChange={e => setNewCurriculum(prev => ({ ...prev, gradeTag: e.target.value }))} style={{flex:'0 0 140px'}} onKeyDown={e => e.key === 'Enter' && addCurriculum()} />
-                <button className="confirm-btn" onClick={addCurriculum} disabled={!newCurriculum.name.trim()}><Check size={14} /></button>
+                <button className="confirm-btn" onClick={addCurriculum} disabled={!newCurriculum.name.trim()}>Add Course</button>
               </div>
             </div>
 
@@ -302,7 +302,7 @@ export default function Wizard({ onComplete }) {
                 <select value={newSchoolLevel} onChange={e => setNewSchoolLevel(e.target.value)} style={{flex:'0 0 76px'}}>
                   {activeLevels.map(l => <option key={l} value={l}>{l.toUpperCase()}</option>)}
                 </select>
-                <button className="confirm-btn" onClick={addSchool} disabled={!newSchoolName.trim()}><Check size={14} /></button>
+                <button className="confirm-btn" onClick={addSchool} disabled={!newSchoolName.trim()}>Add School</button>
               </div>
             </div>
 
@@ -366,7 +366,7 @@ export default function Wizard({ onComplete }) {
                       <option value="">No course</option>
                       {curricula.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                     </select>
-                    <button className="confirm-btn" onClick={() => addClass(activeSchool.id)} disabled={!newClass[activeSchool.id]?.label?.trim()}><Check size={14} /></button>
+                    <button className="confirm-btn" onClick={() => addClass(activeSchool.id)} disabled={!newClass[activeSchool.id]?.label?.trim()}>Add Class</button>
                   </div>
                 </div>
               </div>

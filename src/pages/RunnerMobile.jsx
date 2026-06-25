@@ -18,7 +18,7 @@ export default function RunnerMobile({
 
       <div className="rm-topbar">
         <button className="rm-back-btn" onClick={exitRunner}>
-          <ArrowLeft size={16} />
+          <ArrowLeft size={20} />
         </button>
         <span className="rm-topbar-subtitle">
           {school?.name ?? '—'} · {cls?.label ?? '—'}

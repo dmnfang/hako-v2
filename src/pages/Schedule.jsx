@@ -308,8 +308,8 @@ function RegularWeekTab({ schools, allClasses, selectedDay, refreshSidebar, isMo
           }
         >
           <div style={{display:'flex',flexDirection:'column',gap:16}}>
-            <div>
-              <div className="modal-label modal-label-spaced">Single class or multi class?</div>
+            <div style={{display:'flex',flexDirection:'column',gap:8}}>
+              <div className="modal-label">Single class or multi class?</div>
               <div className="sch-option-grid">
                 {[{v:'weekly',title:'Single Class',desc:'This period is always the same class.'},{v:'alternating',title:'Multi Class',desc:'This period could be any of a pool of classes — choose which one each day.'}].map(opt => (
                   <div key={opt.v} onClick={() => changeModalFreq(opt.v)} className={`sch-option-card ${modalFreq===opt.v ? 'active' : ''}`}>
@@ -323,8 +323,8 @@ function RegularWeekTab({ schools, allClasses, selectedDay, refreshSidebar, isMo
               </div>
             </div>
 
-            <div>
-              <div className="modal-label modal-label-spaced">Which school?</div>
+            <div style={{display:'flex',flexDirection:'column',gap:8}}>
+              <div className="modal-label">Which school?</div>
               <div className="sch-modal-chips">
                 {schools.map(s => (
                   <button key={s.id} className={`sch-modal-chip school ${modalSchoolId === s.id ? 'active' : ''}`} onClick={() => changeModalSchool(s.id)}>
@@ -334,8 +334,8 @@ function RegularWeekTab({ schools, allClasses, selectedDay, refreshSidebar, isMo
               </div>
             </div>
 
-            <div>
-              <div className="modal-label modal-label-spaced">
+            <div style={{display:'flex',flexDirection:'column',gap:8}}>
+              <div className="modal-label">
                 {modalFreq === 'alternating' ? 'Which classes? (select all that apply)' : 'Which class?'}
               </div>
               {!modalSchoolId ? (
@@ -354,11 +354,11 @@ function RegularWeekTab({ schools, allClasses, selectedDay, refreshSidebar, isMo
               )}
             </div>
 
-            <div>
-              <div className="modal-label modal-label-spaced">What time?</div>
-              <div style={{display:'flex',gap:12}}>
-                <div className="sc-field"><span className="sc-field-label">START TIME</span><input className="sch-time-input" type="time" value={timeForm.start_time} onChange={e => setTimeForm(p=>({...p,start_time:e.target.value}))} /></div>
-                <div className="sc-field"><span className="sc-field-label">END TIME</span><input className="sch-time-input" type="time" value={timeForm.end_time} onChange={e => setTimeForm(p=>({...p,end_time:e.target.value}))} /></div>
+            <div style={{display:'flex',flexDirection:'column',gap:8}}>
+              <div className="modal-label">What time?</div>
+              <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
+                <div className="sc-field" style={{flex:1,minWidth:120}}><span className="sc-field-label">START TIME</span><input className="sch-time-input" type="time" value={timeForm.start_time} onChange={e => setTimeForm(p=>({...p,start_time:e.target.value}))} /></div>
+                <div className="sc-field" style={{flex:1,minWidth:120}}><span className="sc-field-label">END TIME</span><input className="sch-time-input" type="time" value={timeForm.end_time} onChange={e => setTimeForm(p=>({...p,end_time:e.target.value}))} /></div>
               </div>
             </div>
 
