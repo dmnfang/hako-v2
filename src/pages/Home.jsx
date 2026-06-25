@@ -832,12 +832,12 @@ export default function Home() {
             </div>
 
             <div className="modal-label modal-label-spaced">Time</div>
-            <div style={{ display: 'flex', gap: 8 }}>
-              <div className="modal-field" style={{ flex: 1 }}>
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+              <div className="modal-field" style={{ flex: 1, minWidth: 120 }}>
                 <span className="modal-field-label">START</span>
                 <input className="modal-label-input" type="time" value={modalTimeForm.start_time} onChange={e => setModalTimeForm(p => ({ ...p, start_time: e.target.value }))} />
               </div>
-              <div className="modal-field" style={{ flex: 1 }}>
+              <div className="modal-field" style={{ flex: 1, minWidth: 120 }}>
                 <span className="modal-field-label">END</span>
                 <input className="modal-label-input" type="time" value={modalTimeForm.end_time} onChange={e => setModalTimeForm(p => ({ ...p, end_time: e.target.value }))} />
               </div>

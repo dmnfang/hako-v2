@@ -919,6 +919,9 @@
   border-radius: 6px;
   border: 0.5px solid var(--stroke-default);
   background: #FFFFFF;
+  box-sizing: border-box;
+  -webkit-appearance: none;
+  appearance: none;
   font-family: 'Figtree', sans-serif;
   font-size: 13px;
   color: var(--text-primary);
