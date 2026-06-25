@@ -62,7 +62,7 @@ html, body, #root {
 }
 
 .nav-btn:hover { background: var(--surface-chip); color: var(--text-primary); }
-.nav-btn.active { background: var(--text-primary); border-color: var(--text-primary); color: #FFFFFF; }
+.nav-btn.active { background: var(--brand-fill); border-color: var(--brand-border); color: var(--brand-text); }
 
 .nav-tooltip {
   position: absolute;
