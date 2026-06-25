@@ -92,7 +92,7 @@
 @media (hover: hover) { .curr-row:hover { background: var(--surface-chip); } }
 .curr-row.selected { background: #FFFFFF; }
 .curr-row.selected .curr-row-name { color: var(--text-primary); }
-.curr-row.selected .curr-row-count { color: var(--text-primary); }
+@media (min-width: 901px) { .curr-row.selected .curr-row-count { color: var(--text-primary); } }
 .curr-row:last-child { border-bottom: none; }
 
 .curr-dot { display: none; }
@@ -146,9 +146,11 @@
   align-items: center;
 }
 
-.curr-row.selected .curr-row-count {
-  background: var(--surface-chip);
-  color: var(--text-primary);
+@media (min-width: 901px) {
+  .curr-row.selected .curr-row-count {
+    background: var(--surface-chip);
+    color: var(--text-primary);
+  }
 }
 
 .curr-grade-tag {

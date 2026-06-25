@@ -171,9 +171,11 @@ export default function Curriculum() {
       const { data: seeded } = await supabase.from('block_groups').insert(rows).select().order('sort_order')
       setBlockGroups(seeded ?? [])
       if (seeded?.length > 0 && !selectedGroupId) setSelectedGroupId(seeded[0].id)
+      if (seeded?.length > 0 && !insertGroupId) setInsertGroupId(seeded[0].id)
     } else {
       setBlockGroups(data)
       if (!selectedGroupId) setSelectedGroupId(data[0].id)
+      if (!insertGroupId) setInsertGroupId(data[0].id)
     }
   }
 
@@ -434,6 +436,7 @@ export default function Curriculum() {
     setInsertSelectedIds([])
     setInsertModal(true)
     if (blockGroups.length === 0) fetchBlockGroups()
+    else if (!insertGroupId) setInsertGroupId(blockGroups[0]?.id ?? null)
   }
 
   function toggleInsertSelected(id) {
