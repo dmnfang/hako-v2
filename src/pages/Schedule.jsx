@@ -490,6 +490,78 @@ function CalendarTab({ schools, allClasses, progressCtx, selectedDate, isMobile,
         )}
       </div>
 
+      {/* Consolidated Period modal */}
+      {modal === 'period_config' && modalPeriod && (
+        <ResponsiveModal
+          isMobile={isMobile}
+          open
+          onClose={() => setModal(null)}
+          title={`Period ${modalPeriod.period_number} — ${selectedDate.toLocaleDateString('en-US',{month:'short',day:'numeric'})}`}
+          footer={
+            <>
+              <button className="sch-form-cancel" onClick={() => setModal(null)}>Cancel</button>
+              <button className="sch-form-save" onClick={async () => {
+                if (modalSchoolId) await savePeriodSchoolOverride(modalPeriod, modalSchoolId, modalSlotIdx, modalChangeType, selectedDate)
+                if (modalClassId) await savePeriodClassOverride(modalPeriod, modalClassId, modalSlotIdx, modalChangeType, selectedDate)
+                if (modalTimeForm.start_time) await savePeriodTimeOverride(modalPeriod, modalTimeForm, modalSlotIdx, modalChangeType, selectedDate)
+                setModal(null)
+              }}>Save</button>
+            </>
+          }
+        >
+          <div style={{display:'flex',flexDirection:'column',gap:16}}>
+            <div style={{display:'flex',flexDirection:'column',gap:8}}>
+              <div className="modal-label">School</div>
+              <div className="sch-modal-chips">
+                {schools.map(s => (
+                  <button key={s.id} className={`sch-modal-chip school ${modalSchoolId === s.id ? 'active' : ''}`} onClick={() => { setModalSchoolId(s.id); setModalClassId(null) }}>
+                    {s.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div style={{display:'flex',flexDirection:'column',gap:8}}>
+              <div className="modal-label">Class</div>
+              {!modalSchoolId ? (
+                <p style={{fontFamily:"'Figtree',sans-serif",fontSize:13,color:'var(--text-muted)',margin:0}}>Choose a school first.</p>
+              ) : (
+                <div className="sch-modal-chips">
+                  {allClasses.filter(c => c.school_id === modalSchoolId).map(cl => (
+                    <button key={cl.id} className={`sch-modal-chip class ${modalClassId === cl.id ? 'active' : ''}`} onClick={() => setModalClassId(cl.id)}>
+                      {cl.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+            <div style={{display:'flex',flexDirection:'column',gap:8}}>
+              <div className="modal-label">Time</div>
+              <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
+                <div className="sc-field" style={{flex:1,minWidth:120}}><span className="sc-field-label">START</span><input className="sch-time-input" type="time" value={modalTimeForm.start_time} onChange={e => setModalTimeForm(p=>({...p,start_time:e.target.value}))} /></div>
+                <div className="sc-field" style={{flex:1,minWidth:120}}><span className="sc-field-label">END</span><input className="sch-time-input" type="time" value={modalTimeForm.end_time} onChange={e => setModalTimeForm(p=>({...p,end_time:e.target.value}))} /></div>
+              </div>
+            </div>
+            <div style={{display:'flex',flexDirection:'column',gap:8}}>
+              <div className="modal-label">What kind of change?</div>
+              <div className="sch-option-grid">
+                {[
+                  {v:'once', title:`Just ${selectedDate.toLocaleDateString('en-US',{month:'short',day:'numeric'})}`, desc:'One-time override only.'},
+                  {v:'permanent', title:`All future ${dow}s`, desc:'Updates your recurring schedule.'},
+                ].map(opt => (
+                  <div key={opt.v} onClick={() => setModalChangeType(opt.v)} className={`sch-option-card ${modalChangeType===opt.v ? 'active' : ''}`}>
+                    <div className="sch-option-radio" />
+                    <div>
+                      <div className="sch-option-title">{opt.title}</div>
+                      <div className="sch-option-desc">{opt.desc}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </ResponsiveModal>
+      )}
+
       {/* Status modal */}
       {modal === 'status' && (
         <ResponsiveModal
