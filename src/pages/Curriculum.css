@@ -564,7 +564,7 @@
   font-size: 13px;
   color: var(--text-secondary);
   background: var(--surface-base);
-  border: 0.5px solid var(--stroke-medium);
+  border: 0.5px solid var(--stroke-default);
   border-radius: 6px;
   padding: 10px 12px;
   resize: none;
