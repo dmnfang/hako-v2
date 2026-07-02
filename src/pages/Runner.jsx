@@ -294,7 +294,7 @@ export default function Runner() {
   const sharedProps = {
     school, cls, curriculum, lesson, blocks,
     currentBlockIdx, completedBlocks, blockElapsed, globalRemaining, blockTimes,
-    goToBlock, prevBlock, nextBlock, exitRunner,
+    goToBlock, prevBlock, nextBlock, exitRunner, finishLesson,
     memoOpen, setMemoOpen, previousMemo, currentMemo, memoDraft, setMemoDraft, saveMemo, memoSaved,
     formatTime,
   }

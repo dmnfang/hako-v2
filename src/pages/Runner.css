@@ -68,6 +68,52 @@
 
 @media (hover: hover) { .runner-exit-btn:hover { background: #FDEAEA; color: #C03030; border-color: #F5AAAA; } }
 
+/* Mark Done — desktop */
+.runner-mark-done-btn {
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 6px;
+  border-top: 1px solid var(--brand-border);
+  border-left: 1px solid var(--brand-border);
+  border-right: 1px solid var(--brand-border);
+  border-bottom: 2px solid var(--brand-text);
+  background: var(--brand-fill);
+  color: var(--brand-text);
+  font-family: 'Figtree', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.runner-mark-done-btn:active { border-bottom-width: 1px; transform: translateY(1px); }
+@media (hover: hover) { .runner-mark-done-btn:hover { background: var(--brand-hover); } }
+
+/* Mark Done — mobile bottom bar */
+.rm-mark-done-btn {
+  height: 40px;
+  padding: 0 16px;
+  border-radius: 6px;
+  border-top: 1px solid var(--brand-border);
+  border-left: 1px solid var(--brand-border);
+  border-right: 1px solid var(--brand-border);
+  border-bottom: 2px solid var(--brand-text);
+  background: var(--brand-fill);
+  color: var(--brand-text);
+  font-family: 'Figtree', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.rm-mark-done-btn:active { border-bottom-width: 1px; transform: translateY(1px); }
 .runner-memo-btn {
   width: 32px;
   height: 32px;

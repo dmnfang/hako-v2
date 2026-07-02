@@ -1,10 +1,10 @@
-import { ChevronLeft, ChevronRight, X, GripVertical, Check, LogOut, StickyNote } from 'lucide-react'
+import { ChevronLeft, ChevronRight, X, GripVertical, Check, CheckCheck, LogOut, StickyNote } from 'lucide-react'
 
 export default function RunnerDesktop({
   school, cls, curriculum, lesson, blocks,
   currentBlockIdx, completedBlocks, blockElapsed, globalRemaining, blockTimes,
   dragIdx, dragOverIdx, handleDragStart, handleDragOver, handleDrop, handleDragEnd,
-  goToBlock, prevBlock, nextBlock, exitRunner,
+  goToBlock, prevBlock, nextBlock, exitRunner, finishLesson,
   memoOpen, setMemoOpen, previousMemo, currentMemo, memoDraft, setMemoDraft, saveMemo, memoSaved,
   formatTime,
 }) {
@@ -38,6 +38,9 @@ export default function RunnerDesktop({
           )}
           <button className={`runner-memo-btn ${previousMemo ? 'has-memo' : ''} ${memoSaved ? 'saved' : ''}`} onClick={() => setMemoOpen(prev => !prev)}>
             <StickyNote size={14} />
+          </button>
+          <button className="runner-mark-done-btn" onClick={finishLesson}>
+            <CheckCheck size={14} /> Mark Done
           </button>
           <button className="runner-exit-btn" onClick={exitRunner}>
             <LogOut size={14} />

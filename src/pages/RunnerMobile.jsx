@@ -1,11 +1,11 @@
 import { useState } from 'react'
-import { ArrowLeft, ChevronLeft, ChevronRight, X, Check, LogOut, StickyNote, List } from 'lucide-react'
+import { ArrowLeft, ChevronLeft, ChevronRight, X, Check, LogOut, StickyNote, List, CheckCheck } from 'lucide-react'
 import BottomDrawer from '../components/BottomDrawer'
 
 export default function RunnerMobile({
   school, cls, curriculum, lesson, blocks,
   currentBlockIdx, completedBlocks, blockElapsed, globalRemaining, blockTimes,
-  goToBlock, prevBlock, nextBlock, exitRunner,
+  goToBlock, prevBlock, nextBlock, exitRunner, finishLesson,
   memoOpen, setMemoOpen, previousMemo, currentMemo, memoDraft, setMemoDraft, saveMemo,
   formatTime,
 }) {
@@ -57,6 +57,9 @@ export default function RunnerMobile({
             <StickyNote size={16} />
           </button>
         </div>
+        <button className="rm-mark-done-btn" onClick={finishLesson}>
+          <CheckCheck size={16} /> Mark Done
+        </button>
         <div className="rm-bottom-bar-right">
           <button className="rm-icon-btn" onClick={prevBlock} disabled={currentBlockIdx === 0}>
             <ChevronLeft size={16} />
