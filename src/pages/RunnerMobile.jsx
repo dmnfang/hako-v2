@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ArrowLeft, ChevronLeft, ChevronRight, X, Check, LogOut, StickyNote, List, CheckCheck } from 'lucide-react'
+import { ArrowLeft, ChevronLeft, ChevronRight, CheckCheck, StickyNote, List } from 'lucide-react'
 import BottomDrawer from '../components/BottomDrawer'
 
 export default function RunnerMobile({
@@ -46,29 +46,21 @@ export default function RunnerMobile({
       </div>
 
       <div className="rm-bottom-bar">
-        <div className="rm-bottom-bar-left">
-          <button className="rm-icon-btn" onClick={() => setBlockListOpen(true)}>
-            <List size={16} />
-          </button>
-          <button
-            className={`rm-icon-btn ${previousMemo ? 'has-memo' : ''}`}
-            onClick={() => setMemoOpen(true)}
-          >
-            <StickyNote size={16} />
-          </button>
-        </div>
-        <button className="rm-mark-done-btn" onClick={finishLesson}>
-          <CheckCheck size={16} /> Mark Done
+        <button className="rm-icon-btn" onClick={prevBlock} disabled={currentBlockIdx === 0}>
+          <ChevronLeft size={16} />
         </button>
-        <div className="rm-bottom-bar-right">
-          <button className="rm-icon-btn" onClick={prevBlock} disabled={currentBlockIdx === 0}>
-            <ChevronLeft size={16} />
-          </button>
-          <span className="rm-block-count">{currentBlockIdx + 1} of {blocks.length}</span>
-          <button className={`rm-icon-btn ${isLastBlock ? 'finish' : ''}`} onClick={nextBlock}>
-            {isLastBlock ? <Check size={16} /> : <ChevronRight size={16} />}
-          </button>
-        </div>
+        <button className="rm-icon-btn" onClick={nextBlock} disabled={currentBlockIdx === blocks.length - 1}>
+          <ChevronRight size={16} />
+        </button>
+        <button className="rm-icon-btn" onClick={() => setBlockListOpen(true)}>
+          <List size={16} />
+        </button>
+        <button className={`rm-icon-btn ${previousMemo ? 'has-memo' : ''}`} onClick={() => setMemoOpen(true)}>
+          <StickyNote size={16} />
+        </button>
+        <button className="rm-icon-btn finish" onClick={finishLesson}>
+          <CheckCheck size={16} />
+        </button>
       </div>
 
       {/* Block list drawer */}

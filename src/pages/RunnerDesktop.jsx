@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronRight, X, GripVertical, Check, CheckCheck, LogOut, StickyNote } from 'lucide-react'
+import { ChevronLeft, ChevronRight, X, GripVertical, CheckCheck, LogOut, StickyNote } from 'lucide-react'
 
 export default function RunnerDesktop({
   school, cls, curriculum, lesson, blocks,
@@ -27,15 +27,9 @@ export default function RunnerDesktop({
           <button className="runner-nav-btn" onClick={prevBlock} disabled={currentBlockIdx === 0}>
             <ChevronLeft size={14} />
           </button>
-          {isLastBlock ? (
-            <button className="runner-nav-btn finish" onClick={nextBlock}>
-              <Check size={14} />
-            </button>
-          ) : (
-            <button className="runner-nav-btn" onClick={nextBlock}>
-              <ChevronRight size={14} />
-            </button>
-          )}
+          <button className="runner-nav-btn" onClick={nextBlock} disabled={isLastBlock}>
+            <ChevronRight size={14} />
+          </button>
           <button className={`runner-memo-btn ${previousMemo ? 'has-memo' : ''} ${memoSaved ? 'saved' : ''}`} onClick={() => setMemoOpen(prev => !prev)}>
             <StickyNote size={14} />
           </button>

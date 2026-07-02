@@ -92,28 +92,6 @@
 .runner-mark-done-btn:active { border-bottom-width: 1px; transform: translateY(1px); }
 @media (hover: hover) { .runner-mark-done-btn:hover { background: var(--brand-hover); } }
 
-/* Mark Done — mobile bottom bar */
-.rm-mark-done-btn {
-  height: 40px;
-  padding: 0 16px;
-  border-radius: 6px;
-  border-top: 1px solid var(--brand-border);
-  border-left: 1px solid var(--brand-border);
-  border-right: 1px solid var(--brand-border);
-  border-bottom: 2px solid var(--brand-text);
-  background: var(--brand-fill);
-  color: var(--brand-text);
-  font-family: 'Figtree', sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  white-space: nowrap;
-}
-
-.rm-mark-done-btn:active { border-bottom-width: 1px; transform: translateY(1px); }
 .runner-memo-btn {
   width: 32px;
   height: 32px;
@@ -597,31 +575,12 @@
 .rm-bottom-bar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: space-around;
   gap: 8px;
-  padding: 16px;
-  padding-bottom: max(16px, env(safe-area-inset-bottom));
+  padding: 12px 16px;
+  padding-bottom: max(12px, env(safe-area-inset-bottom));
   background: #FFFFFF;
   border-top: 0.5px solid var(--stroke-default);
-  flex-shrink: 0;
-}
-
-.rm-bottom-bar-left,
-.rm-bottom-bar-right {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.rm-block-count {
-  font-family: 'Figtree', sans-serif;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text-muted);
-  white-space: nowrap;
-  width: 56px;
-  text-align: center;
-  padding: 0 4px;
   flex-shrink: 0;
 }
 
