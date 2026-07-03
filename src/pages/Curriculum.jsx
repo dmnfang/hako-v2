@@ -4,9 +4,10 @@ import { useData } from '../context/DataContext'
 import Layout from '../components/Layout'
 import HintBanner from '../components/HintBanner'
 import ResponsiveModal from '../components/ResponsiveModal'
-import { Plus, Trash2, X, GripVertical, ArrowLeft, MoreHorizontal, Pencil, Library } from 'lucide-react'
+import { Plus, Trash2, X, GripVertical, ArrowLeft, MoreHorizontal, Pencil, Library, BookOpen, Layers } from 'lucide-react'
 import { useLocation } from 'react-router-dom'
 import { useIsMobile } from '../hooks/useMediaQuery'
+import EmptyState from '../components/EmptyState'
 import './Curriculum.css'
 
 // Seeded default Series group for brand-new users (sidebar) — "New Group" lets
@@ -775,7 +776,7 @@ export default function Curriculum() {
               onDragOver={e => { if (dragLessonId) e.preventDefault() }}
               onDrop={e => { e.preventDefault(); handleLessonDropToEnd() }}
             >
-              {lessons.length === 0 && <div className="curr-empty">No lessons yet. Add one above.</div>}
+              {lessons.length === 0 && <EmptyState icon={BookOpen} message="No lessons yet" sub="Add one above" compact />}
               {lessons.map(l => (
                 <div
                   key={l.id}
@@ -880,7 +881,7 @@ export default function Curriculum() {
               onDragOver={e => { if (dragBlockId) e.preventDefault() }}
               onDrop={e => { e.preventDefault(); handleBlockDropToEnd() }}
             >
-              {blocks.length === 0 && <div className="curr-empty">No blocks yet. Add one above.</div>}
+              {blocks.length === 0 && <EmptyState icon={Layers} message="No blocks yet" sub="Add one above" compact />}
               {blocks.map(block => {
                 const isOpen = expandedBlocks[block.id]
                 const isEditing = editingBlock === block.id
@@ -1001,7 +1002,7 @@ export default function Curriculum() {
               onDrop={e => { e.preventDefault(); handleLibraryDropToEnd() }}
             >
               {libraryBlocks.length === 0 && (
-                <div className="curr-empty">No blocks yet. Add one above.</div>
+                <EmptyState icon={Layers} message="No blocks yet" sub="Add one above" compact />
               )}
               {libraryBlocks
                 .map(block => {
@@ -1125,7 +1126,7 @@ export default function Curriculum() {
             </button>
           </div>
           <div className="curr-lesson-list hm-block-list">
-            {lessons.length === 0 && <div className="curr-empty">No lessons yet. Add one above.</div>}
+            {lessons.length === 0 && <EmptyState icon={BookOpen} message="No lessons yet" sub="Add one above" compact />}
             {lessons.map(l => (
               <div key={l.id} className="curr-lesson-row" onClick={() => drillIntoLesson(l.id)}>
                 <span className="curr-lesson-unit">{l.tag1 ?? '—'}</span>
@@ -1179,7 +1180,7 @@ export default function Curriculum() {
             </button>
           </div>
           <div className="curr-block-list hm-block-list">
-            {blocks.length === 0 && <div className="curr-empty">No blocks yet. Add one above.</div>}
+            {blocks.length === 0 && <EmptyState icon={Layers} message="No blocks yet" sub="Add one above" compact />}
             {blocks.map(block => {
               const isOpen = expandedBlocks[block.id]
               const isEditing = editingBlock === block.id
@@ -1275,7 +1276,7 @@ export default function Curriculum() {
             ))}
           </div>
           <div className="curr-block-list hm-block-list">
-            {libraryBlocks.length === 0 && <div className="curr-empty">No blocks yet. Add one above.</div>}
+            {libraryBlocks.length === 0 && <EmptyState icon={Library} message="No blocks yet" sub="Add one above" compact />}
             {libraryBlocks.map(block => {
               const isOpen = expandedLibraryBlocks[block.id]
               const isEditing = editingLibraryBlock === block.id
@@ -1453,7 +1454,7 @@ export default function Curriculum() {
             </div>
             <div className="curr-insert-list">
               {insertBlocks.length === 0 && (
-                <div className="curr-empty">No blocks in this group yet.</div>
+                <EmptyState icon={Layers} message="No blocks in this group yet" compact />
               )}
               {insertBlocks
                 .map(b => {

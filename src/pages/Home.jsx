@@ -6,9 +6,10 @@ import Layout from '../components/Layout'
 import HintBanner from '../components/HintBanner'
 import ResponsiveModal from '../components/ResponsiveModal'
 import { useDaySchedule, toLocalDateStr, getDayStatus } from '../hooks/useDaySchedule'
-import { GripVertical, ChevronLeft, ChevronRight, X, Play, ArrowLeft, Pencil, StickyNote, School, Users, Clock, BookOpen } from 'lucide-react'
+import { GripVertical, ChevronLeft, ChevronRight, X, Play, ArrowLeft, Pencil, StickyNote, School, Users, Clock, BookOpen, Layers } from 'lucide-react'
 import { useIsMobile } from '../hooks/useMediaQuery'
 import ErrorBoundary from '../components/ErrorBoundary'
+import EmptyState from '../components/EmptyState'
 import './Home.css'
 
 const STATUS_OPTIONS = [
@@ -452,7 +453,7 @@ export default function Home() {
                       </div>
                     )}
                   </div>
-                  {selectedBlocks.length === 0 && <div className="no-blocks">No blocks in this lesson yet.</div>}
+                  {selectedBlocks.length === 0 && <EmptyState icon={Layers} message="No blocks in this lesson yet" compact />}
                   {selectedBlocks.map((block, i) => {
                     const key = `${selectedLesson.id}_${i}`
                     const isOpen = expandedBlocks[key]
@@ -689,7 +690,7 @@ export default function Home() {
                 )}
               </div>
               <div className="block-list">
-                {selectedBlocks.length === 0 && <div className="no-blocks">No blocks in this lesson yet.</div>}
+                {selectedBlocks.length === 0 && <EmptyState icon={Layers} message="No blocks in this lesson yet" compact />}
                 {selectedBlocks.map((block, i) => {
                   const key = `${selectedLesson.id}_${i}`
                   const isOpen = expandedBlocks[key]

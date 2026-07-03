@@ -1,0 +1,36 @@
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 48px 24px;
+  text-align: center;
+  flex: 1;
+}
+
+.empty-state-compact {
+  padding: 24px 16px;
+  gap: 8px;
+}
+
+.empty-state-icon {
+  color: var(--stroke-medium);
+  flex-shrink: 0;
+}
+
+.empty-state-message {
+  font-family: 'Figtree', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-muted);
+  max-width: 240px;
+}
+
+.empty-state-sub {
+  font-family: 'Figtree', sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--text-subtle);
+  max-width: 240px;
+}

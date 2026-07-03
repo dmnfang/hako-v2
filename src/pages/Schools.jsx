@@ -4,8 +4,9 @@ import { useData } from '../context/DataContext'
 import Layout from '../components/Layout'
 import HintBanner from '../components/HintBanner'
 import ResponsiveModal from '../components/ResponsiveModal'
-import { Plus, ChevronLeft, ChevronRight, Trash2, ArrowLeft } from 'lucide-react'
+import { Plus, ChevronLeft, ChevronRight, Trash2, ArrowLeft, Users } from 'lucide-react'
 import { useIsMobile } from '../hooks/useMediaQuery'
+import EmptyState from '../components/EmptyState'
 import './Schools.css'
 
 export default function Schools() {
@@ -194,7 +195,7 @@ export default function Schools() {
   const classList = (
     <div className="sc-class-list">
       {classes.length === 0 && (
-        <div className="sc-empty">No classes yet.</div>
+        <EmptyState icon={Users} message="No classes yet" sub="Add one above" compact />
       )}
       {classes.map(cls => {
         const currentLesson = classProgressCtx[cls.id]?.current_lesson
